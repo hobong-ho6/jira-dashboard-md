@@ -1,0 +1,20 @@
+{
+  "jiraBaseUrl": "https://jira.workers-hub.com",
+  "projects": ["UNIFI"],
+  "jql": "",
+  "fetchLimit": 50,
+  "labelOrder": ["urgent", "ios", "i18n", "qa", "frontend", "backend"],
+  "weekStart": "monday",
+  "startDateField": null,
+  "epicLinkField": null,
+  "ganttDependencyLinkTypes": ["Finish-to-Start link (WBSGantt)", "Blocks"],
+  "descriptionLinkRules": [
+    { "match": ["figma.com"], "category": "design", "label": "Design" },
+    { "match": ["github.com", "gitlab"], "category": "code", "label": "Code" },
+    { "match": ["confluence", "/wiki/"], "category": "docs", "label": "Docs" },
+    { "match": ["docs.google", "sheets.google", "drive.google"], "category": "docs", "label": "Drive" },
+    { "match": ["slack.com"], "category": "chat", "label": "Slack" },
+    { "match": ["jira.workers-hub.com/browse"], "category": "jira", "label": "Jira" },
+    { "match": ["*"], "category": "link", "label": "Link" }
+  ]
+}
