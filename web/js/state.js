@@ -11,6 +11,7 @@ export const state = {
     showDeps: true,
   },
   byKey: new Map(),            // key -> issue (스냅샷 갱신 시 재구성)
+  ui: { groupOrder: [] },      // 로컬 보기 설정(서버 data/ui-state.json 에 영속, docs/12)
 };
 
 const listeners = new Set();
@@ -43,3 +44,5 @@ export function select(key) { state.selectedKey = key; emit(); }
 export function clearSelection() { state.selectedKey = null; emit(); }
 
 export function setFilter(patch) { Object.assign(state.filters, patch); emit(); }
+
+export function setUiState(patch) { Object.assign(state.ui, patch); emit(); }

@@ -8,6 +8,8 @@ serve.py — Jira MCP Dashboard 로컬 서버 (mailbox + 정적 파일)
   - POST /api/commands           -> data/commands.jsonl 에 한 줄 append (pending)
   - GET  /api/commands?status=.. -> 큐 목록 (Claude Code 드레인용)
   - POST /api/commands/ack       -> {ids:[...], status, note?} 로 상태 표시 + .processed 이동
+  - GET  /api/ui-state            -> data/ui-state.json (로컬 보기 설정: 그룹 순서 등)
+  - POST /api/ui-state           -> data/ui-state.json 덮어쓰기 (로컬 파일 I/O, Jira 무관)
 
 절대 규칙:
   - 이 서버는 Jira 를 호출하지 않는다. 비밀키를 다루지 않는다.
@@ -31,6 +33,7 @@ DATA_DIR = os.path.join(BASE, "data")
 SNAPSHOT = os.path.join(DATA_DIR, "snapshot.json")
 COMMANDS = os.path.join(DATA_DIR, "commands.jsonl")
 PROCESSED_DIR = os.path.join(DATA_DIR, ".processed")
+UI_STATE = os.path.join(DATA_DIR, "ui-state.json")
 
 _LOCK = threading.Lock()
 
@@ -118,6 +121,25 @@ def _ack(ids, status, note=None):
         return len(moved)
 
 
+def _read_ui_state():
+    if not os.path.exists(UI_STATE):
+        return {}
+    try:
+        with open(UI_STATE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _write_ui_state(obj):
+    with _LOCK:
+        os.makedirs(DATA_DIR, exist_ok=True)
+        tmp = UI_STATE + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(obj, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, UI_STATE)
+
+
 def _safe_static_path(url_path):
     """web/ 밖으로 못 나가게 정규화. 디렉터리면 index.html."""
     rel = url_path.lstrip("/")
@@ -156,6 +178,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._get_snapshot()
         if path == "/api/commands":
             return self._get_commands(parse_qs(parsed.query))
+        if path == "/api/ui-state":
+            return self._send(200, _read_ui_state())
         if path == "/api/health":
             return self._send(200, {"ok": True})
         return self._get_static(path)
@@ -214,6 +238,12 @@ class Handler(BaseHTTPRequestHandler):
             note = (body or {}).get("note")
             n = _ack(ids, status, note)
             return self._send(200, {"ok": True, "updated": n})
+        if path == "/api/ui-state":
+            # 로컬 보기 설정(그룹 순서 등) 영속화. 로컬 파일 I/O만, Jira 호출 없음.
+            if not isinstance(body, dict):
+                return self._send(400, {"error": "ui-state must be a JSON object"})
+            _write_ui_state(body)
+            return self._send(200, {"ok": True})
         return self._send(404, {"error": "unknown endpoint", "path": path})
 
     def _read_body(self):

@@ -19,8 +19,9 @@
 - 윈도우 포커스 복귀 시 즉시 1회 재fetch.
 
 ## 상태(클라이언트)
-- `state = { snapshot, filters, collapsed:Set<"group:name">, selectedKey, theme }`.
-- 접힘 상태 `collapsed`는 간트·카드 공유(`group:{name}` 키). localStorage는 **사용하지 않는다**(아티팩트 제약과 무관하게, 단순·결정성 위해 메모리 유지; 필요 시 `data/ui-state.json`을 서버로 영속화).
+- `state = { snapshot, filters, collapsed:Set<"group:name">, selectedKey, ui:{ groupOrder } }`.
+- 접힘 상태 `collapsed`·선택 `selectedKey`는 **메모리 유지**(localStorage 사용 안 함).
+- **보기 설정(`ui`)은 서버에 영속**한다: 시작 시 `GET /api/ui-state`로 로드, 변경 시 `POST /api/ui-state`로 저장(`data/ui-state.json`, `13`). 현재 `ui.groupOrder`(그룹 순서 조정)가 이 경로를 쓴다. 서버 미연결 시 기본값으로 동작하고 저장만 생략된다. 그룹 순서는 렌더 시 `util.applyGroupOrder(groups, ui.groupOrder)`로 적용되어 간트·카드가 동일 순서를 공유한다.
 
 ## 액션 전송
 - `POST /api/commands`에 `03` 스키마 JSON. 성공 시 낙관적 UI(예: "대기 중" 배지) 후 폴링으로 확정.

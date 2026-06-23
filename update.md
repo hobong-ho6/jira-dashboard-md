@@ -1128,3 +1128,26 @@ function handleDrop(e) {
    - 드래그 미리보기 (ghost image)
    - 애니메이션 전환
    - 터치 디바이스 지원
+
+---
+
+## 2026-06-23 (수정) - 그룹 순서 조정 동작 안 함 → 보기 설정(ui-state)으로 재설계
+
+### 문제
+"그룹 순서 조정" 저장이 **동작하지 않음.** 원인은 순수 로컬 보기 설정을 Jira용 명령 큐로 우회시킨 설계:
+`저장 → commands.jsonl(reorder_groups) → Claude Code가 process → reorder_groups.py가 config.labelOrder 수정 → normalize 재실행 → snapshot 재생성`.
+즉 사용자가 저장해도 **Claude Code가 `process`를 돌리기 전엔 화면이 안 바뀜** → 사실상 고장.
+
+### 수정 (보기 설정 = 서버 ui-state.json, 클라이언트 적용)
+docs/12의 "localStorage 미사용, 필요 시 `data/ui-state.json` 서버 영속" 방침에 맞춰 재설계:
+- **서버:** `GET/POST /api/ui-state` 추가(`server/serve.py`) — `data/ui-state.json` 읽기/원자적 쓰기. 로컬 파일 I/O만, Jira 무관.
+- **프런트:** 저장 시 `setUiState({groupOrder})`(즉시 재렌더) + `POST /api/ui-state`(영속). 시작 시 `GET /api/ui-state`로 복원. 렌더 시 `util.applyGroupOrder()`가 `snapshot.labelGroups`(시드=`config.labelOrder`) 위에 사용자 순서 적용 → 간트·카드 동시 반영. (`web/js/{reorder,actions,app,data,state,util}.js`)
+- **제거(고아):** `reorder_groups` 큐 액션, `tools/reorder_groups.py`, `process_queue.py`의 `reorder_groups` 항목.
+- **효과:** 드래그→저장 시 **즉시** 반영(서버 `process` 불필요), 새로고침 후에도 유지.
+
+### 문서
+- `docs/03`(ui-state.json 스키마), `docs/05`(순서 = 시드+보기설정 2단계), `docs/11`(reorder_groups 행 제거), `docs/12`(상태/영속화), `docs/13`(서버 엔드포인트) 갱신.
+
+### 검증
+- 서버 라운드트립: GET `{}` → POST → GET 저장값 반영 → 잘못된 body 400 → 디스크 파일 확인 → gitignore 무시 확인. 모두 통과.
+- JS 구문/PY 컴파일 OK, 고아 참조 0. `data/ui-state.json`은 `.gitignore`로 커밋 제외.

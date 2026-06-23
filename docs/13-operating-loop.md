@@ -10,6 +10,8 @@
   - `POST /api/commands` → body(JSON 한 건)에 서버가 `id`(없으면 생성)·`ts`·`status:"pending"` 보정 후 `data/commands.jsonl`에 append. 201 반환.
   - `GET /api/commands?status=pending` → pending 목록(Claude Code 드레인용).
   - `POST /api/commands/ack` → `{ids:[...], status:"done|failed|blocked", note?}` 받아 해당 줄을 표시/`.processed/`로 이동.
+  - `GET /api/ui-state` → `data/ui-state.json`(로컬 보기 설정: `groupOrder` 등). 없으면 `{}`.
+  - `POST /api/ui-state` → JSON 본문을 `data/ui-state.json`에 원자적으로 덮어쓰기. **로컬 파일 I/O만, Jira 호출 없음**(`12` 그룹 순서 조정용).
 - **절대 Jira를 호출하지 않는다. 비밀 저장 안 함. CORS는 localhost 한정.**
 - 동시성: 파일 append/rename은 락 또는 원자적 rename으로 안전하게.
 
@@ -35,7 +37,7 @@
 6) (반복) 쿼리 변경 시 2)부터, 그 외 4)~5) 반복
 ```
 - "click-and-forget"을 원하면: Claude Code가 짧은 watch 루프(예: `commands.jsonl` mtime 변할 때까지 `sleep` 후 1회 process)를 돌릴 수 있다. 단 무한 tight loop 금지 — 적절한 sleep과 종료 조건을 둔다.
-  - 읽기 전용 액션(load_comments/load_transitions/sync/reorder_groups)이 큐에 쌓였는지는 `python3 tools/process_queue.py`로 검사한다(있으면 exit 0 + `PENDING_READONLY=N` 출력, 없으면 exit 1). 이 스크립트는 **신호만 알려줄 뿐 Jira를 호출하지 않는다.** 실제 드레인은 Claude Code가 `process`로 수행한다.
+  - 읽기 전용 액션(load_comments/load_transitions/sync)이 큐에 쌓였는지는 `python3 tools/process_queue.py`로 검사한다(있으면 exit 0 + `PENDING_READONLY=N` 출력, 없으면 exit 1). 이 스크립트는 **신호만 알려줄 뿐 Jira를 호출하지 않는다.** 실제 드레인은 Claude Code가 `process`로 수행한다.
   - 브라우저는 읽기 전용 액션도 다른 액션과 똑같이 큐에 적재만 한다(서버는 Jira를 호출하지 않음 — `01` 신뢰 경계). 과거의 서버 측 자동 처리(`/api/auto-process`·신호파일·워처)는 루프를 닫지 못해 제거됐다.
 
 ## 트러블슈팅 (TROUBLESHOOTING로도 분리 가능)

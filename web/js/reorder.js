@@ -1,7 +1,8 @@
-// reorder.js — 그룹 순서 조정 모달
-import { state } from "./state.js";
-import { actions, runAction } from "./actions.js";
-import { labelColor } from "./util.js";
+// reorder.js — 그룹 순서 조정 모달 (로컬 보기 설정, docs/05·docs/12)
+import { state, setUiState } from "./state.js";
+import { saveUiState } from "./data.js";
+import { toast } from "./actions.js";
+import { labelColor, applyGroupOrder } from "./util.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -15,10 +16,9 @@ export function openReorderModal() {
     return;
   }
 
-  currentOrder = snap.labelGroups.map(g => ({
-    name: g.name,
-    count: g.count,
-  }));
+  // 현재 적용된 순서(저장된 그룹 순서 반영)대로 모달에 표시
+  currentOrder = applyGroupOrder(snap.labelGroups, state.ui.groupOrder)
+    .map(g => ({ name: g.name, count: g.count }));
 
   renderReorderList();
   $("#reorder-modal").style.display = "flex";
@@ -101,18 +101,15 @@ function handleDrop(e) {
   return false;
 }
 
-async function saveReorderChanges() {
-  // (no label) 제거하고 labelOrder 생성
-  const labelOrder = currentOrder
+function saveReorderChanges() {
+  // (no label) 제외한 순서를 보기 설정으로 저장
+  const groupOrder = currentOrder
     .map(g => g.name)
     .filter(name => name !== "(no label)");
 
-  await runAction(
-    actions.reorderGroups(labelOrder),
-    "그룹 순서 저장",
-    "reorder_groups"
-  );
-
+  setUiState({ groupOrder });   // 메모리 반영 + 즉시 재렌더(emit)
+  saveUiState();                // 서버 data/ui-state.json 에 영속화 (fire-and-forget)
+  toast("그룹 순서를 저장했습니다.", "ok");
   closeReorderModal();
 }
 

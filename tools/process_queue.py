@@ -3,7 +3,7 @@
 process_queue.py — 큐에 처리할 읽기 전용 액션이 있는지 검사하는 헬퍼.
 
 이 스크립트는 Jira/MCP를 호출하지 않는다. `data/commands.jsonl`을 읽어
-pending 상태의 읽기 전용 액션(load_comments / load_transitions / sync / reorder_groups)이
+pending 상태의 읽기 전용 액션(load_comments / load_transitions / sync)이
 있으면 개수를 출력하고 exit 0, 없으면 exit 1.
 
 용도: Claude Code가 docs/13의 짧은 "watch 루프"에서 이 결과를 보고
@@ -17,7 +17,7 @@ BASE = Path(__file__).parent.parent
 COMMANDS_FILE = BASE / "data" / "commands.jsonl"
 
 # Jira를 변경하지 않는 읽기 전용 액션 (docs/11)
-READ_ONLY_ACTIONS = {"load_comments", "load_transitions", "sync", "reorder_groups"}
+READ_ONLY_ACTIONS = {"load_comments", "load_transitions", "sync"}
 
 
 def pending_readonly():

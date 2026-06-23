@@ -25,7 +25,8 @@
 | `load_transitions` | `jira_get_transitions(issueKey)` → snapshot `transitions[issueKey]` 채움. 상태 드롭다운 옵션 제공용. Jira 변경 아님 |
 | `set_labels` | `jira_update_issue(issueKey, fields={"labels": labels})` (전체 덮어쓰기) |
 | `create_link` | `jira_create_issue_link(inward, link_type=type, outward)` |
-| `reorder_groups` | `config.json`의 `labelOrder` 업데이트 → normalize.py 재실행으로 snapshot 재생성. Jira 변경 아님, 로컬 설정 변경 |
+
+> 그룹 순서 조정은 **큐 명령이 아니다.** 순수 로컬 보기 설정이라 브라우저가 `POST /api/ui-state`로 즉시 저장한다(`05`,`12`,`13`). Claude Code의 `process`가 필요 없다.
 
 ## 코멘트 "수정"에 대한 솔직한 한계
 - 현재 MCP 도구셋에는 **기존 코멘트를 편집/삭제하는 도구가 없다**(`jira_add_comment`만 존재).

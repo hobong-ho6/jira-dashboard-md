@@ -92,3 +92,18 @@ export function statusCategoryClass(cat) {
   if (cat === "indeterminate") return "st-progress";
   return "st-new";
 }
+
+// 저장된 그룹 순서(이름 배열)대로 그룹 배열을 재정렬.
+// order에 있는 이름이 먼저(그 순서대로), 나머지는 기존 순서 유지, NO_LABEL은 항상 맨 끝.
+export function applyGroupOrder(groups, order) {
+  if (!Array.isArray(order) || !order.length) return groups;
+  const pos = new Map(order.map((n, i) => [n, i]));
+  return groups.slice().sort((a, b) => {
+    const an = a.name === NO_LABEL, bn = b.name === NO_LABEL;
+    if (an !== bn) return an ? 1 : -1;            // NO_LABEL 은 항상 뒤로
+    const pa = pos.has(a.name) ? pos.get(a.name) : Infinity;
+    const pb = pos.has(b.name) ? pos.get(b.name) : Infinity;
+    if (pa === pb) return 0;                        // 동률 → 안정정렬로 기존 순서 유지
+    return pa - pb;
+  });
+}

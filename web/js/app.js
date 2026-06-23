@@ -1,10 +1,10 @@
 // app.js — 오케스트레이터: 필터바, 가시 집합 계산, 렌더 연결
 import { state, subscribe, setFilter, collapseAll, clearSelection } from "./state.js";
-import { loadSnapshot, startPolling, lastSynced } from "./data.js";
+import { loadSnapshot, startPolling, lastSynced, loadUiState } from "./data.js";
 import { renderGantt } from "./gantt.js";
 import { renderCards } from "./cards.js";
 import { renderDetail } from "./detail.js";
-import { bucketOf, todayDate, fmtDateTime, debounce, NO_LABEL } from "./util.js";
+import { bucketOf, todayDate, fmtDateTime, debounce, NO_LABEL, applyGroupOrder } from "./util.js";
 import { actions, runAction } from "./actions.js";
 import { initReorderModal } from "./reorder.js";
 
@@ -38,7 +38,7 @@ function visibleGroups() {
     });
     if (keys.length) out.push({ name: g.name, keys });
   }
-  return out;
+  return applyGroupOrder(out, state.ui.groupOrder);
 }
 
 function currentQuery() {
@@ -125,6 +125,7 @@ async function main() {
   initReorderModal();
   subscribe(render);
   await loadSnapshot({ force: true });
+  await loadUiState();
   startPolling(7000);
   render();
 

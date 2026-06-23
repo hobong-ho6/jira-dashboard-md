@@ -99,3 +99,13 @@
 `action` 종류와 처리 매핑은 `11-mutations.md`가 권위.
 `status`: 브라우저는 항상 `pending`으로 만든다. Claude Code가 `done`/`failed`/`blocked`로 바꿔 `data/.processed/`에 옮기거나 `ack` API로 표시.
 `id` 규칙: `c_` + epoch초 + `_` + 4자 난수. **중복 id 금지, 재실행 금지.**
+
+## `data/ui-state.json` (브라우저 읽기/쓰기, 보조 파일 — gitignore)
+순수 **로컬 보기 설정**. Jira와 무관하며 큐를 거치지 않는다. 브라우저가 `GET/POST /api/ui-state`로 직접 읽고 쓴다(`12`,`13`). 커밋하지 않는다(`.gitignore`).
+```json
+{
+  "groupOrder": ["GuideKim", "Mission&Reward", "UnifiMobile"]
+}
+```
+- `groupOrder`: 라벨 그룹 표시 순서(사용자가 "그룹 순서 조정"에서 드래그한 결과). `"(no label)"`은 제외(항상 맨 끝). 렌더 시 `snapshot.labelGroups`(시드: `config.labelOrder`) 위에 적용된다. 없으면 시드 순서 그대로.
+- 스키마는 자유 확장 가능(향후 다른 보기 설정 추가 시 키만 늘린다). 서버는 객체면 그대로 저장한다.

@@ -32,7 +32,6 @@ export const actions = {
   loadTransitions: (issueKey) => enqueue({ action: "load_transitions", issueKey }),
   setLabels: (issueKey, labels) => enqueue({ action: "set_labels", issueKey, labels }),
   createLink: (inward, type, outward) => enqueue({ action: "create_link", inward, type, outward }),
-  reorderGroups: (labelOrder) => enqueue({ action: "reorder_groups", labelOrder }),
 };
 
 // 간단한 토스트
@@ -51,7 +50,7 @@ export function toast(msg, kind = "info") {
 }
 
 // 읽기 전용 액션 목록 (Jira 변경하지 않음)
-const READ_ONLY_ACTIONS = new Set(['load_comments', 'load_transitions', 'sync', 'reorder_groups']);
+const READ_ONLY_ACTIONS = new Set(['load_comments', 'load_transitions', 'sync']);
 
 export async function runAction(promise, okMsg, actionType = null) {
   const r = await promise;

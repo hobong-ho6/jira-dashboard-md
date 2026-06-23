@@ -32,3 +32,23 @@ export function startPolling(ms = 7000) {
 export function stopPolling() { if (timer) { clearInterval(timer); timer = null; } }
 
 export function lastSynced() { return lastGeneratedAt; }
+
+// 로컬 보기 설정(그룹 순서 등) — 서버 data/ui-state.json 에 영속 (docs/12)
+export async function loadUiState() {
+  try {
+    const res = await fetch("/api/ui-state", { cache: "no-store" });
+    if (!res.ok) return;
+    const ui = await res.json();
+    if (ui && typeof ui === "object") Object.assign(state.ui, ui);
+  } catch (_) { /* 서버 미연결 시 기본값 유지 */ }
+}
+
+export async function saveUiState() {
+  try {
+    await fetch("/api/ui-state", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(state.ui),
+    });
+  } catch (_) { /* 영속화 실패해도 메모리 상태는 이미 반영됨 */ }
+}
