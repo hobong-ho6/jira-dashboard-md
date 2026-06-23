@@ -36,9 +36,15 @@
 5) process                           # 변경 반영 + 증분 재동기화
 6) (반복) 쿼리 변경 시 2)부터, 그 외 4)~5) 반복
 ```
-- "click-and-forget"을 원하면: Claude Code가 짧은 watch 루프(예: `commands.jsonl` mtime 변할 때까지 `sleep` 후 1회 process)를 돌릴 수 있다. 단 무한 tight loop 금지 — 적절한 sleep과 종료 조건을 둔다.
-  - 읽기 전용 액션(load_comments/load_transitions/sync)이 큐에 쌓였는지는 `python3 tools/process_queue.py`로 검사한다(있으면 exit 0 + `PENDING_READONLY=N` 출력, 없으면 exit 1). 이 스크립트는 **신호만 알려줄 뿐 Jira를 호출하지 않는다.** 실제 드레인은 Claude Code가 `process`로 수행한다.
-  - 브라우저는 읽기 전용 액션도 다른 액션과 똑같이 큐에 적재만 한다(서버는 Jira를 호출하지 않음 — `01` 신뢰 경계). 과거의 서버 측 자동 처리(`/api/auto-process`·신호파일·워처)는 루프를 닫지 못해 제거됐다.
+### 큐 자동 처리 (watch 루프, "click-and-forget")
+- 코멘트/전이 조회는 물론 상태·마감일 변경 등 **모든 처리는 MCP가 필요**하므로 서버가 못 한다(서버는 Jira 호출 금지 — `01` 신뢰 경계). 따라서 자동화하려면 **Claude Code 세션이 큐를 감시**해야 하며, 세션(+워처)이 떠 있는 동안만 동작한다.
+- 구현(`tools/`):
+  - `watch_queue.py [poll]` — **pending 명령이 생길 때까지 블로킹 대기**하다가, 발견 즉시 `{"pending":[{id,action,issueKey,to,duedate,jql}]}` 한 줄을 출력하고 **종료**한다. Claude Code가 백그라운드로 실행하면, 종료 시 세션이 재호출되어 처리 루프가 돈다. 읽기 전용(load_comments/load_transitions/sync)과 **변경(transition/set_duedate/add_comment/set_labels/create_link) 모두** 감지한다(변경은 사용자의 명시적 버튼 클릭 = 의도, `11`). 일감 없으면 조용히 대기(재호출 없음).
+  - 재호출된 Claude Code는 `11` 매핑대로 MCP 호출(조회 또는 변경 2단계 전이 등)한 뒤 `apply_queue.py <payload.json> [port]`로 `snapshot.json`에 병합하고 서버 `ack`로 큐를 비운다. payload는 `comments`/`transitions`(드롭다운)/`issuePatch`(변경 후 status·duedate·labels; duedate 변경 시 bucket 재계산)를 담는다. 그리고 watcher를 다시 띄운다.
+  - `process_queue.py` — pending 읽기전용 유무만 1회 검사(블로킹 없는 빠른 상태 확인용, exit 0/1).
+  - 위 스크립트들은 **Jira를 호출하지 않는다**(큐 파일 읽기 + 로컬 snapshot 쓰기 + localhost ack 만). MCP 호출은 항상 Claude Code가 한다.
+- 과거의 서버 측 자동 처리(`/api/auto-process`·신호파일)는 루프를 닫지 못해 제거됐다. `watch_queue.py`는 종료→세션 재호출로 **실제로 루프를 닫는다**는 점이 다르다.
+- 무한 tight loop 금지: `watch_queue.py`는 `poll`초(기본 1.5s) 간격으로 잔다. 세션을 닫으면 워처도 멈추므로, 다시 자동화하려면 워처를 재기동한다.
 
 ## 트러블슈팅 (TROUBLESHOOTING로도 분리 가능)
 - 브라우저가 snapshot 못 읽음 → 서버 기동/포트/경로 확인(`file://` 직접 열기 금지).

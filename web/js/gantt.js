@@ -31,11 +31,16 @@ export function renderGantt(root, groups, byKey, weekStart) {
   let rangeStart = new Date(today); rangeStart.setDate(today.getDate() - 1);
   let rangeEnd = new Date(today); rangeEnd.setDate(today.getDate() + 5);
 
-  // 범위 밖 이슈 분리 (간트 차트에서 제외)
+  // 범위 안/밖 분리. 가시 이슈(완료 숨김·검색·상태 필터 반영된 groups)만 대상으로 한다.
+  // groups 는 app.js visibleGroups() 결과라 이미 필터링돼 있다 → 범위 밖 칩도 동일 필터 존중.
+  const visibleKeys = new Set();
+  for (const g of groups) for (const k of g.keys) visibleKeys.add(k);
+
   const outOfRangeIssues = [];
   const inRangeKeys = new Set();
-
-  for (const it of byKey.values()) {
+  for (const key of visibleKeys) {
+    const it = byKey.get(key);
+    if (!it) continue;
     const due = parseDate(it.duedate);
     if (!due || due < rangeStart || due > rangeEnd) {
       outOfRangeIssues.push(it);

@@ -51,7 +51,7 @@ export function renderDetail(root, byKey, weekStart) {
   root.innerHTML = `
     <div class="d-head">
       <div class="d-title">
-        <span class="d-key">${escapeHtml(it.key)}</span>
+        <a class="d-key" href="${escapeHtml(it.url || (state.snapshot.jiraBaseUrl + "/browse/" + it.key))}" target="_blank" rel="noopener" title="Jira에서 열기">${escapeHtml(it.key)}</a>
         <span class="pill ${statusCategoryClass(it.status && it.status.category)}">${escapeHtml(it.status ? it.status.name : "")}</span>
       </div>
       <button class="d-close" id="d-close" aria-label="닫기">✕</button>
