@@ -5,7 +5,7 @@ import {
   escapeHtml, BUCKET_LABEL,
 } from "./util.js";
 
-const LABEL_W = 260, HEAD_H = 36, ROW_H = 30, GROUP_H = 30, DAY_W = 34, MIN_BAR = 8;
+const LABEL_W = 300, HEAD_H = 44, ROW_H = 36, GROUP_H = 36, MIN_BAR = 12;
 
 function depTypes() {
   const c = (state.snapshot && state.snapshot.config) || {};
@@ -27,15 +27,36 @@ export function renderGantt(root, groups, byKey, weekStart) {
   root.innerHTML = "";
   const today = todayDate();
 
-  // 가시 이슈 수집(레이아웃은 그룹/접힘 반영)
+  // 날짜 범위: D-1 ~ D+5 (7일 고정)
+  let rangeStart = new Date(today); rangeStart.setDate(today.getDate() - 1);
+  let rangeEnd = new Date(today); rangeEnd.setDate(today.getDate() + 5);
+
+  // 범위 밖 이슈 분리 (간트 차트에서 제외)
+  const outOfRangeIssues = [];
+  const inRangeKeys = new Set();
+
+  for (const it of byKey.values()) {
+    const due = parseDate(it.duedate);
+    if (!due || due < rangeStart || due > rangeEnd) {
+      outOfRangeIssues.push(it);
+    } else {
+      inRangeKeys.add(it.key);
+    }
+  }
+
+  // 가시 이슈 수집(레이아웃은 그룹/접힘 반영) - 범위 내 이슈만
   const layout = [];
   const issueGeomKeys = new Set();
   let y = 0;
   for (const g of groups) {
-    layout.push({ type: "group", name: g.name, count: g.keys.length, y, h: GROUP_H, keys: g.keys });
+    // 그룹 내 범위 내 이슈만 필터링
+    const inRangeGroupKeys = g.keys.filter(k => inRangeKeys.has(k));
+    if (inRangeGroupKeys.length === 0) continue; // 빈 그룹 제외
+
+    layout.push({ type: "group", name: g.name, count: inRangeGroupKeys.length, y, h: GROUP_H, keys: inRangeGroupKeys });
     y += GROUP_H;
     if (!isCollapsed(g.name)) {
-      for (const key of g.keys) {
+      for (const key of inRangeGroupKeys) {
         layout.push({ type: "issue", key, y, h: ROW_H });
         y += ROW_H;
       }
@@ -43,16 +64,12 @@ export function renderGantt(root, groups, byKey, weekStart) {
   }
   const totalRowsH = Math.max(y, ROW_H);
 
-  // 날짜 범위
-  let rangeStart = new Date(today); rangeStart.setDate(today.getDate() - 7);
-  let rangeEnd = new Date(today); rangeEnd.setDate(today.getDate() + 28);
-  for (const it of byKey.values()) {
-    const s = parseDate(it.startDate), d = parseDate(it.duedate);
-    if (s && s < rangeStart) rangeStart = s;
-    if (d && d > rangeEnd) rangeEnd = d;
-    if (d && d < rangeStart) rangeStart = d;
-  }
-  const numDays = Math.max(1, daysBetween(rangeStart, rangeEnd) + 1);
+  const numDays = 7; // 고정 7일
+
+  // 반응형 너비 계산: 전체 너비에서 라벨 너비를 뺀 나머지
+  const ganttContainer = root.closest('.gantt-host');
+  const availableWidth = ganttContainer ? ganttContainer.clientWidth - LABEL_W - 2 : 800; // 2px for borders
+  const DAY_W = Math.max(60, Math.floor(availableWidth / numDays)); // 최소 60px, 창에 맞춰 증가
   const timelineW = numDays * DAY_W;
   const x = (date) => daysBetween(rangeStart, date) * DAY_W;
 
@@ -251,6 +268,90 @@ export function renderGantt(root, groups, byKey, weekStart) {
   requestAnimationFrame(() => {
     scroll.scrollLeft = (state._gx != null) ? state._gx : Math.max(0, x(today) - 120);
   });
+
+  // ----- 범위 밖 티켓을 별도 컨테이너에 렌더링 -----
+  renderOutOfRangeSection(outOfRangeIssues, rangeStart, rangeEnd);
+}
+
+function renderOutOfRangeSection(issues, rangeStart, rangeEnd) {
+  const section = document.getElementById("out-of-range-section");
+  const container = document.getElementById("out-of-range");
+
+  if (!section || !container) return;
+
+  if (issues.length === 0) {
+    section.style.display = "none";
+    return;
+  }
+
+  section.style.display = "block";
+  container.innerHTML = "";
+
+  // 날짜별로 그룹화
+  const beforeRange = [];
+  const afterRange = [];
+  const noDue = [];
+
+  for (const it of issues) {
+    const due = parseDate(it.duedate);
+    if (!due) {
+      noDue.push(it);
+    } else if (due < rangeStart) {
+      beforeRange.push(it);
+    } else if (due > rangeEnd) {
+      afterRange.push(it);
+    }
+  }
+
+  // 날짜순 정렬
+  beforeRange.sort((a, b) => parseDate(a.duedate) - parseDate(b.duedate));
+  afterRange.sort((a, b) => parseDate(a.duedate) - parseDate(b.duedate));
+
+  // 모든 티켓을 하나의 리스트로 합치기 (이전 + 이후 + 마감일 없음)
+  const allIssues = [...beforeRange, ...afterRange, ...noDue];
+
+  // 날짜별로 그룹화하여 렌더링
+  const byDate = new Map();
+  for (const it of allIssues) {
+    const dateKey = it.duedate || "마감일 없음";
+    if (!byDate.has(dateKey)) {
+      byDate.set(dateKey, []);
+    }
+    byDate.get(dateKey).push(it);
+  }
+
+  // 날짜 순서대로 표시
+  const sortedDates = Array.from(byDate.keys()).sort((a, b) => {
+    if (a === "마감일 없음") return 1;
+    if (b === "마감일 없음") return -1;
+    return a.localeCompare(b);
+  });
+
+  for (const dateKey of sortedDates) {
+    const items = byDate.get(dateKey);
+
+    const dateGroup = el("div", "oor-date-group");
+    const dateHeader = el("div", "oor-date-header");
+    dateHeader.textContent = dateKey === "마감일 없음" ? dateKey : fmtDate(parseDate(dateKey));
+    dateGroup.append(dateHeader);
+
+    const itemsContainer = el("div", "oor-items");
+    for (const it of items) {
+      const item = createSimpleIssueItem(it);
+      itemsContainer.append(item);
+    }
+    dateGroup.append(itemsContainer);
+    container.append(dateGroup);
+  }
+}
+
+function createSimpleIssueItem(it) {
+  const item = el("div", "oor-simple-item");
+  item.dataset.key = it.key;
+  item.textContent = `${it.key}`;
+  item.title = `${it.summary} (${it.status.name})`;
+  item.addEventListener("click", () => select(it.key));
+  return item;
 }
 
 function el(tag, cls) {

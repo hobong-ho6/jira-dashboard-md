@@ -6,6 +6,7 @@ import { renderCards } from "./cards.js";
 import { renderDetail } from "./detail.js";
 import { bucketOf, todayDate, fmtDateTime, debounce, NO_LABEL } from "./util.js";
 import { actions, runAction } from "./actions.js";
+import { initReorderModal } from "./reorder.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -121,10 +122,24 @@ function buildFilterBar() {
 
 async function main() {
   buildFilterBar();
+  initReorderModal();
   subscribe(render);
   await loadSnapshot({ force: true });
   startPolling(7000);
   render();
+
+  // 창 크기 변경 시 간트 차트 재렌더링 (반응형)
+  let resizeTimeout;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      const snap = state.snapshot;
+      if (snap && snap.issues && snap.issues.length > 0) {
+        const groups = visibleGroups();
+        renderGantt($("#gantt"), groups, state.byKey, weekStart());
+      }
+    }, 150); // 150ms 디바운스
+  });
 }
 
 main();

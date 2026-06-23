@@ -6,6 +6,9 @@ data/raw_issues.json
 __pycache__/
 *.log
 
+# OS
+.DS_Store
+
 # data/snapshot.json 은 데모 시드로 의도적으로 추적합니다.
 # 실제 sync 후에는 로컬에서 덮어써지며, 원치 않으면 아래 주석을 해제하세요.
 # data/snapshot.json

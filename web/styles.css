@@ -69,7 +69,7 @@ a { color: var(--accent); text-decoration: none; }
 .lg.bk-later { background: var(--bk-later); }
 
 /* ---- 간트 ---- */
-.gantt-host { height: 380px; }
+.gantt-host { height: 500px; }
 .gantt { display: flex; height: 100%; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface2); }
 .gantt-labels { position: relative; overflow: hidden; border-right: 1px solid var(--border); background: var(--surface); }
 .glabel-head { display: flex; align-items: center; padding: 0 10px; font-size: 11px; color: var(--muted);
@@ -224,5 +224,59 @@ a { color: var(--accent); text-decoration: none; }
 .toast[data-kind="warn"] { border-color: rgba(245,166,35,.5); }
 .toast[data-kind="err"] { border-color: rgba(255,93,108,.5); }
 
+/* ---- 범위 밖 티켓 (타임라인과 카드 사이) ---- */
+.oor-container { display: flex; flex-direction: column; gap: 12px; }
+.oor-date-group { margin-bottom: 8px; }
+.oor-date-header { font-size: 13px; font-weight: 600; color: var(--text);
+  padding: 6px 10px; background: var(--surface2); border-radius: 6px;
+  border-left: 3px solid var(--accent); margin-bottom: 6px; }
+.oor-items { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 10px; }
+.oor-simple-item {
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  color: var(--accent); background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 10px; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.oor-simple-item:hover {
+  background: var(--accent); color: var(--accent-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(108,140,255,.3);
+}
+
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.d-key { font-family: var(--mono); font-weight: 700; font-size: 14px; }
+/* Open 버튼 숨김 */
+.d-key a { display: none !important; }
+
+/* ---- 모달 ---- */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75);
+  display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: var(--surface); border-radius: 12px; width: 90%; max-width: 600px;
+  max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px;
+  border-bottom: 1px solid var(--border); }
+.modal-header h3 { margin: 0; font-size: 16px; font-weight: 700; }
+.btn-close { background: transparent; border: 0; color: var(--muted); font-size: 28px; line-height: 1;
+  cursor: pointer; padding: 0; width: 32px; height: 32px; border-radius: 6px; }
+.btn-close:hover { background: var(--surface2); color: var(--text); }
+.modal-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.modal-hint { margin: 0 0 16px 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.modal-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 16px 24px; border-top: 1px solid var(--border); }
+
+/* ---- 그룹 순서 조정 리스트 ---- */
+.reorder-list { display: flex; flex-direction: column; gap: 8px; }
+.reorder-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  cursor: move; user-select: none; transition: all 0.15s; }
+.reorder-item:hover { background: var(--surface3); border-color: var(--accent); }
+.reorder-item.dragging { opacity: 0.4; }
+.reorder-item.drag-over { border-color: var(--accent); border-width: 2px; margin-top: 4px; }
+.reorder-handle { color: var(--muted); font-size: 16px; cursor: grab; }
+.reorder-handle:active { cursor: grabbing; }
+.reorder-label { flex: 1; font-size: 13px; font-weight: 600; }
+.reorder-label .label-chip { display: inline-block; width: 12px; height: 12px; border-radius: 3px;
+  margin-right: 8px; vertical-align: middle; }
+.reorder-count { color: var(--muted); font-size: 11px; font-family: var(--mono); }

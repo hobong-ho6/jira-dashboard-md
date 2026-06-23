@@ -42,6 +42,25 @@ summary,status,issuetype,assignee,priority,labels,duedate,created,updated,descri
   - 상대 이슈: `(in/out)wardIssue.key`, `.fields.summary`, `.fields.status.name`
 - 코멘트: `fields.comment.comments[]` → 각 `author.displayName`, `created`, `updated`, `body`(wiki markup)
 
+## MCP 응답 형식: 평면(flattened) — `normalize.py`가 v2로 변환
+> 위 "응답에서 읽어야 할 경로"는 **표준 v2(`fields` 래퍼) 기준**이다. 그러나 이 환경의
+> `noahs-mcp-jira.jira_search`는 **평면(flattened) 형식**을 돌려준다. `tools/normalize.py`의
+> `to_v2()`가 자동으로 v2로 변환하므로, sync 시 **MCP 응답을 가공 없이 그대로** `data/raw_issues.json`에
+> 저장하면 된다(수동 변환 불필요). 두 형식의 실측 차이는 다음과 같다:
+
+| 항목 | MCP 평면 응답 | 표준 v2 (`normalize.py`가 기대) |
+|------|---------------|-------------------------------|
+| 구조 | 필드가 **최상위**에 평면화 | `issue.fields.*` 래퍼 |
+| 상태 | `status = {name, category:"To Do", color}` | `status.statusCategory.key`(`new`/`indeterminate`/`done`) |
+| 담당자 | `display_name`, `avatar_url` (**snake_case**) | `displayName`, `avatarUrls["48x48"]` |
+| 링크 | `issuelinks[].inward_issue` / `outward_issue` (snake) | `inwardIssue` / `outwardIssue` |
+| 커스텀필드 | `customfield_xxx = {"value": X}` (**래핑**) | `customfield_xxx = X` (값 그대로) |
+| 부모 | `parent = {key, fields}` (v2와 동일) | `parent.key` |
+
+- `status.category` → `statusCategory.key` 매핑: `"To Do"→new`, `"In Progress"→indeterminate`, `"Done"→done`.
+- **커스텀필드 언래핑이 중요**: `{"value": null}`을 그대로 두면 `startDate` 추출이 깨진다(과거 수동 변환의 버그). `to_v2()`는 `{value:X}`→`X`로 풀며, 이미 v2인 입력에도 멱등하게 적용된다.
+- 검색 결과에 **`issuetype`이 최상위로 안 올 수 있다**(이 MCP의 한계). 그 경우 타입은 빈 문자열로 둔다.
+
 ## 함정 / 반드시 지킬 것
 1. **상태 변경은 2단계.** 상태 *이름*으로 못 바꾼다.
    `jira_get_transitions(issue_key)` → 응답에서 목표 상태 이름과 일치하는 항목의 `id` →

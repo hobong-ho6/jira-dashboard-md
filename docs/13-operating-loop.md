@@ -35,6 +35,8 @@
 6) (반복) 쿼리 변경 시 2)부터, 그 외 4)~5) 반복
 ```
 - "click-and-forget"을 원하면: Claude Code가 짧은 watch 루프(예: `commands.jsonl` mtime 변할 때까지 `sleep` 후 1회 process)를 돌릴 수 있다. 단 무한 tight loop 금지 — 적절한 sleep과 종료 조건을 둔다.
+  - 읽기 전용 액션(load_comments/load_transitions/sync/reorder_groups)이 큐에 쌓였는지는 `python3 tools/process_queue.py`로 검사한다(있으면 exit 0 + `PENDING_READONLY=N` 출력, 없으면 exit 1). 이 스크립트는 **신호만 알려줄 뿐 Jira를 호출하지 않는다.** 실제 드레인은 Claude Code가 `process`로 수행한다.
+  - 브라우저는 읽기 전용 액션도 다른 액션과 똑같이 큐에 적재만 한다(서버는 Jira를 호출하지 않음 — `01` 신뢰 경계). 과거의 서버 측 자동 처리(`/api/auto-process`·신호파일·워처)는 루프를 닫지 못해 제거됐다.
 
 ## 트러블슈팅 (TROUBLESHOOTING로도 분리 가능)
 - 브라우저가 snapshot 못 읽음 → 서버 기동/포트/경로 확인(`file://` 직접 열기 금지).

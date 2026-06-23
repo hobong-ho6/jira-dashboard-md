@@ -51,7 +51,7 @@ export function renderDetail(root, byKey, weekStart) {
   root.innerHTML = `
     <div class="d-head">
       <div class="d-title">
-        <a href="${escapeHtml(it.url)}" target="_blank" rel="noopener" class="d-key">${escapeHtml(it.key)} ↗</a>
+        <span class="d-key">${escapeHtml(it.key)}</span>
         <span class="pill ${statusCategoryClass(it.status && it.status.category)}">${escapeHtml(it.status ? it.status.name : "")}</span>
       </div>
       <button class="d-close" id="d-close" aria-label="닫기">✕</button>
@@ -86,7 +86,13 @@ export function renderDetail(root, byKey, weekStart) {
   // 자동 코멘트 지연 로드 (1회)
   if (!it.commentsLoaded && !requestedComments.has(key)) {
     requestedComments.add(key);
-    runAction(actions.loadComments(key), `${key} 코멘트 로드 요청`);
+    runAction(actions.loadComments(key), `${key} 코멘트 로드 요청`, 'load_comments');
+  }
+
+  // 전이 정보가 없으면 자동으로 로드 요청
+  if (transitions.length === 0 && !requestedComments.has(`${key}_transitions`)) {
+    requestedComments.add(`${key}_transitions`);
+    runAction(actions.loadTransitions(key), `${key} 전이 정보 로드 요청`, 'load_transitions');
   }
 
   root.querySelector("#d-close").addEventListener("click", clearSelection);
@@ -108,7 +114,7 @@ export function renderDetail(root, byKey, weekStart) {
   const lc = root.querySelector("#d-loadcmt");
   if (lc) lc.addEventListener("click", () => {
     requestedComments.add(key);
-    runAction(actions.loadComments(key), `${key} 코멘트 로드 요청`);
+    runAction(actions.loadComments(key), `${key} 코멘트 로드 요청`, 'load_comments');
   });
 
   root.querySelectorAll("[data-url]").forEach((b) =>

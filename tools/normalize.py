@@ -37,6 +37,87 @@ def load_json(path, default=None):
         return json.load(f)
 
 
+# --- MCP(jira_search) 평면 응답 → 표준 Jira v2 변환 (docs/02 §MCP 응답 형식) -------
+# 이 환경의 MCP `jira_search`는 표준 v2와 다른 평면(flattened) 형식을 돌려준다:
+#   - 필드가 `fields` 래퍼 없이 최상위에 위치
+#   - status = {"name","category":"To Do","color"}  (v2는 status.statusCategory.key)
+#   - assignee = {"display_name","avatar_url",...}   (snake_case)
+#   - issuelinks[].inward_issue / outward_issue       (snake_case; 내부 이슈는 {key,fields})
+#   - customfield_xxx = {"value": X}                  (v2는 값이 그대로)
+# normalize_issue 가 기대하는 v2 형태로 맞춰 준다. 이미 v2면 customfield 래퍼만 정규화한다.
+MCP_STATUS_CATEGORY = {"To Do": "new", "In Progress": "indeterminate", "Done": "done"}
+
+
+def _unwrap_customfield(v):
+    # MCP는 커스텀필드를 {"value": X}로 감싼다. v2는 X가 그대로. 언래핑은 멱등하다.
+    if isinstance(v, dict) and set(v.keys()) == {"value"}:
+        return v["value"]
+    return v
+
+
+def _conv_status(st):
+    st = st or {}
+    if "statusCategory" in st:            # 이미 v2
+        return st
+    cat = st.get("category")
+    return {"name": st.get("name", ""),
+            "statusCategory": {"key": MCP_STATUS_CATEGORY.get(cat, ""), "name": cat or ""}}
+
+
+def _conv_assignee(a):
+    if not a:
+        return None
+    if "displayName" in a or "avatarUrls" in a:   # 이미 v2
+        return a
+    return {
+        "name": a.get("name"),
+        "displayName": a.get("display_name", ""),
+        "accountId": a.get("account_id"),
+        "email": a.get("email"),
+        "avatarUrls": {"48x48": a.get("avatar_url")},
+    }
+
+
+def _conv_links(links):
+    out = []
+    for l in links or []:
+        l = dict(l)
+        if "inward_issue" in l:
+            l["inwardIssue"] = l.pop("inward_issue")
+        if "outward_issue" in l:
+            l["outwardIssue"] = l.pop("outward_issue")
+        # 상대 이슈는 이미 {key, fields:{summary,status}} 구조다.
+        # normalize_links 는 status.name 만 읽으므로 추가 변환 불필요.
+        out.append(l)
+    return out
+
+
+def to_v2(issue):
+    """MCP 평면 응답을 표준 v2(`fields` 래퍼)로 변환. 이미 v2면 customfield 래퍼만 정규화."""
+    if "fields" in issue:
+        f = issue.get("fields") or {}
+        for k in list(f.keys()):
+            if k.startswith("customfield_"):
+                f[k] = _unwrap_customfield(f[k])
+        return issue
+    src = dict(issue)
+    fields = {}
+    for k in ("summary", "description", "labels", "duedate", "created", "updated",
+              "issuetype", "parent", "priority"):
+        if k in src:
+            fields[k] = src[k]
+    if "status" in src:
+        fields["status"] = _conv_status(src["status"])
+    if "assignee" in src:
+        fields["assignee"] = _conv_assignee(src["assignee"])
+    if "issuelinks" in src:
+        fields["issuelinks"] = _conv_links(src["issuelinks"])
+    for k in src:
+        if k.startswith("customfield_"):
+            fields[k] = _unwrap_customfield(src[k])
+    return {"id": issue.get("id"), "key": issue.get("key"), "fields": fields}
+
+
 def week_range(today, week_start="monday"):
     # Monday=0 .. Sunday=6
     wd = today.weekday()
@@ -203,7 +284,7 @@ def normalize_snapshot(raw, cfg, today=None):
     else:
         raw_issues = []
     label_order = cfg.get("labelOrder", [])
-    issues = [normalize_issue(i, cfg, today) for i in raw_issues if i.get("key")]
+    issues = [normalize_issue(to_v2(i), cfg, today) for i in raw_issues if i.get("key")]
     return {
         "generatedAt": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
         "jiraBaseUrl": cfg.get("jiraBaseUrl", ""),

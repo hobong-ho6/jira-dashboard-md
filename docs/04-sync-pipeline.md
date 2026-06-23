@@ -20,7 +20,9 @@
      if start_at + len(res.issues) >= res.total: break
      start_at += config.fetchLimit
    ```
-4. 각 이슈 정규화(`03` 스키마):
+   수집한 응답(`{...,"issues":[...]}` 또는 issues 배열)을 **가공 없이 그대로** `data/raw_issues.json`에 저장한다.
+   - MCP는 평면(flattened) 형식을 돌려주지만, `tools/normalize.py`의 `to_v2()`가 자동으로 표준 v2로 변환한다(`02` §MCP 응답 형식). **수동 변환 스크립트는 불필요**하다.
+4. `python3 tools/normalize.py` 실행 → `config.json`을 읽어 `data/snapshot.json`을 원자적으로 생성. 각 이슈 정규화(`03` 스키마):
    - 상태/우선순위/담당자/라벨/타입/부모를 02 §응답경로대로 추출.
    - `startDate` = `startDateField` 값 → 없으면 `created`의 날짜(YYYY-MM-DD) → 없으면 `duedate`.
    - `descriptionLinks` = description 원문을 `08` 규칙으로 파싱.
