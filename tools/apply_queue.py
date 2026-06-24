@@ -67,12 +67,16 @@ def main():
     week_start = (snap.get("config", {}) or {}).get("weekStart") or cfg.get("weekStart", "monday")
     today = dt.date.today()
 
+    rules = cfg.get("descriptionLinkRules", [])
     comments = payload.get("comments", {})
     for key, cs in comments.items():
         it = by_key.get(key)
         if it is not None:
             it["comments"] = cs
             it["commentsLoaded"] = True
+            # 코멘트 본문의 링크도 같은 규칙으로 분류 (descriptionLinks 와 중복 제거)
+            existing = {l.get("url") for l in it.get("descriptionLinks", [])}
+            it["commentLinks"] = _nz.comment_links_from(cs, rules, existing)
 
     transitions = payload.get("transitions", {})
     snap.setdefault("transitions", {})

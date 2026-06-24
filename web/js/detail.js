@@ -22,10 +22,13 @@ export function renderDetail(root, byKey, weekStart) {
     ? transitions.map((t) => `<option value="${escapeHtml(t.to || t.name)}">${escapeHtml(t.name)}</option>`).join("")
     : `<option value="">(전이 정보 없음 — process 때 조회)</option>`;
 
-  const links = it.descriptionLinks || [];
-  const linkChips = links.map((ln) =>
+  const descLinkChips = (it.descriptionLinks || []).map((ln) =>
     `<button class="chip cat-${escapeHtml(ln.category)}" data-url="${escapeHtml(ln.url)}">${escapeHtml(ln.label)} · ${escapeHtml(ln.text)}</button>`
-  ).join("") || `<span class="muted">없음</span>`;
+  ).join("");
+  const cmtLinkChips = (it.commentLinks || []).map((ln) =>
+    `<button class="chip cat-${escapeHtml(ln.category)}" data-url="${escapeHtml(ln.url)}" title="코멘트 링크">💬 ${escapeHtml(ln.label)} · ${escapeHtml(ln.text)}</button>`
+  ).join("");
+  const linkChips = (descLinkChips + cmtLinkChips) || `<span class="muted">없음</span>`;
 
   const labelChips = (it.labels || []).map((l) =>
     `<span class="chip lab" style="--lc:${labelColor(l)}">${escapeHtml(l)}</span>`).join("") || `<span class="muted">없음</span>`;

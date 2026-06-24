@@ -59,6 +59,9 @@
       "descriptionLinks": [
         { "url": "https://figma.com/file/xxx", "text": "디자인 스펙", "category": "design", "label": "Design" }
       ],
+      "commentLinks": [
+        { "url": "https://slack.com/archives/xxx", "text": "...", "category": "chat", "label": "Slack" }
+      ],
       "links": [
         { "type": "Blocks", "direction": "outward", "relation": "blocks",
           "key": "PROJ-200", "summary": "API 배포", "status": "To Do" }
@@ -81,6 +84,7 @@
 - `bucket` ∈ `overdue|today|thisWeek|later|none` — sync가 `generatedAt`과 `weekStart` 기준으로 계산(`06`).
 - `startDate`: `config.startDateField` 값 → 없으면 `created`의 날짜 → 그래도 없으면 `duedate`와 동일(0일 막대). (`06`)
 - `links[].direction` ∈ `inward|outward`, `relation`은 표시 문구(`type.inward`/`outward`).
+- `descriptionLinks`: description 원문에서 추출(sync, `08`). `commentLinks`: 코멘트 본문에서 **같은 규칙**으로 추출하되 코멘트 로드 시에만 채워짐(지연, description url과 중복 제거). UI는 둘을 함께 표시(`08`).
 - `comments`/`commentsLoaded`: 상세 진입 시 지연 로드로 채움(`10`).
 - `transitions`: 비워둬도 됨. 상태 드롭다운을 미리 채우려면 sync 때 일부만, 혹은 상세 진입 시 큐로 요청(`11`).
 - 라벨이 없는 이슈는 `labelGroups`의 `"(no label)"`에 모은다.

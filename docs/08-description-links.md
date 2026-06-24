@@ -17,8 +17,14 @@
 - 결과: `{ url, text, category, label }`. 같은 category는 같은 색(토큰 `12`).
 - 규칙은 전부 `config.json`에 있으므로 새 도메인 추가 시 코드 수정 불필요(유지보수성).
 
+## 코멘트 링크 (`commentLinks[]`)
+- **같은 규칙(`descriptionLinkRules`)을 코멘트 본문에도 적용**해 링크를 추출·분류한다. 결과는 이슈의 별도 필드 `commentLinks[]`(스키마 `03`)에 담는다. 형식은 description 링크와 동일(`{url,text,category,label}`).
+- **지연 처리:** 코멘트는 상세 진입 시에만 로드되므로(`10`), sync 시점엔 `commentLinks=[]`. 코멘트가 로드될 때 `apply_queue.py`가 `normalize.comment_links_from()`으로 채운다(파서·규칙은 description과 공유).
+- **중복 제거:** description 링크에 이미 있는 url 은 `commentLinks`에서 뺀다(같은 링크 두 번 표시 방지).
+
 ## UI
 - 카드·상세에 링크 칩 행: `[Design] [Code] [Docs] ...` 형태. 칩 라벨/색 = category.
+- description 링크와 **코멘트 링크를 같은 칩 행에 함께** 표시한다. 코멘트 출처 칩은 앞에 `💬`를 붙이고 툴팁에 "코멘트 링크"를 표기해 구분한다.
 - 칩 클릭 → `window.open(url, "_blank", "noopener")`. (새 탭, opener 차단)
 - 칩 hover 시 표시텍스트·url 툴팁.
 - 같은 종류가 여럿이면 `Design ×2`처럼 묶거나 개별 칩 + 텍스트 병기(설정). 기본: 개별 칩, 라벨 옆에 짧은 text.

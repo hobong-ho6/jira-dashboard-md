@@ -44,9 +44,13 @@ function card(it, today, weekStart) {
     `<button class="chip lab" data-label="${escapeHtml(l)}" style="--lc:${labelColor(l)}">${escapeHtml(l)}</button>`
   ).join("");
 
-  const linkChips = (it.descriptionLinks || []).map((ln) =>
+  const descLinkChips = (it.descriptionLinks || []).map((ln) =>
     `<button class="chip cat-${escapeHtml(ln.category)}" data-url="${escapeHtml(ln.url)}" title="${escapeHtml(ln.text)} — ${escapeHtml(ln.url)}">${escapeHtml(ln.label)}</button>`
   ).join("");
+  const cmtLinkChips = (it.commentLinks || []).map((ln) =>
+    `<button class="chip cat-${escapeHtml(ln.category)}" data-url="${escapeHtml(ln.url)}" title="코멘트 링크 — ${escapeHtml(ln.text)} — ${escapeHtml(ln.url)}">💬 ${escapeHtml(ln.label)}</button>`
+  ).join("");
+  const linkChips = descLinkChips + cmtLinkChips;
 
   const rel = (it.links || []).length
     ? `<div class="card-rel">🔗 ${it.links.length}개 연결</div>` : "";

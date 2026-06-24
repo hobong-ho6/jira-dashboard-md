@@ -15,8 +15,9 @@
 1. 상세 열릴 때 `commentsLoaded=false`면 `load_comments` 명령 enqueue(`03`).
 2. "코멘트 불러오기" 버튼도 같은 명령을 보냄(수동 새로고침).
 3. Claude Code(`process`)가 `jira_get_issue(issue_key, comment_limit=50)` →
-   `fields.comment.comments[]`를 snapshot의 해당 이슈 `comments[]`로 채우고 `commentsLoaded=true` → snapshot 저장.
-4. 브라우저 폴링이 갱신을 감지해 코멘트 렌더. (로드 중엔 스피너/"불러오는 중")
+   `fields.comment.comments[]`를 snapshot의 해당 이슈 `comments[]`로 채우고 `commentsLoaded=true`,
+   이때 **코멘트 본문의 링크도 `08` 규칙으로 추출해 `commentLinks[]`에 채운다**(`apply_queue.py`) → snapshot 저장.
+4. 브라우저 폴링이 갱신을 감지해 코멘트 + 코멘트 링크 칩 렌더. (로드 중엔 스피너/"불러오는 중")
 
 > 작은 보드 최적화: sync에서 모든 이슈 코멘트를 미리 받고 싶으면 이슈별 `jira_get_issue(comment_limit=N)`. 비용 크므로 기본은 지연 로드.
 

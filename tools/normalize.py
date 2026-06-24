@@ -178,6 +178,21 @@ def parse_description_links(text, rules):
     return out
 
 
+def comment_links_from(comments, rules, exclude_urls=None):
+    """코멘트 본문들에서 링크를 추출·분류(`descriptionLinks`와 동일 규칙).
+    exclude_urls(보통 descriptionLinks의 url)에 있는 건 제외해 중복 표시를 막는다."""
+    exclude = set(exclude_urls or ())
+    out, seen = [], set()
+    for c in comments or []:
+        for ln in parse_description_links(c.get("body", ""), rules):
+            u = ln["url"]
+            if u in exclude or u in seen:
+                continue
+            seen.add(u)
+            out.append(ln)
+    return out
+
+
 def normalize_links(issuelinks):
     out = []
     for l in issuelinks or []:
@@ -249,6 +264,7 @@ def normalize_issue(issue, cfg, today):
         "bucket": bucket_of(duedate, today, week_start),
         "descriptionText": desc,
         "descriptionLinks": parse_description_links(desc, rules),
+        "commentLinks": [],   # 코멘트 로드 시 apply_queue.py 가 채움 (지연)
         "links": normalize_links(f.get("issuelinks")),
         "comments": [],
         "commentsLoaded": False,
