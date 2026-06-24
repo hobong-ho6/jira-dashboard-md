@@ -3,6 +3,13 @@
 > 이 환경의 실제 사실에 기반한다. Jira **Server/DC**, base `https://jira.workers-hub.com`, REST **v2**.
 > 도구 시그니처는 세션에서 `tool_search`로 로드한 결과를 항상 우선한다(여기 표기는 작성 시점 기준).
 
+## 인증 / 자격증명 (Jira 토큰)
+- Jira 읽기/쓰기는 **MCP(`noahs-mcp-jira`)** 가 자신의 자격증명으로 수행한다. 대시보드 서버·`config.json`·`snapshot`·`commands`는 **토큰을 다루지 않는다**(`01` 신뢰 경계, `13` 서버 규칙).
+- **토큰이 없거나 인증 실패(401/403 · "client not configured" · read-only 오류) 시:** Claude Code는 사용자에게 Jira 토큰을 **1회 요청**한다(예: "Jira 토큰을 알려주세요 — MCP 인증에만 쓰고 저장소엔 저장하지 않습니다"). 받은 값은 **저장소 밖**에만 둔다:
+  - 권장: MCP 서버 설정의 환경변수(예: `JIRA_PERSONAL_TOKEN`)로 주입 → MCP 재기동.
+  - 임시: gitignore된 `.env` 또는 `data/secrets.json`. **`config.json` 등 커밋되는 파일·스냅샷·큐·로그에는 절대 넣지 않는다.**
+- 토큰을 채팅·이슈 본문·커밋 등 평문으로 받으면 **노출된 것으로 간주**하고 사용자에게 **폐기·재발급(rotate)** 을 권고한다. 어떤 산출물에도 토큰을 echo/기록하지 않는다.
+
 ## 사용하는 도구와 용도
 | 도구 | 용도 | 핵심 인자 |
 |------|------|-----------|
@@ -59,7 +66,7 @@ summary,status,issuetype,assignee,priority,labels,duedate,created,updated,descri
 
 - `status.category` → `statusCategory.key` 매핑: `"To Do"→new`, `"In Progress"→indeterminate`, `"Done"→done`.
 - **커스텀필드 언래핑이 중요**: `{"value": null}`을 그대로 두면 `startDate` 추출이 깨진다(과거 수동 변환의 버그). `to_v2()`는 `{value:X}`→`X`로 풀며, 이미 v2인 입력에도 멱등하게 적용된다.
-- 검색 결과에 **`issuetype`이 최상위로 안 올 수 있다**(이 MCP의 한계). 그 경우 타입은 빈 문자열로 둔다.
+- 검색 결과는 **`issuetype`을 누락한다**(이 MCP의 한계). 유형이 필요하면 `jira_get_issue(fields="issuetype")`로 받는다(응답 키는 snake_case `issue_type`). sync에서 유형 표시가 필요하면 이슈당 1콜로 보강한다(`04`). 보강 안 하면 타입은 빈 문자열.
 
 ## 함정 / 반드시 지킬 것
 1. **상태 변경은 2단계.** 상태 *이름*으로 못 바꾼다.

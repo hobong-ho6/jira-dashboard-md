@@ -106,6 +106,9 @@ def to_v2(issue):
               "issuetype", "parent", "priority"):
         if k in src:
             fields[k] = src[k]
+    # get_issue 는 issuetype 을 snake_case `issue_type` 로 준다 (search 는 issuetype 자체를 누락)
+    if "issue_type" in src and "issuetype" not in fields:
+        fields["issuetype"] = src["issue_type"]
     if "status" in src:
         fields["status"] = _conv_status(src["status"])
     if "assignee" in src:

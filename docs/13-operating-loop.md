@@ -51,6 +51,7 @@
 - 상태 변경 실패 → 해당 워크플로우에 그 전이가 없음. `jira_get_transitions` 결과를 사용자에게 보여줌.
 - duedate 형식 오류 → `YYYY-MM-DD` 확인.
 - 권한/read-only → MCP가 read-only면 mutation 불가, 사용자에게 안내.
+- **Jira 인증 실패(401/403 · "client not configured" · 토큰 없음)** → 사용자에게 Jira 토큰을 **1회 요청**하고, **저장소 밖**(MCP 서버 env / gitignore된 `.env`·`data/secrets.json`)에만 보관해 MCP를 재인증한다. 토큰을 `config.json`·snapshot·commands·로그·커밋에 **남기지 않는다**. 평문으로 받은 토큰은 노출로 간주해 재발급 권고(`02` 인증).
 - 네트워크 도메인 차단(컨테이너) → 조직 관리자에게 허용 도메인 추가 요청.
 
 ## Definition of Done

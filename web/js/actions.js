@@ -27,6 +27,7 @@ export const actions = {
   sync: (jql) => enqueue({ action: "sync", jql }),
   transition: (issueKey, to, comment = null) => enqueue({ action: "transition", issueKey, to, comment }),
   setDuedate: (issueKey, duedate) => enqueue({ action: "set_duedate", issueKey, duedate }),
+  setDescription: (issueKey, description) => enqueue({ action: "set_description", issueKey, description }),
   addComment: (issueKey, body) => enqueue({ action: "add_comment", issueKey, body }),
   loadComments: (issueKey) => enqueue({ action: "load_comments", issueKey }),
   loadTransitions: (issueKey) => enqueue({ action: "load_transitions", issueKey }),

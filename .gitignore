@@ -9,6 +9,10 @@ __pycache__/
 # OS
 .DS_Store
 
+# 비밀(절대 커밋 금지) — Jira 토큰 등은 환경변수나 아래 파일로만 두고 커밋하지 않는다 (docs/02)
+.env
+data/secrets.json
+
 # data/snapshot.json 은 데모 시드로 의도적으로 추적합니다.
 # 실제 sync 후에는 로컬에서 덮어써지며, 원치 않으면 아래 주석을 해제하세요.
 # data/snapshot.json

@@ -21,6 +21,7 @@
 | `sync` | **대시보드 시작/재조회.** `jql`을 `config.json.jql`에 저장 → `docs/04` sync 파이프라인 실행 → `snapshot.json` 재생성(최상위 `query` 갱신). 단일 MCP 변경이 아니라 읽기 파이프라인 트리거다 |
 | `transition` | `jira_get_transitions(issueKey)` → `to`와 일치하는 전이 `id` 찾기 → `jira_transition_issue(issueKey, transition_id, comment?)`. 일치 전이 없으면 `blocked` + 가능한 전이 목록 보고 |
 | `set_duedate` | `jira_update_issue(issueKey, fields={"duedate": duedate})` (제거는 `null`) |
+| `set_description` | `jira_update_issue(issueKey, fields={"description": description})` — **Jira wiki markup 원문**으로 저장(markdown으로 넣으려면 `is_description_markdown=True`). 반영 후 snapshot의 `descriptionText`·`descriptionLinks` 갱신(`apply_queue.py` issuePatch가 링크 재파싱) |
 | `add_comment` | `jira_add_comment(issueKey, comment=body)` (markdown 허용) |
 | `load_comments` | `jira_get_issue(issueKey, comment_limit=50)` → snapshot `comments[]` 채움(`10`). Jira 변경 아님 |
 | `load_transitions` | `jira_get_transitions(issueKey)` → snapshot `transitions[issueKey]` 채움. 상태 드롭다운 옵션 제공용. Jira 변경 아님 |

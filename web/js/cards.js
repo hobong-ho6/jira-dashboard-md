@@ -66,6 +66,7 @@ function card(it, today, weekStart) {
   c.innerHTML = `
     <div class="card-top">
       <span class="card-key">${escapeHtml(it.key)}</span>
+      ${it.issuetype ? `<span class="itype">${escapeHtml(it.issuetype)}</span>` : ""}
       <span class="pill ${statusCategoryClass(it.status && it.status.category)}">${escapeHtml(it.status ? it.status.name : "")}</span>
       <span class="prio prio-${escapeHtml((it.priority || "").toLowerCase())}">${escapeHtml(it.priority || "")}</span>
     </div>

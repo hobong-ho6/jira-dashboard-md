@@ -55,6 +55,7 @@ export function renderDetail(root, byKey, weekStart) {
     <div class="d-head">
       <div class="d-title">
         <a class="d-key" href="${escapeHtml(it.url || (state.snapshot.jiraBaseUrl + "/browse/" + it.key))}" target="_blank" rel="noopener" title="Jira에서 열기">${escapeHtml(it.key)}</a>
+        ${it.issuetype ? `<span class="itype">${escapeHtml(it.issuetype)}</span>` : ""}
         <span class="pill ${statusCategoryClass(it.status && it.status.category)}">${escapeHtml(it.status ? it.status.name : "")}</span>
       </div>
       <button class="d-close" id="d-close" aria-label="닫기">✕</button>
@@ -73,7 +74,11 @@ export function renderDetail(root, byKey, weekStart) {
     <div class="d-field"><label>담당자</label><div>${it.assignee ? escapeHtml(it.assignee.displayName || it.assignee.name) : `<span class="muted">미배정</span>`}</div></div>
     <div class="d-field"><label>라벨</label><div class="chips">${labelChips}</div></div>
 
-    <div class="d-field"><label>설명</label><div class="d-desc">${escapeHtml(it.descriptionText || "")}</div></div>
+    <div class="d-field"><label>설명</label>
+      <textarea id="d-desc-body" rows="5" placeholder="설명 (Jira wiki markup)">${escapeHtml(it.descriptionText || "")}</textarea>
+      <button class="btn" id="d-desc-apply">설명 저장</button>
+      <p class="hint">Jira wiki markup 원문으로 저장됩니다.</p>
+    </div>
     <div class="d-field"><label>링크</label><div class="chips">${linkChips}</div></div>
 
     <div class="d-field"><label>연결관계</label><div class="rels">${relHtml}</div></div>
@@ -107,6 +112,10 @@ export function renderDetail(root, byKey, weekStart) {
   root.querySelector("#d-due-apply").addEventListener("click", () => {
     const v = root.querySelector("#d-due").value || null;
     runAction(actions.setDuedate(key, v), `${key} 마감일 → ${v || "(제거)"}`);
+  });
+  root.querySelector("#d-desc-apply").addEventListener("click", () => {
+    const body = root.querySelector("#d-desc-body").value;
+    runAction(actions.setDescription(key, body), `${key} 설명 수정`);
   });
   root.querySelector("#d-cmt-add").addEventListener("click", () => {
     const body = root.querySelector("#d-cmt-body").value.trim();

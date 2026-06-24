@@ -91,6 +91,8 @@ def main():
         it.update(fields)
         if "duedate" in fields:  # 마감일 변경 → bucket 재계산
             it["bucket"] = _nz.bucket_of(fields["duedate"], today, week_start)
+        if "descriptionText" in fields:  # 설명 변경 → 설명 링크 재파싱
+            it["descriptionLinks"] = _nz.parse_description_links(fields["descriptionText"], rules)
 
     snap["generatedAt"] = dt.datetime.now().astimezone().isoformat(timespec="seconds")
 
