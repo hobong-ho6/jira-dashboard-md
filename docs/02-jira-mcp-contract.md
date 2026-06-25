@@ -30,7 +30,7 @@
 summary,status,issuetype,assignee,priority,labels,duedate,created,updated,description,issuelinks,parent
 ```
 - `issuelinks` 를 포함하면 연결관계(A3)를 검색 결과에서 바로 얻는다 → 이슈별 추가 호출 불필요.
-- **코멘트는 검색 결과에 없다.** 상세 진입 시 `jira_get_issue(comment_limit=N)`로만 가져온다(`10`).
+- **코멘트는 검색 결과에 없다.** 상세 진입 시 `jira_get_issue(issue_key, fields="comment", comment_limit=N)`로 가져온다(`10`). ⚠️ **이 MCP는 `fields`에 `comment`가 없으면 `comment_limit`을 줘도 코멘트를 반환하지 않는다**(기본 `fields`엔 comment 미포함 → 빈 것처럼 보임). 코멘트 0건 이슈는 응답에 `comments` 키 자체가 없으니 `[]`로 취급한다. 또한 `jira_get_issue`의 코멘트는 평면 형식이라 `comments[].author`가 **객체**(`{display_name,...}`)다 — snapshot/`apply_queue`에는 `author`를 **문자열(displayName)** 로 변환해 넣는다(프런트 `detail.js`가 문자열로 렌더).
 
 ## 응답에서 읽어야 할 경로 (정규화 기준)
 - 상태: `fields.status.name`, 카테고리: `fields.status.statusCategory.key` (`new`/`indeterminate`/`done`)
