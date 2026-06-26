@@ -7,6 +7,7 @@ import { renderDetail } from "./detail.js";
 import { bucketOf, todayDate, fmtDateTime, debounce, NO_LABEL, applyGroupOrder } from "./util.js";
 import { actions, runAction } from "./actions.js";
 import { initReorderModal } from "./reorder.js";
+import { initCreateModal } from "./create.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -123,6 +124,7 @@ function buildFilterBar() {
 async function main() {
   buildFilterBar();
   initReorderModal();
+  initCreateModal();
   subscribe(render);
   await loadSnapshot({ force: true });
   await loadUiState();

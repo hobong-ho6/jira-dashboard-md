@@ -1,9 +1,10 @@
 {
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "projects": [
-    "UNIFI",
+    "UNIFY",
     "W3P"
   ],
+  "currentUser": "hogeun.kim",
   "jql": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "fetchLimit": 50,
   "labelOrder": [],

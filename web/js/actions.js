@@ -33,6 +33,7 @@ export const actions = {
   loadTransitions: (issueKey) => enqueue({ action: "load_transitions", issueKey }),
   setLabels: (issueKey, labels) => enqueue({ action: "set_labels", issueKey, labels }),
   createLink: (inward, type, outward) => enqueue({ action: "create_link", inward, type, outward }),
+  createIssue: (fields) => enqueue({ action: "create_issue", ...fields }),
 };
 
 // 간단한 토스트

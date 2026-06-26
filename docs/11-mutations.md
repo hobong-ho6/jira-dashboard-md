@@ -27,6 +27,7 @@
 | `load_transitions` | `jira_get_transitions(issueKey)` → snapshot `transitions[issueKey]` 채움. 상태 드롭다운 옵션 제공용. Jira 변경 아님 |
 | `set_labels` | `jira_update_issue(issueKey, fields={"labels": labels})` (전체 덮어쓰기) |
 | `create_link` | `jira_create_issue_link(inward, link_type=type, outward)` |
+| `create_issue` | `jira_create_issue(project_key=project, issue_type=issueType, summary, assignee?, description?, additional_fields={"priority":{"name":priority}, "labels":labels, "parent":parent, "duedate":duedate})` → 생성된 `key`를 `jira_get_issue(key, fields="*all")`로 다시 읽어 `apply_queue.py`의 `addIssues`로 snapshot에 추가(normalize→issues 추가/교체→labelGroups 재빌드). `assignee`는 **username/key**(예: `hogeun.kim`; 이메일/표시명은 이 인스턴스에서 조회 실패). 빈 선택 필드는 보내지 않는다. |
 
 > 그룹 순서 조정은 **큐 명령이 아니다.** 순수 로컬 보기 설정이라 브라우저가 `POST /api/ui-state`로 즉시 저장한다(`05`,`12`,`13`). Claude Code의 `process`가 필요 없다.
 

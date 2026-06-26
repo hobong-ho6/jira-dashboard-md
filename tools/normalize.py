@@ -312,6 +312,8 @@ def normalize_snapshot(raw, cfg, today=None):
             "jiraBaseUrl": cfg.get("jiraBaseUrl", ""),
             "weekStart": cfg.get("weekStart", "monday"),
             "jql": cfg.get("jql", ""),
+            "projects": cfg.get("projects", []),
+            "currentUser": cfg.get("currentUser", ""),
             "ganttDependencyLinkTypes": cfg.get("ganttDependencyLinkTypes", []),
         },
         "issues": issues,

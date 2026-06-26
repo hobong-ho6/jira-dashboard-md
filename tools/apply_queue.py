@@ -7,6 +7,7 @@ Claude Code 가 MCP 로 받은 결과(코멘트/전이/변경 후 필드)를 pay
   2) transitions[KEY]                            (load_transitions: 드롭다운 옵션)
   3) issues[] 필드 패치 (status/duedate/labels)  (transition/set_duedate/set_labels 등 mutation 후)
      - duedate 가 바뀌면 bucket 을 재계산(normalize 규칙 재사용)
+  3b) addIssues: 새 이슈(raw MCP)를 normalize 해 issues 에 추가/교체 (create_issue 후) → labelGroups 재빌드
   4) generatedAt 갱신(브라우저 폴링이 변경 감지)
   5) 서버 POST /api/commands/ack 로 처리분 done 처리
 를 한다. 이 스크립트는 Jira/MCP 를 호출하지 않는다(로컬 파일 + localhost ack 만).
@@ -19,6 +20,7 @@ payload.json:
   "comments":    {"W3P-5600": [{"author","created","updated","body"}, ...]},
   "transitions": {"UNIFY-7789": [{"id","name","to"}, ...]},
   "issuePatch":  {"UNIFY-7789": {"status": {"name":"Resolved","category":"done"}}},
+  "addIssues":   [ {raw MCP issue}, ... ],
   "ackIds":  ["c_..."],
   "dropIds": ["c_..."]
 }
@@ -93,6 +95,18 @@ def main():
             it["bucket"] = _nz.bucket_of(fields["duedate"], today, week_start)
         if "descriptionText" in fields:  # 설명 변경 → 설명 링크 재파싱
             it["descriptionLinks"] = _nz.parse_description_links(fields["descriptionText"], rules)
+
+    add = payload.get("addIssues", [])
+    if add:  # create_issue 후: 새 이슈 normalize → 추가/교체 → labelGroups 재빌드
+        pos = {it.get("key"): i for i, it in enumerate(snap.get("issues", []))}
+        for raw in add:
+            norm = _nz.normalize_issue(_nz.to_v2(raw), cfg, today)
+            if norm["key"] in pos:
+                snap["issues"][pos[norm["key"]]] = norm
+            else:
+                snap.setdefault("issues", []).append(norm)
+                pos[norm["key"]] = len(snap["issues"]) - 1
+        snap["labelGroups"] = _nz.build_label_groups(snap.get("issues", []), cfg.get("labelOrder", []))
 
     snap["generatedAt"] = dt.datetime.now().astimezone().isoformat(timespec="seconds")
 

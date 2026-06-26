@@ -282,3 +282,16 @@ a.d-key:hover { text-decoration: underline; }
 .reorder-label .label-chip { display: inline-block; width: 12px; height: 12px; border-radius: 3px;
   margin-right: 8px; vertical-align: middle; }
 .reorder-count { color: var(--muted); font-size: 11px; font-family: var(--mono); }
+
+/* ---- 새 티켓 생성 폼 ---- */
+.create-form { display: flex; flex-direction: column; gap: 14px; }
+.create-form .cf-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.create-form .d-field { margin: 0; }
+.create-form select, .create-form textarea,
+.create-form input[type="text"], .create-form input[type="date"] {
+  width: 100%; box-sizing: border-box; background: var(--surface2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 7px; padding: 7px 9px; font: inherit; }
+.create-form select:focus, .create-form textarea:focus,
+.create-form input:focus { border-color: var(--accent); outline: none; }
+.create-form textarea { resize: vertical; }
+@media (max-width: 560px) { .create-form .cf-row { grid-template-columns: 1fr; } }

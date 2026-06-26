@@ -88,6 +88,8 @@
 - `comments`/`commentsLoaded`: 상세 진입 시 지연 로드로 채움(`10`).
 - `transitions`: 비워둬도 됨. 상태 드롭다운을 미리 채우려면 sync 때 일부만, 혹은 상세 진입 시 큐로 요청(`11`).
 - 라벨이 없는 이슈는 `labelGroups`의 `"(no label)"`에 모은다.
+- `config.projects`: `config.json`의 `projects` 사본. 대시보드 "새 티켓" 폼의 프로젝트 선택지로 쓰인다(`12`). 없으면 프런트가 이슈 키 접두사에서 폴백 추출.
+- `config.currentUser`: `config.json`의 `currentUser`(이 Jira 인스턴스의 username, 예: `hogeun.kim`). "새 티켓" 폼의 담당자 기본값으로 쓰인다(`12`). 이메일/표시명이 아니라 **username/key**여야 조회·배정이 된다.
 
 ## `data/commands.jsonl` (브라우저 append, Claude Code 드레인)
 한 줄당 JSON 하나. 모든 명령은 `id`, `ts`, `status` 보유.
@@ -99,7 +101,10 @@
 {"id":"c_1719_gh78","ts":"...","status":"pending","action":"load_comments","issueKey":"PROJ-123"}
 {"id":"c_1719_ij90","ts":"...","status":"pending","action":"set_labels","issueKey":"PROJ-123","labels":["frontend","i18n","done-check"]}
 {"id":"c_1719_kl12","ts":"...","status":"pending","action":"create_link","inward":"PROJ-1","type":"Blocks","outward":"PROJ-2"}
+{"id":"c_1719_mn34","ts":"...","status":"pending","action":"create_issue","project":"UNIFY","issueType":"Task","summary":"새 작업","assignee":"hogeun.kim","description":null,"priority":"High","duedate":"2026-07-01","labels":["frontend"],"parent":null}
 ```
+- `create_issue`: 필수 `project`·`issueType`·`summary`. 선택 `assignee`(기본값=`config.currentUser`, 비우면 프로젝트 기본값)·`description`·`priority`·`duedate`·`labels[]`·`parent`(Sub-task 등). 브라우저는 빈 선택 필드를 생략한다. 생성된 새 이슈는 처리 후 snapshot `issues[]`에 추가된다(`11`).
+
 `action` 종류와 처리 매핑은 `11-mutations.md`가 권위.
 `status`: 브라우저는 항상 `pending`으로 만든다. Claude Code가 `done`/`failed`/`blocked`로 바꿔 `data/.processed/`에 옮기거나 `ack` API로 표시.
 `id` 규칙: `c_` + epoch초 + `_` + 4자 난수. **중복 id 금지, 재실행 금지.**
