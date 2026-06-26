@@ -39,7 +39,11 @@ export async function loadUiState() {
     const res = await fetch("/api/ui-state", { cache: "no-store" });
     if (!res.ok) return;
     const ui = await res.json();
-    if (ui && typeof ui === "object") Object.assign(state.ui, ui);
+    if (ui && typeof ui === "object") {
+      Object.assign(state.ui, ui);
+      // 접힘 상태 복원: 영속된 키 배열 → 런타임 Set (docs/12 마지막 접힘/펼침 유지)
+      if (Array.isArray(state.ui.collapsed)) state.collapsed = new Set(state.ui.collapsed);
+    }
   } catch (_) { /* 서버 미연결 시 기본값 유지 */ }
 }
 

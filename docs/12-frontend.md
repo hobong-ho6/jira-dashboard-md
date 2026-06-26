@@ -20,8 +20,8 @@
 
 ## 상태(클라이언트)
 - `state = { snapshot, filters, collapsed:Set<"group:name">, selectedKey, ui:{ groupOrder } }`.
-- 접힘 상태 `collapsed`·선택 `selectedKey`는 **메모리 유지**(localStorage 사용 안 함).
-- **보기 설정(`ui`)은 서버에 영속**한다: 시작 시 `GET /api/ui-state`로 로드, 변경 시 `POST /api/ui-state`로 저장(`data/ui-state.json`, `13`). 현재 `ui.groupOrder`(그룹 순서 조정)가 이 경로를 쓴다. 서버 미연결 시 기본값으로 동작하고 저장만 생략된다. 그룹 순서는 렌더 시 `util.applyGroupOrder(groups, ui.groupOrder)`로 적용되어 간트·카드가 동일 순서를 공유한다.
+- 선택 `selectedKey`는 메모리 유지. **접힘 상태 `collapsed`는 서버 `ui-state.json`에 영속**(다음 실행 시 복원). 타임라인·카드가 같은 `state.collapsed`(그룹명 기준)를 공유하므로 **한쪽에서 접으면 양쪽이 함께 접힌다.**
+- **보기 설정(`ui`)은 서버에 영속**한다: 시작 시 `GET /api/ui-state`로 로드, 변경 시 `POST /api/ui-state`로 저장(`data/ui-state.json`, `13`). 현재 `ui.groupOrder`(그룹 순서)·`ui.collapsed`(접힘 그룹, 키 `group:<name>`)·`ui.sectionOrder`(본문 영역 순서 — `timeline`/`outOfRange`/`cards`)가 이 경로를 쓴다. 서버 미연결 시 기본값으로 동작하고 저장만 생략된다. 그룹 순서는 렌더 시 `util.applyGroupOrder(groups, ui.groupOrder)`로 적용되어 간트·카드가 동일 순서를 공유한다. 영역 순서는 `sections.js`가 `.content`의 `section[data-section]` 노드를 재배치(패널 헤더의 ▲▼)하고 영속한다.
 
 ## 액션 전송
 - `POST /api/commands`에 `03` 스키마 JSON. 성공 시 낙관적 UI(예: "대기 중" 배지) 후 폴링으로 확정.

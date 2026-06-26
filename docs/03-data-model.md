@@ -113,8 +113,12 @@
 순수 **로컬 보기 설정**. Jira와 무관하며 큐를 거치지 않는다. 브라우저가 `GET/POST /api/ui-state`로 직접 읽고 쓴다(`12`,`13`). 커밋하지 않는다(`.gitignore`).
 ```json
 {
-  "groupOrder": ["GuideKim", "Mission&Reward", "UnifiMobile"]
+  "groupOrder": ["GuideKim", "Mission&Reward", "UnifiMobile"],
+  "collapsed": ["group:UnifiMobile"],
+  "sectionOrder": ["timeline", "outOfRange", "cards"]
 }
 ```
 - `groupOrder`: 라벨 그룹 표시 순서(사용자가 "그룹 순서 조정"에서 드래그한 결과). `"(no label)"`은 제외(항상 맨 끝). 렌더 시 `snapshot.labelGroups`(시드: `config.labelOrder`) 위에 적용된다. 없으면 시드 순서 그대로.
+- `collapsed`: 접힌 그룹 키 배열(`group:<라벨명>`). 타임라인·카드가 공유하는 접힘 상태를 영속해 다음 실행 시 복원한다(`12`).
+- `sectionOrder`: 본문 영역 표시 순서. 값은 `timeline`·`outOfRange`·`cards`. 패널 헤더의 ▲▼로 조정(`12`). 누락 항목은 기본 순서로 보충.
 - 스키마는 자유 확장 가능(향후 다른 보기 설정 추가 시 키만 늘린다). 서버는 객체면 그대로 저장한다.

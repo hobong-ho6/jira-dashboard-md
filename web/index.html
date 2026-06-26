@@ -41,19 +41,19 @@
 
   <main class="layout">
     <div class="content">
-      <section class="panel">
+      <section class="panel" data-section="timeline">
         <h2 class="panel-title">타임라인 (D-1 ~ D+5) <span class="legend">
           <i class="lg bk-overdue"></i>지남 <i class="lg bk-today"></i>오늘
           <i class="lg bk-thisWeek"></i>이번주 <i class="lg bk-later"></i>이후</span></h2>
         <div id="gantt" class="gantt-host"></div>
       </section>
 
-      <section id="out-of-range-section" class="panel" style="display:none;">
+      <section id="out-of-range-section" class="panel" data-section="outOfRange" style="display:none;">
         <h2 class="panel-title">범위 밖 티켓</h2>
         <div id="out-of-range" class="oor-container"></div>
       </section>
 
-      <section class="panel">
+      <section class="panel" data-section="cards">
         <h2 class="panel-title">티켓 (라벨 그룹)</h2>
         <div id="cards" class="cards-host"></div>
       </section>

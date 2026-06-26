@@ -295,3 +295,9 @@ a.d-key:hover { text-decoration: underline; }
 .create-form input:focus { border-color: var(--accent); outline: none; }
 .create-form textarea { resize: vertical; }
 @media (max-width: 560px) { .create-form .cf-row { grid-template-columns: 1fr; } }
+
+/* ---- 본문 영역 순서 조정 (▲▼) ---- */
+.sec-move { margin-left: auto; display: inline-flex; gap: 2px; }
+.sec-btn { background: var(--surface2); color: var(--muted); border: 1px solid var(--border);
+  border-radius: 6px; width: 22px; height: 20px; line-height: 1; font-size: 10px; cursor: pointer; padding: 0; }
+.sec-btn:hover { color: var(--text); border-color: var(--accent); }

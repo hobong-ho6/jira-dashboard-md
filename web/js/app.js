@@ -1,6 +1,6 @@
 // app.js — 오케스트레이터: 필터바, 가시 집합 계산, 렌더 연결
-import { state, subscribe, setFilter, collapseAll, clearSelection } from "./state.js";
-import { loadSnapshot, startPolling, lastSynced, loadUiState } from "./data.js";
+import { state, subscribe, setFilter, collapseAll, clearSelection, setUiPersister } from "./state.js";
+import { loadSnapshot, startPolling, lastSynced, loadUiState, saveUiState } from "./data.js";
 import { renderGantt } from "./gantt.js";
 import { renderCards } from "./cards.js";
 import { renderDetail } from "./detail.js";
@@ -8,6 +8,7 @@ import { bucketOf, todayDate, fmtDateTime, debounce, NO_LABEL, applyGroupOrder }
 import { actions, runAction } from "./actions.js";
 import { initReorderModal } from "./reorder.js";
 import { initCreateModal } from "./create.js";
+import { initSections } from "./sections.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -122,12 +123,14 @@ function buildFilterBar() {
 }
 
 async function main() {
+  setUiPersister(saveUiState);
   buildFilterBar();
   initReorderModal();
   initCreateModal();
   subscribe(render);
   await loadSnapshot({ force: true });
   await loadUiState();
+  initSections();
   startPolling(7000);
   render();
 
