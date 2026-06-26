@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jira MCP Dashboard — 사용 매뉴얼</title>
+  <meta name="description" content="Jira MCP Dashboard 기능 소개와 사용법. 실제 사용 예시로 배우는 시각 가이드.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="topbar">
+    <button id="menuBtn" aria-label="메뉴">☰</button>
+    <span>Jira MCP Dashboard 매뉴얼</span>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="dot"></span> Jira MCP Dashboard</div>
+      <nav class="nav" id="nav">
+        <div class="grp">시작</div>
+        <a href="#intro">대시보드란</a>
+        <a href="#install">프로젝트 받기(클론)</a>
+        <a href="#start">① 쿼리로 시작하기</a>
+        <div class="grp">보기</div>
+        <a href="#views">② 화면 구성</a>
+        <a href="#detail">③ 상세·코멘트·링크</a>
+        <a href="#links">└ 링크 칩 분류</a>
+        <a href="#customize">④ 보기 맞춤(순서·접힘)</a>
+        <div class="grp">작업</div>
+        <a href="#mutate">⑤ 상태·마감일·코멘트</a>
+        <a href="#create">⑥ 티켓 생성</a>
+        <a href="#slack">⑦ Slack 스레드 → 티켓 ★</a>
+        <div class="grp">원리</div>
+        <a href="#how">⑧ 어떻게 동작하나</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <!-- HERO -->
+      <header class="hero" id="top">
+        <span class="kicker">실제 사용 예시로 배우는 가이드</span>
+        <h1>흩어진 Jira 이슈를<br>한 화면에서 보고, 바로 정리하세요.</h1>
+        <p class="lead">Jira MCP Dashboard는 내 Jira 이슈를 <b>마감일 타임라인</b>과 <b>라벨 그룹</b>으로 한눈에 보여주고,
+          상태 변경·마감일·코멘트·티켓 생성을 대시보드에서 바로 처리합니다.
+          심지어 <b>Slack 스레드 링크 하나로 회의 내용을 요약해 티켓</b>까지 만듭니다.</p>
+        <div class="cta">
+          <a class="btn primary" href="#start">사용법 시작 →</a>
+          <a class="btn ghost" href="#slack">★ Slack → 티켓 보기</a>
+        </div>
+      </header>
+
+      <!-- 1. INTRO -->
+      <section id="intro">
+        <div class="eyebrow">소개</div>
+        <h2>대시보드란 무엇인가요?</h2>
+        <p class="lead-muted">Jira에 있는 내 이슈를 읽어와 보기 좋게 시각화하고, 화면에서 만든 변경을 다시 Jira에 반영하는 도구입니다.
+          브라우저는 <b>보기와 의도 입력</b>만 담당하고, Jira에 대한 실제 읽기·쓰기는 뒤에서 안전하게 처리됩니다.</p>
+        <div class="flow">
+          <div class="node"><b>Jira</b><small>이슈 원본</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>대시보드</b><small>타임라인·라벨 그룹으로 보기</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>내 액션</b><small>상태·마감일·코멘트·생성</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>Jira 반영</b><small>변경이 다시 Jira로</small></div>
+        </div>
+        <div class="grid cols-3" style="margin-top:8px">
+          <div class="card"><div class="ic">📅</div><h4>마감일 타임라인</h4><p>오늘 기준 D-1~D+5 간트에서 지남·오늘·이번주·이후를 색으로 구분.</p></div>
+          <div class="card"><div class="ic">🏷️</div><h4>라벨 그룹</h4><p>라벨별로 묶인 카드. 순서도 내 마음대로 정렬·고정.</p></div>
+          <div class="card"><div class="ic">⚡</div><h4>바로 처리</h4><p>상태 전이·마감일·코멘트·티켓 생성을 화면에서 클릭으로.</p></div>
+        </div>
+      </section>
+
+      <!-- INSTALL -->
+      <section id="install">
+        <div class="eyebrow">시작 · 터미널이 처음이어도 OK</div>
+        <h2>프로젝트 받기 — 클론 · 실행</h2>
+        <p class="lead-muted">두 단계면 됩니다. ① 터미널을 <b>딱 한 번</b> 열어 저장소를 내려받고(클론), ② <b>서버 실행은 터미널이 아니라 Claude Code에게 말로 시킵니다.</b> (macOS 기준)</p>
+
+        <h3>1단계 · 터미널 열고 저장소 받기 (클론)</h3>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>터미널 앱 열기</b>
+            <p>키보드에서 <span class="kbd">⌘</span> + <span class="kbd">Space</span> 를 누르고 "<b>터미널</b>"(또는 Terminal) 입력 → <span class="kbd">Enter</span>.
+            (또는 <i>응용 프로그램 ▸ 유틸리티 ▸ 터미널</i>)</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>아래 명령을 복사해 터미널에 붙여넣기(<span class="kbd">⌘</span>+<span class="kbd">V</span>) → <span class="kbd">Enter</span></b>
+            <p>터미널은 기본으로 <b>홈 폴더</b>(예: <code class="inline">/Users/내계정</code>)에서 열립니다. 그대로 붙여넣으면 홈 폴더 안에 <code class="inline">jira-dashboard-md</code> 폴더가 생기고 그 안으로 들어갑니다. (오른쪽 위 <b>복사</b> 버튼을 쓰세요.)</p>
+            <pre><code>git clone https://github.com/hobong-ho6/jira-dashboard-md.git
+cd jira-dashboard-md</code></pre>
+            <p style="font-size:13px;color:var(--muted)">📁 특정 폴더에 받고 싶다면: <b>Finder</b>에서 그 폴더를 우클릭 → "<b>폴더에서 새로운 터미널 열기</b>" 한 뒤 위 명령을 붙여넣으세요.</p>
+          </div></div>
+        </div>
+        <div class="note">⚙️ 처음 <code class="inline">git</code>을 쓰면 "명령어 도구 설치" 팝업이 뜰 수 있습니다 — <b>설치</b>를 누르고, 끝나면 위 명령을 다시 붙여넣으면 됩니다.</div>
+
+        <h3>2단계 · 서버 실행은 Claude Code에게 (터미널 ❌)</h3>
+        <p>이 대시보드의 Jira 조회·변경은 <b>Claude Code</b>가 합니다. 그래서 서버도 터미널에서 직접 켜지 않고, Claude Code 채팅에 <b>말로</b> 시키는 게 정석입니다 — 명령어를 외울 필요가 없습니다.</p>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>Claude Code에서 폴더 열기</b><p>Claude Code 앱(또는 확장)에서 방금 받은 <code class="inline">jira-dashboard-md</code> 폴더를 엽니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>채팅에 자연어로 입력</b><p>아래처럼 말하면 Claude Code가 대신 서버를 실행하고, 쿼리 조회·반영까지 해줍니다.</p></div></div>
+        </div>
+        <div class="chat">
+          <div class="bubble me">서버 켜줘</div>
+          <div class="bubble cc"><b>Claude Code</b><br>로컬 서버를 실행했습니다 (<code>python3 server/serve.py</code>). 브라우저에서 <b>http://localhost:5173</b> 로 접속하세요.</div>
+          <div class="bubble me">이 쿼리로 조회: project = UNIFY AND statusCategory != Done ORDER BY duedate ASC</div>
+          <div class="bubble cc"><b>Claude Code</b><br>해당 JQL로 동기화했습니다. 대시보드에 이슈가 채워졌어요. 👀</div>
+        </div>
+        <div class="note">💡 이후에도 "큐 처리해줘", "새 티켓 만들어줘", "이 Slack 스레드로 티켓 만들어줘"처럼 <b>말로</b> 시키면 Claude Code가 Jira에 반영합니다.</div>
+        <div class="warn">🐍 서버 실행에는 컴퓨터에 <b>Python 3</b>가 필요합니다(맥은 기본 포함). Claude Code가 "없다"고 안내하면 안내대로 설치 후 다시 "서버 켜줘"라고 하세요.</div>
+      </section>
+
+      <!-- 2. START -->
+      <section id="start">
+        <div class="eyebrow">시작하기</div>
+        <h2>① 쿼리(JQL)로 시작하기</h2>
+        <p class="lead-muted">대시보드의 출발점은 <b>JQL 쿼리</b>입니다. 상단 JQL 바에 "어떤 이슈를 볼지" 입력하고 <b>조회 시작</b>을 누르면,
+          그 조건의 이슈들이 타임라인과 카드로 채워집니다.</p>
+
+        <div class="app">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">Jira MCP Dashboard</span></div>
+          <div class="body">
+            <div class="qbar"><span class="lbl">JQL</span><span class="q">project in (W3P, UNIFY) AND status in (Open, "In Progress", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC</span><span class="toolbtn solid">조회 시작</span></div>
+            <div style="font-size:11px;color:var(--app-muted);margin-top:8px">이슈 18 · <span style="color:var(--bk-overdue)">지남 2</span> · <span style="color:var(--bk-today)">오늘 0</span> · 이번주 0 · 동기화 2026-06-26 14:06</div>
+          </div>
+        </div>
+
+        <div class="real"><span class="tag">실제 예시</span> 이 매뉴얼의 모든 화면은 실제 사용 데이터입니다. 위 쿼리는 "W3P·UNIFY 프로젝트에서 내가 담당/보고한 미완료 이슈를 우선순위·최근순으로" 보여줍니다.</div>
+
+        <h3>입력하는 법</h3>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>JQL 바에 쿼리 입력</b><p>예: <code class="inline">project = UNIFI AND statusCategory != Done ORDER BY duedate ASC</code></p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>"조회 시작" 클릭 (또는 Enter)</b><p>입력한 쿼리가 저장되고, 그 조건으로 이슈를 다시 불러옵니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>타임라인·카드가 채워짐</b><p>마감일은 간트로, 라벨은 그룹 카드로 자동 정리됩니다.</p></div></div>
+        </div>
+        <div class="note">💡 쿼리는 한 번 저장되면 다음에 열 때 그대로 채워집니다. 다른 범위를 보고 싶을 때만 바꿔서 다시 조회하세요.</div>
+      </section>
+
+      <!-- 3. VIEWS -->
+      <section id="views">
+        <div class="eyebrow">보기</div>
+        <h2>② 화면 구성 — 3개 영역</h2>
+        <p class="lead-muted">본문은 <b>타임라인</b>, <b>범위 밖 티켓</b>, <b>티켓(라벨 그룹)</b> 세 영역으로 구성됩니다.</p>
+
+        <h3>마감일 색(버킷)</h3>
+        <div class="legend">
+          <span class="chip" style="background:#fdecec;color:#b3201f"><span class="swatch" style="background:var(--bk-overdue)"></span> 지남(overdue)</span>
+          <span class="chip" style="background:#fff4e0;color:#9a6500"><span class="swatch" style="background:var(--bk-today)"></span> 오늘(today)</span>
+          <span class="chip" style="background:#e9f1ff;color:#1f5bd6"><span class="swatch" style="background:var(--bk-week)"></span> 이번주(thisWeek)</span>
+          <span class="chip" style="background:#eef0f2;color:#555"><span class="swatch" style="background:var(--bk-later)"></span> 이후(later)</span>
+          <span class="chip" style="background:#f1f2f4;color:#777"><span class="swatch" style="background:var(--bk-none)"></span> 마감일 없음</span>
+        </div>
+
+        <h3>상단 요약 클릭 = 마감일 필터 🔎 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>화면 맨 위 요약줄의 <b>지남 · 오늘 · 이번주</b> 숫자는 그냥 표시가 아니라 <b>버튼</b>입니다.
+          누르면 그 마감 버킷에 해당하는 티켓만 타임라인·카드에 추려서 보여주고, <b>다시 누르면 해제</b>됩니다.
+          "어떤 게 지남 티켓이지?" 싶을 때 한 번 누르면 바로 골라냅니다.</p>
+        <div class="app">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">요약줄</span></div>
+          <div class="body">
+            <div style="font-size:11.5px;color:var(--app-muted)">이슈 18 ·
+              <b style="color:var(--bk-overdue);border:1px solid var(--bk-overdue);border-radius:5px;padding:1px 7px;cursor:pointer">지남 2</b> ·
+              <b style="color:var(--bk-today);border:1px solid transparent;padding:1px 7px;cursor:pointer">오늘 0</b> ·
+              <b style="color:var(--bk-week);border:1px solid transparent;padding:1px 7px;cursor:pointer">이번주 0</b> ·
+              동기화 2026-06-26 14:06</div>
+            <div style="font-size:11px;color:var(--app-muted);margin-top:8px">↑ <b style="color:var(--bk-overdue)">지남 2</b> 를 누른 상태(테두리 강조) — 마감이 지난 티켓 2건만 남깁니다.</div>
+          </div>
+        </div>
+        <div class="note">🔎 숫자는 "완료 숨김·검색" 같은 다른 필터를 반영해 세므로, <b>표시된 숫자 = 눌렀을 때 실제로 보이는 티켓 수</b>입니다. 0건인 버킷은 눌러도 빈 화면이 되지 않게 막혀 있습니다.</div>
+
+        <h3>타임라인 (간트)</h3>
+        <p>오늘을 기준으로 <b>D-1 ~ D+5</b> 7일 구간을 보여줍니다. 막대 색이 곧 마감 임박도입니다. 그룹 머리글을 누르면 접힙니다.</p>
+        <div class="app">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">타임라인 (D-1 ~ D+5)</span></div>
+          <div class="body">
+            <div class="gantt">
+              <div class="g-row g-grp"><div class="g-lab">▾ GuideKim</div><div class="g-track"><div class="today-line" style="left:30%"></div></div></div>
+              <div class="g-row"><div class="g-lab"><span class="k">UNIFY-7791</span> 스펙리뷰</div><div class="g-track"><div class="today-line" style="left:30%"></div><div class="bar" style="left:30%;width:42%;background:var(--bk-later)">UNIFY-7791 · ~06-29</div></div></div>
+              <div class="g-row g-grp"><div class="g-lab">▾ Mission&amp;Reward</div><div class="g-track"><div class="today-line" style="left:30%"></div></div></div>
+              <div class="g-row"><div class="g-lab"><span class="k">UNIFY-7898</span> 럭키볼 정책</div><div class="g-track"><div class="today-line" style="left:30%"></div><div class="bar" style="left:8%;width:30%;background:var(--bk-overdue)">UNIFY-7898 · ~06-29</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="note">📌 마감일이 이 7일 구간을 벗어나거나 없는 티켓은 <b>"범위 밖 티켓"</b> 영역에 따로 모입니다.</div>
+
+        <h3>티켓 (라벨 그룹) 카드</h3>
+        <p>같은 라벨끼리 묶인 카드. 키·유형·상태·우선순위·마감일·담당자·링크 칩을 한눈에.</p>
+        <div class="app">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">티켓 (라벨 그룹)</span></div>
+          <div class="body">
+            <div class="app-row" style="font-size:12px;font-weight:700;margin-bottom:8px">▾ <span style="color:#7c6cff">●</span> Mission&amp;Reward <span style="color:var(--app-muted)">3</span></div>
+            <div class="tk">
+              <div class="h"><span class="k">UNIFY-7898</span><span class="pill">Sub-task</span><span class="pill" style="color:#7aa2ff">Open</span><span style="margin-left:auto;color:var(--app-muted)">High</span></div>
+              <div class="s">럭키볼 소멸 및 예산 소진 시 정책</div>
+              <div class="meta"><span style="color:var(--bk-overdue)">지남 · 2026-06-29</span><span>Kim HoGeun（김호근）</span></div>
+              <div class="tkchips"><span class="c" style="color:var(--cat-chat)">💬 Slack</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. DETAIL & CUSTOMIZE merged later; detail first -->
+      <section id="detail">
+        <div class="eyebrow">보기</div>
+        <h2>③ 상세 패널 · 코멘트 · 링크</h2>
+        <p class="lead-muted">카드나 막대를 클릭하면 오른쪽 상세 패널이 열립니다. 코멘트와 상태 전이 옵션은 <b>상세를 열 때 그때 불러옵니다(지연 로드)</b> — 처음엔 가볍게, 필요할 때만.</p>
+        <div class="grid cols-2">
+          <div class="card"><div class="ic">💬</div><h4>코멘트</h4><p>상세 진입 시 코멘트를 불러옵니다. 본문 속 링크(Slack·Drive·Figma·Wiki)는 자동으로 칩이 되어 바로 열 수 있습니다.</p></div>
+          <div class="card"><div class="ic">🔗</div><h4>설명/코멘트 링크</h4><p>Figma=Design, GitHub=Code, Confluence/Wiki=Wiki, Slack=Slack 처럼 도메인별로 분류된 칩으로 표시됩니다.</p></div>
+        </div>
+        <div class="real"><span class="tag">실제 예시</span> <code class="inline">W3P-5600</code> 상세를 열면 코멘트 2건("정보보안 불필요"·"wallet connect로 대체")이 로드됐고, <code class="inline">UNIFY-8035</code>에는 구글시트·Slack 링크가 <b>Drive·Slack 칩</b>으로 표시됐습니다.</div>
+      </section>
+
+      <!-- LINKS -->
+      <section id="links">
+        <div class="eyebrow">보기</div>
+        <h2>링크 자동 분류 — 도메인별 칩 🏷️</h2>
+        <p class="lead-muted">티켓의 <b>설명·코멘트 본문에 들어 있는 URL</b>을 도메인으로 자동 분류해, 종류별 색 <b>칩(chip)</b>으로 보여줍니다.
+          칩을 누르면 새 탭으로 바로 열립니다 — Figma·기획 문서·Slack 스레드를 본문에서 일일이 찾을 필요 없이 카드에서 바로 이동.</p>
+
+        <h3>분류 종류</h3>
+        <div class="legend">
+          <span class="linkchip cat-design">Design</span>
+          <span class="linkchip cat-code">Code</span>
+          <span class="linkchip cat-docs">Wiki</span>
+          <span class="linkchip cat-docs">Drive</span>
+          <span class="linkchip cat-chat">Slack</span>
+          <span class="linkchip cat-jira">Jira</span>
+          <span class="linkchip cat-link">Link</span>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>칩</th><th>도메인 예시</th><th>주로 가리키는 것</th></tr></thead>
+          <tbody>
+            <tr><td><span class="linkchip cat-design">Design</span></td><td><code>figma.com</code></td><td>디자인 스펙·프로토타입</td></tr>
+            <tr><td><span class="linkchip cat-code">Code</span></td><td><code>github.com</code>, <code>gitlab</code></td><td>코드·PR</td></tr>
+            <tr><td><span class="linkchip cat-docs">Wiki</span></td><td><code>confluence</code>, <code>wiki.workers-hub.com</code>, <code>/wiki/</code></td><td>기획 위키·문서</td></tr>
+            <tr><td><span class="linkchip cat-docs">Drive</span></td><td><code>docs.google</code>, <code>sheets.google</code>, <code>drive.google</code></td><td>구글 문서·시트·드라이브</td></tr>
+            <tr><td><span class="linkchip cat-chat">Slack</span></td><td><code>slack.com</code></td><td>논의 스레드</td></tr>
+            <tr><td><span class="linkchip cat-jira">Jira</span></td><td><code>jira.workers-hub.com/browse</code></td><td>연관 이슈</td></tr>
+            <tr><td><span class="linkchip cat-link">Link</span></td><td>그 외 모든 링크</td><td>일반 링크(폴백)</td></tr>
+          </tbody>
+        </table>
+        <p class="lead-muted" style="font-size:13.5px">분류 규칙은 위에서부터 첫 매칭이 적용되고, 어디에도 안 걸리면 <span class="linkchip cat-link">Link</span> 로 표시됩니다. (규칙은 설정에서 조정 가능)</p>
+
+        <h3>설명 링크 vs 코멘트 링크</h3>
+        <div class="grid cols-2">
+          <div class="card"><div class="ic">📄</div><h4>설명 링크</h4><p>티켓 <b>설명</b>의 링크는 조회 즉시 칩으로 표시됩니다.</p></div>
+          <div class="card"><div class="ic">💬</div><h4>코멘트 링크</h4><p>코멘트 속 링크는 <b>상세를 열어 코멘트를 불러올 때</b> 채워지며 💬 표시가 붙습니다. 설명에 이미 있는 링크는 중복 제거됩니다.</p></div>
+        </div>
+
+        <h3>카드에서 보이는 모습</h3>
+        <div class="app">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span></div>
+          <div class="body">
+            <div class="tk">
+              <div class="h"><span class="k">UNIFY-3303</span><span class="pill">Bug</span><span class="pill" style="color:#7aa2ff">Reopened</span></div>
+              <div class="s">IAB로 Unifi 접근 시, LIFF로 이동</div>
+              <div class="meta"><span style="color:var(--bk-later)">이후 · 마감일 없음</span><span>Kim HoGeun（김호근）</span></div>
+              <div class="tkchips" style="gap:6px;margin-top:8px">
+                <span class="linkchip cat-design">Design</span>
+                <span class="linkchip cat-docs">Wiki</span>
+                <span class="linkchip cat-chat">Slack</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="real"><span class="tag">실제 예시</span> <code class="inline">UNIFY-3303</code> 설명엔 Figma·Wiki·Slack 링크가 <b>Design·Wiki·Slack 칩</b>으로 떴고,
+          <code class="inline">UNIFY-8035</code> 코멘트의 구글시트·Slack 링크는 <b>💬 Drive·💬 Slack</b> 칩으로 표시됐습니다.</div>
+      </section>
+
+      <!-- CUSTOMIZE -->
+      <section id="customize">
+        <div class="eyebrow">보기</div>
+        <h2>④ 보기 맞춤 — 순서 조정 · 접힘 저장</h2>
+        <p class="lead-muted">내 작업 방식에 맞게 화면을 재배치하고, 그 상태를 <b>다음에 열 때도 그대로</b> 유지합니다. (보기 설정만 저장 — Jira는 안 건드림)</p>
+
+        <h3>본문 영역 순서 (▲▼)</h3>
+        <p>각 영역(타임라인·범위 밖·라벨 그룹) 머리글 오른쪽의 <span class="kbd">▲</span><span class="kbd">▼</span> 버튼으로 순서를 바꿉니다.</p>
+        <div class="app"><div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span></div>
+          <div class="body"><div class="app panel-title" style="border:0;box-shadow:none;background:none;padding:0">타임라인 (D-1 ~ D+5)<span class="secmove"><b>▲</b><b>▼</b></span></div></div></div>
+
+        <h3>그룹 순서 조정</h3>
+        <p>툴바의 <b>그룹 순서 조정</b> 버튼 → 드래그로 라벨 그룹 순서 변경. 타임라인과 카드가 같은 순서를 공유합니다.</p>
+
+        <h3>접기 / 펼치기 동기화 + 저장</h3>
+        <p>그룹을 접으면 <b>타임라인과 카드가 함께</b> 접힙니다(한쪽에서 접으면 양쪽 반영). 그리고 접힌 상태는 저장되어 <b>다음에 열 때 복원</b>됩니다.</p>
+        <div class="real"><span class="tag">실제 예시</span> 카드에서 <code class="inline">GuideKim</code> 그룹을 접자 타임라인에서도 같이 접혔고, 새로고침 후에도 접힘·영역 순서가 그대로 복원됐습니다.</div>
+      </section>
+
+      <!-- 5. MUTATE -->
+      <section id="mutate">
+        <div class="eyebrow">작업</div>
+        <h2>⑤ 상태 · 마감일 · 코멘트 변경</h2>
+        <p class="lead-muted">상세 패널/카드에서 상태를 바꾸거나, 마감일을 지정하거나, 코멘트를 답니다. 누른 변경은 Jira에 반영됩니다.</p>
+        <div class="grid cols-3">
+          <div class="card"><div class="ic">🔄</div><h4>상태 전이</h4><p>드롭다운에서 상태 선택 → Closed/In Progress 등으로 전이. (Jira 워크플로 2단계 전이를 자동 처리)</p></div>
+          <div class="card"><div class="ic">📅</div><h4>마감일</h4><p>날짜 선택으로 Due date 지정/변경. 타임라인 막대 색이 즉시 갱신됩니다.</p></div>
+          <div class="card"><div class="ic">💬</div><h4>코멘트 추가</h4><p>코멘트를 답니다. 같은 내용 중복 게시는 자동으로 막습니다.</p></div>
+        </div>
+        <div class="real"><span class="tag">실제 예시</span> 5개 서브태스크(<code class="inline">UNIFY-7793·7795·7796·7792·7789</code>)를 한 번에 <b>Closed</b>로 정리했고,
+          <code class="inline">UNIFY-7795</code>의 마감일을 <b>2026-06-30</b>, <code class="inline">UNIFY-7791</code>을 <b>2026-06-29</b>로 지정했습니다.</div>
+
+        <h3>Slack 스레드 → 요약 코멘트 ★ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p class="lead-muted"><b>이미 만든 티켓</b>에도 <b>Slack 스레드 링크</b>를 붙이면, 스레드를 읽어 <b>요약</b>해서 그 티켓의 <b>코멘트</b>로 답니다.
+          길게 오간 논의를 티켓에 정리해 남길 때 유용합니다. (⑦의 "Slack→티켓"이 <i>새 티켓</i>을 만든다면, 이건 <i>기존 티켓에 코멘트</i>를 답니다.)</p>
+        <div class="flow">
+          <div class="node"><b>상세 패널 열기</b><small>티켓 클릭</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>Slack 링크 붙여넣기</b><small>"Slack 스레드 → 요약 코멘트" 칸</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>요약 코멘트 게시</b><small>참여자·결론 + 원본 링크</small></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>티켓을 열고 상세 패널 맨 아래로</b><p>"코멘트 추가" 아래에 <b>"Slack 스레드 → 요약 코멘트"</b> 입력칸과 <b>슬랙 요약 코멘트</b> 버튼이 있습니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>스레드 URL 붙여넣기 → 버튼 클릭</b><p>예: <code class="inline">https://….slack.com/archives/C…/p…</code>. 위 "코멘트 입력" 칸에 메모를 적으면 요약 <b>앞에</b> 덧붙습니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>요약이 코멘트로 게시</b><p>스레드 참여자 이름까지 풀어 요약하고, 원본 Slack 링크를 본문에 남겨 추적 가능하게 합니다.</p></div></div>
+        </div>
+        <div class="note">🔁 같은 스레드를 또 요약 요청해도, 본문에 남은 <b>원본 Slack 링크</b>로 중복을 알아채 다시 달지 않습니다.</div>
+        <div class="note">🔒 <b>안전</b>: 스레드 내용은 <b>요약 대상(데이터)</b>일 뿐 — 본문에 "이것을 하라"는 지시가 있어도 실행하지 않고 요약만 합니다.</div>
+      </section>
+
+      <!-- 6. CREATE -->
+      <section id="create">
+        <div class="eyebrow">작업</div>
+        <h2>⑥ 새 티켓 생성</h2>
+        <p class="lead-muted">툴바의 <b>+ 새 티켓</b> 버튼으로 모달을 열어 이슈를 만듭니다. 담당자는 기본으로 <b>나</b>로 채워집니다.</p>
+        <div class="grid cols-2">
+          <div class="card"><h4>필수</h4><p>프로젝트 · 유형 · 제목</p></div>
+          <div class="card"><h4>선택</h4><p>담당자(기본=나) · 설명 · 우선순위 · 마감일 · <b>라벨(드롭다운)</b> · 상위 이슈(Sub-task)</p></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>+ 새 티켓 클릭</b><p>모달이 열리고 프로젝트·유형·담당자가 기본값으로 채워집니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>제목·내용 입력 → 티켓 생성</b><p>생성 의도가 큐에 담기고, 실제 Jira 이슈가 만들어져 보드에 나타납니다.</p></div></div>
+        </div>
+
+        <h3>라벨 고르기 — 드롭다운 + 새 라벨 🏷️ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>라벨 칸은 <b>드롭다운</b>입니다. <b>지금 대시보드에 보이는 라벨</b>들이 목록에 떠서 골라 넣을 수 있고,
+          목록의 <b>"＋ 새 라벨 직접 입력…"</b>을 고르면 새 라벨을 타이핑해 추가할 수 있습니다(쉼표로 여러 개도 가능).
+          고른 라벨은 칩으로 쌓이고 <b>×</b>로 빼면 됩니다 — 여러 개 선택 가능합니다.</p>
+        <div class="app">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">새 티켓 생성 · 라벨</span></div>
+          <div class="body">
+            <div style="font-size:10px;color:var(--app-muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px">라벨</div>
+            <div class="tkchips" style="margin-bottom:8px">
+              <span class="c" style="color:#7c6cff;border-color:#7c6cff">UnifiMobile&nbsp;×</span>
+              <span class="c" style="color:#36d399;border-color:#36d399">GuideKim&nbsp;×</span>
+            </div>
+            <div class="qbar" style="margin-top:0"><span class="q" style="color:var(--app-ink)">＋ 라벨 추가…</span><span style="margin-left:auto;color:var(--app-muted)">▾</span></div>
+            <div style="margin-top:6px;border:1px solid var(--app-line);border-radius:8px;background:var(--app-surface2);font-size:11px;overflow:hidden">
+              <div style="padding:6px 10px;color:var(--accent);border-bottom:1px solid var(--app-line)">＋ 새 라벨 직접 입력…</div>
+              <div style="padding:5px 10px;color:var(--app-muted)">대시보드 라벨</div>
+              <div style="padding:4px 16px;color:var(--app-ink)">Mission&amp;Reward</div>
+              <div style="padding:4px 16px;color:var(--app-ink)">unifi-backlog</div>
+              <div style="padding:4px 16px;color:var(--app-ink)">UnifiNow.Feature</div>
+            </div>
+          </div>
+        </div>
+        <div class="real"><span class="tag">실제 예시</span> <code class="inline">[UNIFY/Task] 대시보드 생성 테스트</code>를 담당자=나로 만들어 보드의 라벨 그룹에 바로 표시됨을 확인했습니다.</div>
+      </section>
+
+      <!-- 7. SLACK -->
+      <section id="slack">
+        <div class="eyebrow">작업 · 핵심 기능</div>
+        <h2>⑦ Slack 스레드 → 티켓 ★</h2>
+        <p class="lead-muted">회의/논의가 길게 오간 <b>Slack 스레드 링크 하나</b>만 넣으면, 스레드를 읽어 <b>요약</b>하고 그걸 설명으로 한 Jira 티켓을 만듭니다.
+          제목을 비워두면 제목까지 스레드에서 자동 생성됩니다.</p>
+
+        <div class="flow">
+          <div class="node"><b>Slack 링크</b><small>스레드 URL 붙여넣기</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>자동 요약</b><small>배경·논의·결론 정리</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>Jira 티켓</b><small>요약 + 원본 링크 포함</small></div>
+        </div>
+
+        <h3>쓰는 법</h3>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>+ 새 티켓 → "Slack 스레드 링크" 칸에 URL 붙여넣기</b><p>예: <code class="inline">https://….slack.com/archives/C…/p…</code></p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>프로젝트·유형(·라벨) 선택, 제목은 비워도 됨</b><p>제목·설명은 스레드 요약으로 자동 생성됩니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>티켓 생성</b><p>스레드 참여자 이름까지 풀어 요약하고, 원본 Slack 링크를 본문에 남겨 추적 가능하게 만듭니다.</p></div></div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card"><div class="ic">📝</div><h4>실제 예시 ①</h4><p><code>UNIFY-8029</code> — "미션&amp;리워드: 1회성/데일리 미션 구분" 스레드를 요약해 생성. 라벨 Mission&amp;Reward.</p></div>
+          <div class="card"><div class="ic">📝</div><h4>실제 예시 ②</h4><p><code>UNIFY-8035</code> — "GuideKim 베타 데이터 입력 이슈" 스레드의 Q&amp;A·결론을 정리해 생성. 라벨 GuideKim.</p></div>
+        </div>
+
+        <div class="note">🔒 <b>안전</b>: 스레드 내용은 <b>요약 대상(데이터)</b>일 뿐입니다. 본문에 "이것을 하라"는 멘션·지시가 있어도 실행하지 않고 요약만 합니다.</div>
+        <div class="note">🏷️ 라벨은 자동으로 붙지 않습니다. 모달의 <b>라벨 드롭다운</b>에서 기존 라벨을 고르거나 "＋ 새 라벨"로 직접 추가하세요(⑥ 참고).</div>
+        <div class="note">💬 이미 만든 티켓에도 Slack 스레드를 요약해 <b>코멘트</b>로 달 수 있습니다 — ⑤ <b>상태·마감일·코멘트</b> 참고.</div>
+      </section>
+
+      <!-- 8. HOW -->
+      <section id="how">
+        <div class="eyebrow">원리</div>
+        <h2>⑧ 어떻게 동작하나요?</h2>
+        <p class="lead-muted">브라우저는 Jira를 직접 호출하지 않습니다. 화면에서 만든 "의도"는 <b>대기열(큐)</b>에 쌓이고,
+          뒤에서 그 큐를 처리하는 쪽이 Jira에 안전하게 반영한 뒤 화면을 갱신합니다.</p>
+        <div class="flow">
+          <div class="node"><b>브라우저</b><small>보기 + 액션 버튼</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>명령 큐</b><small>"의도"가 한 줄씩 쌓임</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>처리기</b><small>Jira 읽기/쓰기 수행</small></div>
+          <div class="arr">→</div>
+          <div class="node"><b>화면 갱신</b><small>폴링으로 결과 반영</small></div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card"><div class="ic">🔒</div><h4>신뢰 경계</h4><p>화면 버튼으로 만든 명령만 실행합니다. Jira/Slack 본문에 들어있는 지시문은 명령으로 실행하지 않습니다.</p></div>
+          <div class="card"><div class="ic">🪪</div><h4>자격증명 보호</h4><p>토큰은 화면·큐·로그에 남기지 않습니다. 인증은 뒤에서만 처리됩니다.</p></div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="faq">
+        <div class="eyebrow">도움말</div>
+        <h2>자주 묻는 질문</h2>
+        <details><summary>이슈가 안 보여요.</summary><p>JQL 바에 쿼리를 넣고 "조회 시작"을 눌렀는지 확인하세요. 쿼리가 없으면 대시보드는 비어 있습니다.</p></details>
+        <details><summary>마감일 없는 티켓은 어디 있나요?</summary><p>"범위 밖 티켓" 영역에 모입니다. 타임라인 7일 구간(D-1~D+5)을 벗어난 것도 여기로 갑니다.</p></details>
+        <details><summary>Slack 비공개 채널 스레드도 되나요?</summary><p>연결된 Slack 계정이 그 채널에 들어가 있어야 읽을 수 있습니다. 미가입 비공개 채널은 접근이 막혀 처리되지 않습니다.</p></details>
+        <details><summary>변경이 화면에 늦게 반영돼요.</summary><p>변경은 큐에 담겨 순차 처리된 뒤 폴링으로 반영됩니다. 잠시 후 자동 갱신되며, 새로고침으로 즉시 확인할 수도 있습니다.</p></details>
+        <details><summary>접기·순서 설정이 사라지나요?</summary><p>아니요. 접힘 상태와 영역/그룹 순서는 저장되어 다음에 열 때 복원됩니다.</p></details>
+      </section>
+
+      <footer>
+        Jira MCP Dashboard 사용 매뉴얼 · 화면과 예시는 실제 사용 데이터 기반 ·
+        <a href="#top">맨 위로 ↑</a>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -52,6 +52,11 @@ a { color: var(--accent); text-decoration: none; }
 .status-line .c-overdue { color: var(--bk-overdue); }
 .status-line .c-today { color: var(--bk-today); }
 .status-line .c-week { color: var(--bk-thisWeek); }
+.status-line .stat-btn { font: inherit; font-weight: 700; color: inherit; background: transparent;
+  border: 1px solid transparent; border-radius: 5px; padding: 1px 6px; cursor: default; }
+.status-line .stat-btn.clickable { cursor: pointer; }
+.status-line .stat-btn.clickable:hover { background: var(--surface2); }
+.status-line .stat-btn.active { background: var(--surface3); border-color: currentColor; }
 
 /* ---- 레이아웃 ---- */
 .layout { display: flex; align-items: flex-start; }
@@ -196,9 +201,10 @@ a { color: var(--accent); text-decoration: none; }
 .d-field { margin-bottom: 12px; }
 .d-field > label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .4px; }
 .d-field .row { display: flex; gap: 6px; }
-.d-field select, .d-field input[type="date"], .d-field textarea {
+.d-field select, .d-field input[type="date"], .d-field input[type="text"], .d-field textarea {
   background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 7px;
   padding: 6px 8px; font-size: 12px; width: 100%; font-family: inherit; outline: none; }
+.d-field input[type="text"] { box-sizing: border-box; margin-bottom: 6px; }
 .d-field select:focus, .d-field input:focus, .d-field textarea:focus { border-color: var(--accent); }
 .d-desc { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
   white-space: pre-wrap; font-size: 12px; color: #cfd5e2; }
@@ -294,7 +300,20 @@ a.d-key:hover { text-decoration: underline; }
 .create-form select:focus, .create-form textarea:focus,
 .create-form input:focus { border-color: var(--accent); outline: none; }
 .create-form textarea { resize: vertical; }
+.create-form .cf-row.cf-row-2 { grid-template-columns: 1fr 1fr; }
 @media (max-width: 560px) { .create-form .cf-row { grid-template-columns: 1fr; } }
+
+/* 라벨 피커 (드롭다운 선택 + 새 라벨 입력, 다중 선택 칩) */
+.cf-label-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cf-label-chips:not(:empty) { margin-bottom: 8px; }
+.cf-label-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px;
+  padding: 2px 4px 2px 8px; border-radius: 6px; border: 1px solid var(--lc); color: var(--lc);
+  background: transparent; }
+.cf-label-chip button { background: transparent; border: 0; color: inherit; cursor: pointer;
+  font-size: 14px; line-height: 1; padding: 0 2px; opacity: .65; }
+.cf-label-chip button:hover { opacity: 1; }
+.cf-label-add { display: flex; gap: 8px; }
+.cf-label-add select, .cf-label-add input { flex: 1; min-width: 0; }
 
 /* ---- 본문 영역 순서 조정 (▲▼) ---- */
 .sec-move { margin-left: auto; display: inline-flex; gap: 2px; }

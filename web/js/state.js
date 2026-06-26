@@ -9,6 +9,7 @@ export const state = {
     statusCategory: "all",     // all | new | indeterminate | done
     hideDone: true,
     showDeps: true,
+    bucket: "all",             // all | overdue | today | thisWeek (상태줄 카운트 클릭 필터)
   },
   byKey: new Map(),            // key -> issue (스냅샷 갱신 시 재구성)
   ui: { groupOrder: [], collapsed: [], sectionOrder: [] }, // 로컬 보기 설정(서버 data/ui-state.json 에 영속, docs/12)

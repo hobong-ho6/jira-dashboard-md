@@ -161,9 +161,10 @@ def main():
               % (len(dd), len(vals), ", ".join("%s×%d" % (k, v) for k, v in vals.most_common(5))))
     ac = [r for r in recs if r.get("action") == "add_comment"]
     if ac:
-        seen = Counter((r.get("issueKey"), r.get("body")) for r in ac)
+        # slackUrl 기반 코멘트는 body=null 이라 슬랙 링크를 키에 포함해야 중복을 정확히 센다(docs/11)
+        seen = Counter((r.get("issueKey"), r.get("body"), r.get("slackUrl")) for r in ac)
         dups = sum(v - 1 for v in seen.values() if v > 1)
-        print("  add_comment %d건 → 동일(이슈+본문) 중복 재요청 %d건 (헤드리스 중복-drop 가드 대상)"
+        print("  add_comment %d건 → 동일(이슈+본문/Slack링크) 중복 재요청 %d건 (헤드리스 중복-drop 가드 대상)"
               % (len(ac), dups))
     for a in ("set_description", "set_labels", "create_link"):
         if actions.get(a):

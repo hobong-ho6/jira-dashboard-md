@@ -16,7 +16,9 @@ function weekStart() {
   return ((state.snapshot && state.snapshot.config && state.snapshot.config.weekStart) || "monday");
 }
 
-function issueVisible(it) {
+// 버킷(지남/오늘/이번주) 필터를 제외한 나머지 필터. 상태줄 카운트는 이 기준으로 센다
+// → 뱃지 숫자가 그 버킷을 눌렀을 때 실제로 보이는 티켓 수와 일치한다.
+function passesBaseFilters(it) {
   const f = state.filters;
   if (f.hideDone && it.status && it.status.category === "done") return false;
   if (f.statusCategory !== "all" && (!it.status || it.status.category !== f.statusCategory)) return false;
@@ -25,6 +27,13 @@ function issueVisible(it) {
     const hay = `${it.key} ${it.summary} ${(it.labels || []).join(" ")}`.toLowerCase();
     if (!hay.includes(q)) return false;
   }
+  return true;
+}
+
+function issueVisible(it) {
+  if (!passesBaseFilters(it)) return false;
+  const f = state.filters;
+  if (f.bucket !== "all" && bucketOf(it.duedate, todayDate(), weekStart()) !== f.bucket) return false;
   return true;
 }
 
@@ -78,16 +87,26 @@ function render() {
   }
   renderDetail($("#detail"), state.byKey, weekStart());
 
-  // 상태줄
+  // 상태줄: 버킷 카운트는 버킷 외 필터(완료숨김·상태·검색) 기준으로 세어 클릭 결과와 일치시킨다
   const total = snap ? (snap.issues || []).length : 0;
   const today = todayDate();
   const counts = { overdue: 0, today: 0, thisWeek: 0 };
   if (snap) for (const it of snap.issues || []) {
+    if (!passesBaseFilters(it)) continue;
     const b = bucketOf(it.duedate, today, weekStart());
     if (counts[b] != null) counts[b]++;
   }
   const synced = lastSynced() ? fmtDateTime(lastSynced()) : "—";
-  status.innerHTML = `이슈 ${total} · <b class="c-overdue">지남 ${counts.overdue}</b> · <b class="c-today">오늘 ${counts.today}</b> · <b class="c-week">이번주 ${counts.thisWeek}</b> · 동기화 ${synced}`;
+  const fb = state.filters.bucket;
+  const stat = (bucket, cls, label, n) => {
+    const active = fb === bucket ? " active" : "";
+    const clickable = (n > 0 || fb === bucket) ? " clickable" : "";
+    const tip = fb === bucket ? `${label} 필터 해제` : `${label} 티켓만 보기`;
+    return `<button type="button" class="stat-btn ${cls}${active}${clickable}" data-bucket="${bucket}" data-count="${n}" title="${tip}">${label} ${n}</button>`;
+  };
+  status.innerHTML = `이슈 ${total} · ${stat("overdue", "c-overdue", "지남", counts.overdue)}`
+    + ` · ${stat("today", "c-today", "오늘", counts.today)}`
+    + ` · ${stat("thisWeek", "c-week", "이번주", counts.thisWeek)} · 동기화 ${synced}`;
 }
 
 function buildFilterBar() {
@@ -112,6 +131,14 @@ function buildFilterBar() {
   $("#f-collapse").addEventListener("click", () => {
     const names = (state.snapshot.labelGroups || []).map((g) => g.name);
     collapseAll(names, true);
+  });
+  // 상태줄 버킷 카운트 클릭 -> 해당 버킷 티켓만 (다시 누르면 해제)
+  $("#status-line").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-bucket]");
+    if (!btn) return;
+    const bucket = btn.dataset.bucket;
+    if (state.filters.bucket === bucket) setFilter({ bucket: "all" });   // 토글 해제
+    else if (Number(btn.dataset.count || 0) > 0) setFilter({ bucket });  // 0개면 무시
   });
   // 카드 라벨칩 클릭 -> 검색 필터로
   document.addEventListener("labelfilter", (e) => {

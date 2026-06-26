@@ -4,7 +4,7 @@ import {
   escapeHtml, fmtDateTime, fmtDateFull, bucketOf, todayDate, labelColor,
   BUCKET_LABEL, statusCategoryClass,
 } from "./util.js";
-import { actions, runAction } from "./actions.js";
+import { actions, runAction, toast } from "./actions.js";
 
 let requestedComments = new Set();
 
@@ -89,6 +89,11 @@ export function renderDetail(root, byKey, weekStart) {
       <button class="btn" id="d-cmt-add">코멘트 추가</button>
       <p class="hint">기존 코멘트 편집/삭제는 현재 MCP 도구로 불가 → 새 코멘트 추가로 처리됩니다.</p>
     </div>
+    <div class="d-field"><label>Slack 스레드 → 요약 코멘트</label>
+      <input type="text" id="d-slack-url" placeholder="https://….slack.com/archives/C…/p…">
+      <button class="btn" id="d-slack-add">슬랙 요약 코멘트</button>
+      <p class="hint">스레드를 가져와 요약해 코멘트로 답니다. 위 코멘트 칸에 내용을 적으면 요약 앞에 덧붙입니다.</p>
+    </div>
   `;
 
   // 자동 코멘트 지연 로드 (1회)
@@ -121,6 +126,18 @@ export function renderDetail(root, byKey, weekStart) {
     const body = root.querySelector("#d-cmt-body").value.trim();
     if (!body) return;
     runAction(actions.addComment(key, body), `${key} 코멘트 추가`);
+    root.querySelector("#d-cmt-body").value = "";
+  });
+  root.querySelector("#d-slack-add").addEventListener("click", () => {
+    const slackUrl = root.querySelector("#d-slack-url").value.trim();
+    if (!slackUrl) return;
+    if (!/\/archives\/[A-Z0-9]+\/p\d+/.test(slackUrl)) {
+      toast("Slack 스레드 링크 형식이 아닙니다 (…/archives/C…/p…).", "warn");
+      return;
+    }
+    const body = root.querySelector("#d-cmt-body").value.trim();   // 있으면 요약 앞에 덧붙임
+    runAction(actions.addComment(key, body || null, slackUrl), `${key} Slack 스레드 요약 코멘트`);
+    root.querySelector("#d-slack-url").value = "";
     root.querySelector("#d-cmt-body").value = "";
   });
   const lc = root.querySelector("#d-loadcmt");
