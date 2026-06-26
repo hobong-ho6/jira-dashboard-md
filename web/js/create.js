@@ -31,6 +31,8 @@ function renderForm() {
   const projects = projectOptions(snap);
   const me = (snap && snap.config && snap.config.currentUser) || "";
   $("#create-form").innerHTML = `
+    <div class="d-field"><label>Slack 스레드 링크 (선택 — 넣으면 제목·설명을 스레드 요약으로 자동 생성)</label>
+      <input id="cf-slack" type="text" placeholder="https://….slack.com/archives/C…/p…"></div>
     <div class="cf-row">
       <div class="d-field"><label>프로젝트 *</label>
         <select id="cf-project">${projects.map((p) => opt(p)).join("")}</select></div>
@@ -39,8 +41,8 @@ function renderForm() {
       <div class="d-field"><label>우선순위</label>
         <select id="cf-priority"><option value="">(기본)</option>${prioOptions(snap).map((p) => opt(p)).join("")}</select></div>
     </div>
-    <div class="d-field"><label>제목 *</label>
-      <input id="cf-summary" type="text" placeholder="요약/제목"></div>
+    <div class="d-field"><label>제목 (Slack 링크 없으면 필수)</label>
+      <input id="cf-summary" type="text" placeholder="요약/제목 — Slack 링크를 넣으면 비워도 됨"></div>
     <div class="d-field"><label>담당자 (username/email)</label>
       <input id="cf-assignee" type="text" value="${escapeHtml(me)}" placeholder="예: hogeun.kim (비우면 프로젝트 기본값)"></div>
     <div class="d-field"><label>설명</label>
@@ -68,11 +70,22 @@ function submitCreate() {
   const project = $("#cf-project").value;
   const issueType = $("#cf-type").value;
   const summary = ($("#cf-summary").value || "").trim();
-  if (!project || !issueType || !summary) {
-    toast("프로젝트·유형·제목은 필수입니다.", "warn");
+  const slackUrl = ($("#cf-slack").value || "").trim();
+  if (!project || !issueType) {
+    toast("프로젝트·유형은 필수입니다.", "warn");
     return;
   }
-  const cmd = { project, issueType, summary };
+  if (!summary && !slackUrl) {
+    toast("제목을 입력하거나 Slack 스레드 링크를 넣어주세요.", "warn");
+    return;
+  }
+  if (slackUrl && !/\/archives\/[A-Z0-9]+\/p\d+/.test(slackUrl)) {
+    toast("Slack 스레드 링크 형식이 아닙니다 (…/archives/C…/p…).", "warn");
+    return;
+  }
+  const cmd = { project, issueType };
+  if (summary) cmd.summary = summary;       // 비우면 Claude Code가 스레드 요약으로 생성 (docs/11)
+  if (slackUrl) cmd.slackUrl = slackUrl;
   const description = ($("#cf-description").value || "").trim();
   if (description) cmd.description = description;
   const priority = $("#cf-priority").value;
@@ -86,7 +99,8 @@ function submitCreate() {
   const assignee = ($("#cf-assignee").value || "").trim();
   if (assignee) cmd.assignee = assignee;
 
-  runAction(actions.createIssue(cmd), `새 티켓 생성: [${project}/${issueType}] ${summary}`);
+  const label = summary || (slackUrl ? "(Slack 스레드 요약)" : "");
+  runAction(actions.createIssue(cmd), `새 티켓 생성: [${project}/${issueType}] ${label}`);
   closeCreateModal();
 }
 
