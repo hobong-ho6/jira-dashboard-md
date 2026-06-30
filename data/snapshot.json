@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T13:52:34+09:00",
+  "generatedAt": "2026-06-30T16:39:41+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -327,12 +327,12 @@
       "labels": [
         "Mission&Reward"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-01",
       "startDate": "2026-06-29",
       "created": "2026-06-29T10:37:31.000+0900",
       "updated": "2026-06-29T10:38:51.000+0900",
       "parent": null,
-      "bucket": "today",
+      "bucket": "thisWeek",
       "descriptionText": "h3. 배경\nUnifi MINI 써드파티 미션&리워드(Legend War)가 7.9 런칭 예정(현재 7/9 목표). 현재 어드민·화면이 *1회성 미션*과 *데일리 미션*을 구분하지 않아, 각 미션 성질에 맞는 어드민/FE 화면 정리·개발이 필요. 정리 전까지는 수기 처리.\n\nh3. 미션 유형 차이 (이주성 정리)\n*데일리 미션*\n* 매일 초기화 (전일 달성분도 리셋)\n* 미션 달성 당일만 클레임 가능, 미수령 시 소멸\n* 화면: 당일 미수령 시 소멸 문구 노출, reset까지 잔여시간 표기\n\n*1회성 미션*\n* 초기화 없음 (1회만 달성·수령, 중복 신호여도 1회 지급)\n* 미션 종료 시까지 클레임 가능, 종료 후 화면 미노출 → 추가 논의 필요\n* 화면: 보상 관련 문구 없음, 잔여시간 표기 없음(표기 방법 결정 필요 — P&G 외부 개발사가 종료일/잔여시간 노출 요청)\n\nh3. 결론(잠정 합의)\n* 1회성 미션에도 *기간 명시 보상 문구* 추가.\n* 리워드는 *유저가 직접 클레임해야 수령*되는 구조 확인.\n* 잔여시간 표기는 P&G 요청대로 필요.\n\n----\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1782458238018599",
       "descriptionLinks": [
         {
@@ -350,6 +350,12 @@
           "created": "2026-06-30T10:15:23.542+0900",
           "updated": "2026-06-30T10:15:23.542+0900",
           "body": "Reward will automatically expire if not claimed on the same day.\n\n문구를 공통 문구로 변경"
+        },
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-06-30T14:03:04.470+0900",
+          "updated": "2026-06-30T14:03:04.470+0900",
+          "body": "[Unifi MINI 미션&리워드 (Legend War) — 1회성/데일리 미션 구분 논의 요약]\n\n배경\n- Unifi MINI 써드파티 미션&리워드(Legend War)가 7/9 런칭 예정.\n- 어드민/화면이 1회성·데일리 미션을 구분하지 않아 정리 필요(정리 전까지 수기 처리). 이주성님이 두 유형 차이를 정리해 개발 진행 여부 문의.\n\n논의\n- 미션 유형 정의(이주성): 데일리=매일 초기화·당일만 클레임(미수령 시 소멸)·소멸 문구+잔여시간 표기 / 1회성=초기화 없음·종료 시까지 클레임·종료 후 화면 미노출 추가 논의·잔여시간 표기 방식 결정 필요(P&G 요청).\n- 기획 정리(김호근): 1회성/데일리 구분 위한 Admin·FE 화면 처리 가능하도록 기획단 정리.\n- Legend War 사양(임재형): JPYC 104,000 / 300레벨 달성 시 JPYC 300 / 기간 런칭부터 1개월(7/9) / 1회성 미션.\n- 답변(이주성): 1회성은 미수령 시 못 받아 불만 우려. 소멸 문구는 1회성엔 불필요. 리워드는 유저 직접 클레임 구조.\n- 일정(김호근): 7/9 전 기획서 정리 불가 → Legend War는 기존 방식(운영팀 등록→개발팀 1회성 적용 요청)으로 진행.\n\n결론 / 다음 단계\n- 공통 안내 문구 확정(김호근): \"리워드는 미션 종료 시점까지 미수령 시 자동 소멸됩니다.\" = 데일리·1회성 공통 문구. xlt 키 업데이트, Jimmy에게 Univi v1.5.1 적용 요청.\n- 잔여기간 선택적 기재 방향(전종화)에 공감대.\n- 근본적 어드민·화면 구분은 별도 기획서 리뷰 후 일정 산정(7/9 미반영).\n\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1782458238018599"
         }
       ],
       "commentsLoaded": true
@@ -1050,7 +1056,14 @@
       "descriptionLinks": [],
       "commentLinks": [],
       "links": [],
-      "comments": [],
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-06-30T16:39:24.910+0900",
+          "updated": "2026-06-30T16:39:24.910+0900",
+          "body": "동선 업데이트 후 추가 논의 필요"
+        }
+      ],
       "commentsLoaded": true
     },
     {
@@ -1059,8 +1072,8 @@
       "summary": "LV 스펙리뷰 진행",
       "issuetype": "Task",
       "status": {
-        "name": "Open",
-        "category": "new"
+        "name": "Closed",
+        "category": "done"
       },
       "priority": "Low",
       "assignee": {
