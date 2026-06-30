@@ -59,6 +59,7 @@
 
 ## 트러블슈팅 (TROUBLESHOOTING로도 분리 가능)
 - 브라우저가 snapshot 못 읽음 → 서버 기동/포트/경로 확인(`file://` 직접 열기 금지).
+- **정적 파일만 500 `{"error":"read failed"}`** (API `/api/snapshot`은 200인데 `GET /`·`/js/*.js`가 500) → 서버 데몬이 **샌드박스 실행 컨텍스트**에서 떠 `web/` 읽기가 막힌 상태. `data/`만 허용돼 API만 동작. 해결: 데몬을 죽이고(`pgrep -f serve.py` → kill) **샌드박스 없이** 재기동한다(Claude Code Bash 도구면 `dangerouslyDisableSandbox=true`). `SessionStart` 훅의 `tools/ensure_services.sh`는 사용자 셸(비샌드박스)에서 돌아 이 문제가 없다 — 증상은 Claude가 Bash 도구로 직접 `nohup` 기동할 때 발생.
 - 상태 변경 실패 → 해당 워크플로우에 그 전이가 없음. `jira_get_transitions` 결과를 사용자에게 보여줌.
 - duedate 형식 오류 → `YYYY-MM-DD` 확인.
 - 권한/read-only → MCP가 read-only면 mutation 불가, 사용자에게 안내.
