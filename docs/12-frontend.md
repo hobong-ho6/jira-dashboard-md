@@ -29,9 +29,6 @@
 - 상태줄 버킷 필터(`filters.bucket`)와 **무관**(정의상 오늘). 0건이면 "오늘 마감인 티켓이 없습니다" 표시(영역·순서조정 유지).
 - 순서 조정·영속은 다른 영역과 동일(`sections.js`가 `section[data-section]`에 ▲▼ 자동 부착, `sectionOrder`에 `today` 포함). 기본 맨 위.
 
-## 설명 이미지 붙여넣기
-- 설명(description) `textarea`(`#cf-description`·`#d-desc-body`)에 `paste-image.js`의 `wireImagePaste`를 연결한다. 클립보드 이미지를 붙이면 `POST /api/upload-image`로 업로드 → 본문 커서에 `!파일명!` 삽입 + 업로드 경로를 수집해 `create_issue`/`set_description`의 `attachments[]`로 전송(`03`/`11`). 코멘트는 미지원(첨부 인자 없음).
-
 ## 액션 전송
 - `POST /api/commands`에 `03` 스키마 JSON. 성공 시 낙관적 UI(예: "대기 중" 배지) 후 폴링으로 확정.
 - 서버 없으면 클립보드 폴백(`11`).

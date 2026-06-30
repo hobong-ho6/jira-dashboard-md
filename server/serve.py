@@ -16,10 +16,8 @@ serve.py — Jira MCP Dashboard 로컬 서버 (mailbox + 정적 파일)
   - 127.0.0.1 에만 바인딩한다.
 모든 Jira 읽기/쓰기는 Claude Code 가 MCP 로 수행한다 (docs/01 신뢰 경계).
 """
-import base64
 import json
 import os
-import re
 import sys
 import time
 import random
@@ -35,9 +33,6 @@ SNAPSHOT = os.path.join(DATA_DIR, "snapshot.json")
 COMMANDS = os.path.join(DATA_DIR, "commands.jsonl")
 PROCESSED_DIR = os.path.join(DATA_DIR, ".processed")
 UI_STATE = os.path.join(DATA_DIR, "ui-state.json")
-ATTACH_DIR = os.path.join(DATA_DIR, "attachments")   # 설명 이미지 첨부 임시 저장(런타임 산출물, gitignore)
-MAX_IMAGE_BYTES = 10 * 1024 * 1024                    # 업로드 이미지 상한 10MB
-IMAGE_EXT_RE = re.compile(r"(png|jpe?g|gif|webp)", re.I)
 
 _LOCK = threading.Lock()
 
@@ -248,9 +243,6 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(400, {"error": "ui-state must be a JSON object"})
             _write_ui_state(body)
             return self._send(200, {"ok": True})
-        if path == "/api/upload-image":
-            # 클립보드 이미지를 파일로 저장(파일 I/O만, Jira 호출 없음). 경로를 큐 명령의 attachments 로 쓴다.
-            return self._upload_image(body)
         return self._send(404, {"error": "unknown endpoint", "path": path})
 
     def _read_body(self):
@@ -265,37 +257,6 @@ class Handler(BaseHTTPRequestHandler):
             return json.loads(raw.decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError):
             return {}
-
-    def _upload_image(self, body):
-        if not isinstance(body, dict):
-            return self._send(400, {"error": "body must be a JSON object"})
-        data_url = body.get("dataUrl") or ""
-        filename = body.get("filename") or "image.png"
-        m = re.match(r"^data:image/(png|jpe?g|gif|webp);base64,(.+)$", data_url, re.DOTALL)
-        if not m:
-            return self._send(400, {"error": "dataUrl must be a base64 image data URL (png/jpg/gif/webp)"})
-        ext = "jpg" if m.group(1).lower() in ("jpeg", "jpg") else m.group(1).lower()
-        try:
-            data = base64.b64decode(m.group(2), validate=True)
-        except (ValueError, base64.binascii.Error):
-            return self._send(400, {"error": "invalid base64 data"})
-        if len(data) > MAX_IMAGE_BYTES:
-            return self._send(413, {"error": "image too large (>10MB)"})
-        # 파일명 sanitize: basename + 안전문자만. 확장자 없으면 data URL 타입으로 보충.
-        base = re.sub(r"[^A-Za-z0-9._-]", "_", os.path.basename(filename)).strip("._") or "image"
-        if not IMAGE_EXT_RE.search(base.rsplit(".", 1)[-1]):
-            base = base + "." + ext
-        name = "%d-%04x-%s" % (int(time.time()), random.randint(0, 0xffff), base)
-        os.makedirs(ATTACH_DIR, exist_ok=True)
-        full = os.path.abspath(os.path.join(ATTACH_DIR, name))
-        if not full.startswith(os.path.abspath(ATTACH_DIR) + os.sep):  # 디렉토리 이탈 방지
-            return self._send(400, {"error": "bad filename"})
-        try:
-            with open(full, "wb") as f:
-                f.write(data)
-        except OSError as e:
-            return self._send(500, {"error": "write failed: %s" % e})
-        return self._send(201, {"ok": True, "path": full, "filename": name})
 
     def log_message(self, fmt, *args):
         sys.stderr.write("[serve] " + (fmt % args) + "\n")

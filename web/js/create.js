@@ -3,7 +3,6 @@
 import { state } from "./state.js";
 import { actions, runAction, toast } from "./actions.js";
 import { labelColor, NO_LABEL } from "./util.js";
-import { wireImagePaste } from "./paste-image.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -15,8 +14,6 @@ const distinct = (arr) => [...new Set(arr.filter(Boolean))];
 
 // 이 모달 세션에서 선택된 라벨들(칩). openCreateModal 마다 초기화한다.
 let selectedLabels = [];
-// 설명에 붙여넣은 이미지의 업로드 파일 경로(create_issue.attachments). openCreateModal 마다 초기화.
-let pendingAttachments = [];
 
 // 현재 대시보드에 보이는 라벨들(이슈 라벨 ∪ 라벨 그룹명, NO_LABEL 제외) — 이름 오름차순.
 function existingLabels(snap) {
@@ -62,7 +59,7 @@ function renderForm() {
     <div class="d-field"><label>담당자 (username/email)</label>
       <input id="cf-assignee" type="text" value="${escapeHtml(me)}" placeholder="예: hogeun.kim (비우면 프로젝트 기본값)"></div>
     <div class="d-field"><label>설명</label>
-      <textarea id="cf-description" rows="4" placeholder="설명 (선택, Jira wiki markup) — 이미지 ⌘V 붙여넣기 가능"></textarea></div>
+      <textarea id="cf-description" rows="4" placeholder="설명 (선택, Jira wiki markup)"></textarea></div>
     <div class="cf-row cf-row-2">
       <div class="d-field"><label>마감일</label>
         <input id="cf-duedate" type="date"></div>
@@ -78,7 +75,6 @@ function renderForm() {
   renderLabelOptions();
   renderLabelChips();
   wireLabelPicker();
-  wireImagePaste($("#cf-description"), (p) => pendingAttachments.push(p));
 }
 
 // ---- 라벨 피커 (드롭다운: 기존 라벨 선택 + "새 라벨" 직접 입력, 다중 선택 칩) ----
@@ -148,7 +144,6 @@ function wireLabelPicker() {
 export function openCreateModal() {
   if (!state.snapshot) { alert("스냅샷이 아직 로드되지 않았습니다."); return; }
   selectedLabels = [];
-  pendingAttachments = [];
   renderForm();
   $("#create-modal").style.display = "flex";
   setTimeout(() => { const s = $("#cf-summary"); if (s) s.focus(); }, 0);
@@ -186,7 +181,6 @@ function submitCreate() {
   const pending = $("#cf-label-new");
   if (pending && pending.value.trim()) addLabels(pending.value);
   if (selectedLabels.length) cmd.labels = [...selectedLabels];
-  if (pendingAttachments.length) cmd.attachments = [...pendingAttachments];  // 설명 이미지 (생성 후 첨부, docs/11)
   const parent = ($("#cf-parent").value || "").trim();
   if (parent) cmd.parent = parent;
   const assignee = ($("#cf-assignee").value || "").trim();

@@ -97,17 +97,17 @@
 {"id":"c_1719_q001","ts":"2026-06-23T09:05:00+09:00","status":"pending","action":"sync","jql":"project = UNIFI AND statusCategory != Done ORDER BY duedate ASC"}
 {"id":"c_1719_ab12","ts":"2026-06-23T09:10:00+09:00","status":"pending","action":"transition","issueKey":"PROJ-123","to":"Done","comment":null}
 {"id":"c_1719_cd34","ts":"...","status":"pending","action":"set_duedate","issueKey":"PROJ-123","duedate":"2026-06-30"}
-{"id":"c_1719_de45","ts":"...","status":"pending","action":"set_description","issueKey":"PROJ-123","description":"개편안 정리 !ui.png!","attachments":["/…/data/attachments/1782-ui.png"]}
+{"id":"c_1719_de45","ts":"...","status":"pending","action":"set_description","issueKey":"PROJ-123","description":"개편안 정리"}
 {"id":"c_1719_ef56","ts":"...","status":"pending","action":"add_comment","issueKey":"PROJ-123","body":"QA 완료","slackUrl":null}
 {"id":"c_1719_ef57","ts":"...","status":"pending","action":"add_comment","issueKey":"PROJ-123","body":null,"slackUrl":"https://….slack.com/archives/C123/p1782458238018599"}
 {"id":"c_1719_gh78","ts":"...","status":"pending","action":"load_comments","issueKey":"PROJ-123"}
 {"id":"c_1719_ij90","ts":"...","status":"pending","action":"set_labels","issueKey":"PROJ-123","labels":["frontend","i18n","done-check"]}
 {"id":"c_1719_kl12","ts":"...","status":"pending","action":"create_link","inward":"PROJ-1","type":"Blocks","outward":"PROJ-2"}
-{"id":"c_1719_mn34","ts":"...","status":"pending","action":"create_issue","project":"UNIFY","issueType":"Task","summary":"새 작업","assignee":"hogeun.kim","slackUrl":null,"description":null,"priority":"High","duedate":"2026-07-01","labels":["frontend"],"parent":null,"attachments":null}
+{"id":"c_1719_mn34","ts":"...","status":"pending","action":"create_issue","project":"UNIFY","issueType":"Task","summary":"새 작업","assignee":"hogeun.kim","slackUrl":null,"description":null,"priority":"High","duedate":"2026-07-01","labels":["frontend"],"parent":null}
 ```
 - `add_comment`: 필수 `issueKey`. **`body` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). `slackUrl`(Slack 스레드 링크)이 있으면 Claude Code가 스레드를 가져와 **요약해 코멘트 본문을 생성**해 게시한다(`11`). `body`도 함께 주면 요약 앞에 덧붙인다. 직접 입력 코멘트는 `slackUrl:null`로 둔다.
-- `set_description`: 필수 `issueKey`·`description`. 선택 `attachments[]` — 설명에 붙여넣은 이미지의 **업로드 파일 경로**(서버 `POST /api/upload-image`가 `data/attachments/`에 저장한 절대경로). 본문엔 Jira wiki markup `!파일명!`이 들어가고, 처리 시 그 파일들을 이슈에 첨부한다(`11`). 이미지가 없으면 `attachments`는 생략.
-- `create_issue`: 필수 `project`·`issueType`. **`summary` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). 선택 `assignee`(기본값=`config.currentUser`, 비우면 프로젝트 기본값)·`description`·`priority`·`duedate`·`labels[]`·`parent`(Sub-task 등)·**`slackUrl`**(Slack 스레드 링크 — 있으면 Claude Code가 스레드를 가져와 요약해 `description`을, `summary` 미입력 시 제목까지 생성; `11`)·**`attachments[]`**(설명 이미지의 업로드 파일 경로 — 생성 후 별도 첨부; `11`). 브라우저는 빈 선택 필드를 생략한다. 생성된 새 이슈는 처리 후 snapshot `issues[]`에 추가된다(`11`).
+- `set_description`: 필수 `issueKey`·`description`. **Jira wiki markup 원문**으로 저장된다(`11`).
+- `create_issue`: 필수 `project`·`issueType`. **`summary` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). 선택 `assignee`(기본값=`config.currentUser`, 비우면 프로젝트 기본값)·`description`·`priority`·`duedate`·`labels[]`·`parent`(Sub-task 등)·**`slackUrl`**(Slack 스레드 링크 — 있으면 Claude Code가 스레드를 가져와 요약해 `description`을, `summary` 미입력 시 제목까지 생성; `11`). 브라우저는 빈 선택 필드를 생략한다. 생성된 새 이슈는 처리 후 snapshot `issues[]`에 추가된다(`11`).
 
 `action` 종류와 처리 매핑은 `11-mutations.md`가 권위.
 `status`: 브라우저는 항상 `pending`으로 만든다. Claude Code가 `done`/`failed`/`blocked`로 바꿔 `data/.processed/`에 옮기거나 `ack` API로 표시.
