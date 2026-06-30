@@ -14,6 +14,7 @@
   - `POST /api/ui-state` → JSON 본문을 `data/ui-state.json`에 원자적으로 덮어쓰기. **로컬 파일 I/O만, Jira 호출 없음**(`12` 그룹 순서 조정용).
 - **절대 Jira를 호출하지 않는다. 비밀 저장 안 함. CORS는 localhost 한정.**
 - 동시성: 파일 append/rename은 락 또는 원자적 rename으로 안전하게.
+- **상시 데몬으로 띄운다.** 서버는 순수 파일 I/O라 세션과 무관하게 살 수 있다 → `nohup python3 server/serve.py >data/serve.log 2>&1 &` (또는 `tools/ensure_services.sh`)로 분리 기동해 **세션 정리에도 생존**시킨다. `tools/ensure_services.sh`는 멱등(이미 떠 있으면 그대로 둠).
 
 ## 사용자 명령 ↔ Claude Code 동작
 | 사용자가 말함 | Claude Code |
@@ -29,6 +30,13 @@
 | "대시보드 고쳐: …" | 해당 모듈(`05`~`12`) 규칙 내에서 수정 |
 
 > **규칙: 서버와 워쳐는 항상 함께 기동한다.** (2026-06-30 사용자 durable 지시) 워처만으로는 대시보드가 큐에 명령을 넣을 수 없고 `apply_queue.py`의 ack가 localhost:5173으로 가야 해서 동작하지 않는다. "서버 켜"/"워쳐 실행" 중 무엇을 받든 **둘 다** 떠 있게 만든다(이미 떠 있으면 그대로 둠). 한쪽을 끄라는 명시 지시가 없으면 둘을 분리해 띄우지 않는다.
+
+## 프로세스 수명 — 서버 데몬 · 워쳐 세션 묶임 (세션 정리 생존)
+(2026-06-30 사용자 durable 지시) 세션 정리/teardown 때 harness 관리 백그라운드 작업은 종료된다. 대응:
+- **서버 = 상시 데몬.** `nohup`(또는 `tools/ensure_services.sh`)으로 분리 기동해 세션과 무관하게 생존. 대시보드 보기는 세션이 죽어도 계속 뜬다.
+- **워쳐 = 세션 묶임(불가피).** 워쳐는 *큐 발견 → 프로세스 종료 → harness가 Claude 세션 재호출 → MCP 처리* 로 루프를 닫는다. 재호출을 받을 살아있는 세션이 필요하므로 **Claude가 `run_in_background`로 띄워야** 한다. `nohup`으로 분리하면 처리 주체(MCP=Claude)가 없어 공회전하므로 분리 기동 금지. 따라서 워쳐 자동 처리는 **세션이 살아있는 동안만** 동작한다.
+- **SessionStart 훅 자동복구.** `.claude/settings.local.json`의 `SessionStart` 훅이 매 세션 시작/재개 때 `tools/ensure_services.sh`를 돌려 (a) 서버 데몬을 보장하고 (b) 워쳐 상태를 stdout으로 보고한다. 워쳐가 `DOWN`이면 보고에 `ACTION:` 줄이 떠서 Claude가 `python3 tools/watch_queue.py`를 `run_in_background`로 (재)기동한다. → 사용자는 수동 재기동 없이 세션 재개만으로 서버·워쳐가 자동 복구된다.
+  - 훅 설정은 `.claude/settings.local.json`에 있고 이 파일은 **gitignore(토큰 포함 가능 정책, docs/02)** 라 커밋되지 않는다. 새 클론에서 자동복구를 쓰려면 같은 `SessionStart` 훅을 로컬에 추가해야 한다(스크립트 `tools/ensure_services.sh`는 커밋됨). 훅 미설정 시에는 "서버 켜"/"워쳐 실행"으로 수동 기동.
 
 ## 권장 운영 사이클
 ```
