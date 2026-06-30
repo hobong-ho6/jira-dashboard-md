@@ -52,6 +52,22 @@ function visibleGroups() {
   return applyGroupOrder(out, state.ui.groupOrder);
 }
 
+// 오늘 마감(due=today) 이슈만 라벨 그룹핑 — 상태줄 버킷 필터와 무관(정의상 오늘), 나머지 필터(완료숨김·상태·검색)는 반영.
+function todayGroups() {
+  const snap = state.snapshot;
+  if (!snap) return [];
+  const today = todayDate(), ws = weekStart();
+  const out = [];
+  for (const g of (snap.labelGroups || [])) {
+    const keys = (g.issueKeys || []).filter((k) => {
+      const it = state.byKey.get(k);
+      return it && passesBaseFilters(it) && bucketOf(it.duedate, today, ws) === "today";
+    });
+    if (keys.length) out.push({ name: g.name, keys });
+  }
+  return applyGroupOrder(out, state.ui.groupOrder);
+}
+
 function currentQuery() {
   const s = state.snapshot;
   if (!s) return "";
@@ -80,10 +96,14 @@ function render() {
     }
     $("#gantt").innerHTML = `<div class="empty">${msg}</div>`;
     $("#cards").innerHTML = "";
+    $("#today").innerHTML = "";
   } else {
     const groups = visibleGroups();
     renderGantt($("#gantt"), groups, state.byKey, weekStart());
     renderCards($("#cards"), groups, state.byKey, weekStart());
+    const tg = todayGroups();
+    if (tg.length) renderCards($("#today"), tg, state.byKey, weekStart());
+    else $("#today").innerHTML = `<div class="empty">오늘 마감인 티켓이 없습니다.</div>`;
   }
   renderDetail($("#detail"), state.byKey, weekStart());
 

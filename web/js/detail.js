@@ -5,6 +5,7 @@ import {
   BUCKET_LABEL, statusCategoryClass,
 } from "./util.js";
 import { actions, runAction, toast } from "./actions.js";
+import { wireImagePaste } from "./paste-image.js";
 
 let requestedComments = new Set();
 
@@ -77,7 +78,7 @@ export function renderDetail(root, byKey, weekStart) {
     <div class="d-field"><label>설명</label>
       <textarea id="d-desc-body" rows="5" placeholder="설명 (Jira wiki markup)">${escapeHtml(it.descriptionText || "")}</textarea>
       <button class="btn" id="d-desc-apply">설명 저장</button>
-      <p class="hint">Jira wiki markup 원문으로 저장됩니다.</p>
+      <p class="hint">Jira wiki markup 원문으로 저장됩니다. 📋 이미지를 붙여넣으면(⌘V) 자동 첨부됩니다.</p>
     </div>
     <div class="d-field"><label>링크</label><div class="chips">${linkChips}</div></div>
 
@@ -118,9 +119,11 @@ export function renderDetail(root, byKey, weekStart) {
     const v = root.querySelector("#d-due").value || null;
     runAction(actions.setDuedate(key, v), `${key} 마감일 → ${v || "(제거)"}`);
   });
+  const descAttachments = [];  // 설명에 붙여넣은 이미지의 업로드 경로 (set_description.attachments)
+  wireImagePaste(root.querySelector("#d-desc-body"), (p) => descAttachments.push(p));
   root.querySelector("#d-desc-apply").addEventListener("click", () => {
     const body = root.querySelector("#d-desc-body").value;
-    runAction(actions.setDescription(key, body), `${key} 설명 수정`);
+    runAction(actions.setDescription(key, body, descAttachments), `${key} 설명 수정`);
   });
   root.querySelector("#d-cmt-add").addEventListener("click", () => {
     const body = root.querySelector("#d-cmt-body").value.trim();

@@ -138,8 +138,23 @@ cd jira-dashboard-md</code></pre>
       <!-- 3. VIEWS -->
       <section id="views">
         <div class="eyebrow">보기</div>
-        <h2>② 화면 구성 — 3개 영역</h2>
-        <p class="lead-muted">본문은 <b>타임라인</b>, <b>범위 밖 티켓</b>, <b>티켓(라벨 그룹)</b> 세 영역으로 구성됩니다.</p>
+        <h2>② 화면 구성 — 4개 영역</h2>
+        <p class="lead-muted">본문은 <b>오늘 할 일</b>, <b>타임라인</b>, <b>범위 밖 티켓</b>, <b>티켓(라벨 그룹)</b> 네 영역으로 구성됩니다. 각 영역은 머리글의 ▲▼로 순서를 바꿀 수 있습니다.</p>
+
+        <h3>📌 오늘 할 일 (Today) <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>마감일이 <b>오늘</b>인 티켓만 라벨별로 모아 본문 맨 위에 <b>주황 테두리로 강조</b>해 보여줍니다 — "오늘 처리할 것"을 가장 먼저 보게 됩니다. 다른 영역처럼 ▲▼로 위치를 옮길 수 있고, 오늘 마감이 없으면 "오늘 마감인 티켓이 없습니다"로 표시됩니다.</p>
+        <div class="app" style="border-color:var(--bk-today);box-shadow:0 0 0 1px var(--bk-today)">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">오늘 할 일</span></div>
+          <div class="body">
+            <div class="panel-title" style="color:var(--bk-today);font-weight:700;display:flex;align-items:center;gap:8px;font-size:12px;margin:0 2px 8px">📌 오늘 할 일 <span style="font-size:10px;border:1px solid var(--bk-today);border-radius:999px;padding:1px 8px">Today · 마감 오늘</span><span class="secmove"><b>▲</b><b>▼</b></span></div>
+            <div class="app-row" style="font-size:12px;font-weight:700;margin:0 0 6px">▾ <span style="color:#7c6cff">●</span> Mission&amp;Reward <span style="color:var(--app-muted)">1</span></div>
+            <div class="tk" style="border-left-color:var(--bk-today)">
+              <div class="h"><span class="k">UNIFY-7795</span><span class="pill">Task</span><span class="pill" style="color:#7aa2ff">In Progress</span></div>
+              <div class="s">오늘 마감 작업 예시</div>
+              <div class="meta"><span style="color:var(--bk-today)">오늘 · 2026-06-30</span><span>Kim HoGeun（김호근）</span></div>
+            </div>
+          </div>
+        </div>
 
         <h3>마감일 색(버킷)</h3>
         <div class="legend">
@@ -355,6 +370,11 @@ cd jira-dashboard-md</code></pre>
             </div>
           </div>
         </div>
+        <h3>설명에 이미지 붙여넣기 🖼️ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>설명(description) 칸에 캡처 이미지를 <b>⌘V로 붙여넣으면</b> 자동 업로드되고, 본문에 <code class="inline">!파일명!</code>이 들어갑니다.
+          처리(process) 때 Jira 이슈에 <b>첨부</b>되어 인라인 이미지로 표시됩니다. <b>새 티켓 생성</b>과 <b>기존 티켓 상세의 설명 수정</b> 양쪽에서 됩니다.</p>
+        <div class="note">📌 코멘트엔 이미지 첨부가 지원되지 않습니다(설명만). 상세에서 붙여넣은 뒤엔 화면이 갱신되기 전에 <b>"설명 저장"</b>을 바로 눌러주세요.</div>
+
         <div class="real"><span class="tag">실제 예시</span> <code class="inline">[UNIFY/Task] 대시보드 생성 테스트</code>를 담당자=나로 만들어 보드의 라벨 그룹에 바로 표시됨을 확인했습니다.</div>
       </section>
 

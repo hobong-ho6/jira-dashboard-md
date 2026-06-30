@@ -3,6 +3,7 @@ data/commands.jsonl
 data/.processed/
 data/ui-state.json
 data/raw_issues.json
+data/attachments/
 __pycache__/
 *.log
 

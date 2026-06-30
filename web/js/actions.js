@@ -27,7 +27,11 @@ export const actions = {
   sync: (jql) => enqueue({ action: "sync", jql }),
   transition: (issueKey, to, comment = null) => enqueue({ action: "transition", issueKey, to, comment }),
   setDuedate: (issueKey, duedate) => enqueue({ action: "set_duedate", issueKey, duedate }),
-  setDescription: (issueKey, description) => enqueue({ action: "set_description", issueKey, description }),
+  setDescription: (issueKey, description, attachments = []) => {
+    const c = { action: "set_description", issueKey, description };
+    if (attachments.length) c.attachments = attachments;   // 설명에 붙인 이미지 파일 경로 (docs/11)
+    return enqueue(c);
+  },
   addComment: (issueKey, body, slackUrl = null) => enqueue({ action: "add_comment", issueKey, body, slackUrl }),
   loadComments: (issueKey) => enqueue({ action: "load_comments", issueKey }),
   loadTransitions: (issueKey) => enqueue({ action: "load_transitions", issueKey }),

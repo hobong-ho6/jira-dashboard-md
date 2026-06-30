@@ -21,7 +21,16 @@
 ## 상태(클라이언트)
 - `state = { snapshot, filters, collapsed:Set<"group:name">, selectedKey, ui:{ groupOrder } }`.
 - 선택 `selectedKey`는 메모리 유지. **접힘 상태 `collapsed`는 서버 `ui-state.json`에 영속**(다음 실행 시 복원). 타임라인·카드가 같은 `state.collapsed`(그룹명 기준)를 공유하므로 **한쪽에서 접으면 양쪽이 함께 접힌다.**
-- **보기 설정(`ui`)은 서버에 영속**한다: 시작 시 `GET /api/ui-state`로 로드, 변경 시 `POST /api/ui-state`로 저장(`data/ui-state.json`, `13`). 현재 `ui.groupOrder`(그룹 순서)·`ui.collapsed`(접힘 그룹, 키 `group:<name>`)·`ui.sectionOrder`(본문 영역 순서 — `timeline`/`outOfRange`/`cards`)가 이 경로를 쓴다. 서버 미연결 시 기본값으로 동작하고 저장만 생략된다. 그룹 순서는 렌더 시 `util.applyGroupOrder(groups, ui.groupOrder)`로 적용되어 간트·카드가 동일 순서를 공유한다. 영역 순서는 `sections.js`가 `.content`의 `section[data-section]` 노드를 재배치(패널 헤더의 ▲▼)하고 영속한다.
+- **보기 설정(`ui`)은 서버에 영속**한다: 시작 시 `GET /api/ui-state`로 로드, 변경 시 `POST /api/ui-state`로 저장(`data/ui-state.json`, `13`). 현재 `ui.groupOrder`(그룹 순서)·`ui.collapsed`(접힘 그룹, 키 `group:<name>`)·`ui.sectionOrder`(본문 영역 순서 — `today`/`timeline`/`outOfRange`/`cards`)가 이 경로를 쓴다. 서버 미연결 시 기본값으로 동작하고 저장만 생략된다. 그룹 순서는 렌더 시 `util.applyGroupOrder(groups, ui.groupOrder)`로 적용되어 간트·카드가 동일 순서를 공유한다. 영역 순서는 `sections.js`가 `.content`의 `section[data-section]` 노드를 재배치(패널 헤더의 ▲▼)하고 영속한다.
+
+## 오늘 마감(Today) 강조 섹션
+- 본문 첫 영역(`section[data-section="today"]`, `#today`)에 **due date가 오늘인 이슈만** 라벨 그룹으로 보여준다. 강조 스타일(`.panel-today`, today 색).
+- `app.js todayGroups()`가 `passesBaseFilters(it) && bucketOf(duedate)==="today"`인 이슈를 `labelGroups` 기준으로 묶고, **기존 `renderCards`를 재사용**해 `#today`에 렌더한다(카드 UI·그룹 접힘 `group:<name>` 공유).
+- 상태줄 버킷 필터(`filters.bucket`)와 **무관**(정의상 오늘). 0건이면 "오늘 마감인 티켓이 없습니다" 표시(영역·순서조정 유지).
+- 순서 조정·영속은 다른 영역과 동일(`sections.js`가 `section[data-section]`에 ▲▼ 자동 부착, `sectionOrder`에 `today` 포함). 기본 맨 위.
+
+## 설명 이미지 붙여넣기
+- 설명(description) `textarea`(`#cf-description`·`#d-desc-body`)에 `paste-image.js`의 `wireImagePaste`를 연결한다. 클립보드 이미지를 붙이면 `POST /api/upload-image`로 업로드 → 본문 커서에 `!파일명!` 삽입 + 업로드 경로를 수집해 `create_issue`/`set_description`의 `attachments[]`로 전송(`03`/`11`). 코멘트는 미지원(첨부 인자 없음).
 
 ## 액션 전송
 - `POST /api/commands`에 `03` 스키마 JSON. 성공 시 낙관적 UI(예: "대기 중" 배지) 후 폴링으로 확정.

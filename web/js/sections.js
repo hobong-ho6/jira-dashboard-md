@@ -3,7 +3,7 @@
 import { state, setUiState } from "./state.js";
 
 const $ = (s) => document.querySelector(s);
-const DEFAULT_ORDER = ["timeline", "outOfRange", "cards"];
+const DEFAULT_ORDER = ["today", "timeline", "outOfRange", "cards"];
 
 // 유효한 순서 = 저장값에서 알려진 섹션만 + 누락분을 기본 순서로 보충
 function order() {
