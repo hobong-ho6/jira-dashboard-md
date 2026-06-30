@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T11:02:07+09:00",
+  "generatedAt": "2026-06-30T13:52:34+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -66,7 +66,7 @@
       "labels": [
         "GuideKim"
       ],
-      "duedate": "2026-06-29",
+      "duedate": "2026-06-30",
       "startDate": "2026-06-26",
       "created": "2026-06-26T11:47:46.000+0900",
       "updated": "2026-06-26T11:53:24.000+0900",
@@ -106,7 +106,7 @@
       "key": "UNIFY-7786",
       "url": "https://jira.workers-hub.com/browse/UNIFY-7786",
       "summary": "GuideKim",
-      "issuetype": "Task",
+      "issuetype": "Epic",
       "status": {
         "name": "In Progress",
         "category": "indeterminate"
@@ -120,12 +120,12 @@
       "labels": [
         "GuideKim"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-07",
       "startDate": "2026-06-23",
       "created": "2026-06-23T10:25:35.000+0900",
       "updated": "2026-06-26T11:47:46.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4302493959",
       "descriptionLinks": [
         {
@@ -327,12 +327,12 @@
       "labels": [
         "Mission&Reward"
       ],
-      "duedate": "2026-07-02",
+      "duedate": "2026-06-30",
       "startDate": "2026-06-29",
       "created": "2026-06-29T10:37:31.000+0900",
       "updated": "2026-06-29T10:38:51.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "today",
       "descriptionText": "h3. 배경\nUnifi MINI 써드파티 미션&리워드(Legend War)가 7.9 런칭 예정(현재 7/9 목표). 현재 어드민·화면이 *1회성 미션*과 *데일리 미션*을 구분하지 않아, 각 미션 성질에 맞는 어드민/FE 화면 정리·개발이 필요. 정리 전까지는 수기 처리.\n\nh3. 미션 유형 차이 (이주성 정리)\n*데일리 미션*\n* 매일 초기화 (전일 달성분도 리셋)\n* 미션 달성 당일만 클레임 가능, 미수령 시 소멸\n* 화면: 당일 미수령 시 소멸 문구 노출, reset까지 잔여시간 표기\n\n*1회성 미션*\n* 초기화 없음 (1회만 달성·수령, 중복 신호여도 1회 지급)\n* 미션 종료 시까지 클레임 가능, 종료 후 화면 미노출 → 추가 논의 필요\n* 화면: 보상 관련 문구 없음, 잔여시간 표기 없음(표기 방법 결정 필요 — P&G 외부 개발사가 종료일/잔여시간 노출 요청)\n\nh3. 결론(잠정 합의)\n* 1회성 미션에도 *기간 명시 보상 문구* 추가.\n* 리워드는 *유저가 직접 클레임해야 수령*되는 구조 확인.\n* 잔여시간 표기는 P&G 요청대로 필요.\n\n----\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1782458238018599",
       "descriptionLinks": [
         {
@@ -450,8 +450,8 @@
       "summary": "제품 상세 데이터 일본어 검토",
       "issuetype": "Task",
       "status": {
-        "name": "Open",
-        "category": "new"
+        "name": "Closed",
+        "category": "done"
       },
       "priority": "Low",
       "assignee": {
@@ -850,7 +850,7 @@
       "key": "UNIFY-5987",
       "url": "https://jira.workers-hub.com/browse/UNIFY-5987",
       "summary": "Unifi Mobile 설치 유도",
-      "issuetype": "Task",
+      "issuetype": "Epic",
       "status": {
         "name": "Open",
         "category": "new"
@@ -1051,7 +1051,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-8085",
@@ -1079,10 +1079,24 @@
       "bucket": "today",
       "descriptionText": "",
       "descriptionLinks": [],
-      "commentLinks": [],
+      "commentLinks": [
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1782704805067429",
+          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1782704805067429",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
       "links": [],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-06-30T13:14:24.113+0900",
+          "updated": "2026-06-30T13:14:24.113+0900",
+          "body": "Slack 스레드 요약 — MINI 페이지 footer / aggregator 적용 범위\n\n배경\n- Jimmy(FE)가 \"새 MINI 페이지에 footer를 추가해야 하나?\"를 질문.\n\n논의\n- 김호근: footer 추가 필요. 단 aggregator 미포함 기준.\n- Jimmy 1차 정리 (without aggregator): MINI — Home ✅, K-Kick ✅ / LIFF — Home(K-Pick 탭) ✅, K Pick ❌ (메인 탭 아님)\n- 김호근 적용 범위 확정: MINI(without aggregator)는 My 탭을 제외한 모든 탭 / LIFF(aggregator)는 Home, K-Pick(일본 IP 전용), Rewards, Assets / 상세는 기획 위키에 정리 예정.\n\n결론 / 다음 단계\n- 위키 업데이트 후 전체 flow 정렬용 미팅(Zoom/Meet/Huddle) 진행. 시간 4PM KST 확정, 김호근이 초대 발송 완료.\n\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1782704805067429"
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-8086",
@@ -1090,8 +1104,8 @@
       "summary": "가이드킴 위키 업데이트 정책 및 상세 화면 업데이트",
       "issuetype": "Task",
       "status": {
-        "name": "Open",
-        "category": "new"
+        "name": "Closed",
+        "category": "done"
       },
       "priority": "Low",
       "assignee": {
@@ -1113,7 +1127,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     }
   ],
   "labelGroups": [
@@ -1511,6 +1525,72 @@
       }
     ],
     "UNIFY-5998": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-8085": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-8084": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-8086": [
       {
         "id": "11",
         "name": "In Progress",
