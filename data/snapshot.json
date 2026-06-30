@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T10:24:46+09:00",
+  "generatedAt": "2026-06-30T11:02:07+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -211,18 +211,32 @@
       "labels": [
         "UnifiMobile"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-10",
       "startDate": "2026-04-27",
       "created": "2026-04-27T09:38:24.000+0900",
       "updated": "2026-06-23T10:22:47.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "Unifi에서 Google Login 시, Kaia Wallet이라 노출되고 있어 Branding 변경 필요\r\n\r\nBranding 변경 심사에서 홈페이지 소유권 확인을 할 수없다는 이유로 거절됨.\r\n관련 해결책은 Google Search Console에서 도메인 소유권 인증 후 OAuth 재심사 진행 필요.",
       "descriptionLinks": [],
-      "commentLinks": [],
+      "commentLinks": [
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C068NE7EHML/p1777250756106999",
+          "text": "https://group-all-workers-hub.slack.com/archives/C068NE7EHML/p1777250756106999",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
       "links": [],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-04-27T09:46:11.214+0900",
+          "updated": "2026-04-27T09:46:11.214+0900",
+          "body": "Devops Help thread: https://group-all-workers-hub.slack.com/archives/C068NE7EHML/p1777250756106999"
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-3303",
@@ -396,7 +410,7 @@
       "labels": [
         "Mission&Reward"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-03",
       "startDate": "2026-06-26",
       "created": "2026-06-26T16:41:27.000+0900",
       "updated": "2026-06-26T19:48:53.000+0900",
@@ -484,18 +498,18 @@
         "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
       },
       "labels": [],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-10",
       "startDate": "2026-06-08",
       "created": "2026-06-08T15:37:38.000+0900",
       "updated": "2026-06-23T21:56:47.000+0900",
       "parent": "W3P-5594",
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "카이아 월렛에서 자산이동하는 유니크 사용자, 전체 보낸 양 메트릭 지표 추가 필요",
       "descriptionLinks": [],
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-5726",
@@ -515,12 +529,12 @@
       "labels": [
         "UnifiMobile"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-30",
       "startDate": "2026-05-07",
       "created": "2026-05-07T13:47:13.000+0900",
       "updated": "2026-06-23T21:56:46.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "블록체인 지갑 특성상 iOS OS 외부의 표준 암호 라이브러리를 사용하고 있어, 프랑스 App Store 배포 시 ANSSI(프랑스 사이버 보안청)에 암호화 신고서 제출이 필요합니다.\nwiki: https://wiki.workers-hub.com/pages/viewpage.action?pageId=4082431337\n아래 사전 결정 사항 확인 부탁드립니다.\n프랑스 App Store 배포 시점/우선순위\n신고 주체 법인\n법무 검수/서명 담당자",
       "descriptionLinks": [
         {
@@ -533,7 +547,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-6311",
@@ -553,12 +567,12 @@
       "labels": [
         "unifi-backlog"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-30",
       "startDate": "2026-05-21",
       "created": "2026-05-21T16:51:58.000+0900",
       "updated": "2026-06-23T21:51:12.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "슬랙 스레드 : https://group-all-workers-hub.slack.com/archives/C0APPFKC3MY/p1779335865877979\r\nWF: https://wfpf.workers-hub.com/detail/20260521154332386841\r\n [^WFPF문의 - GA와 Firebase 통합을 위한 권한 문의 (1).eml] ",
       "descriptionLinks": [
         {
@@ -576,8 +590,15 @@
       ],
       "commentLinks": [],
       "links": [],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-05-22T15:36:32.924+0900",
+          "updated": "2026-05-22T15:36:32.924+0900",
+          "body": "GA / Firebase 통합을 위한 권한 신청함(5/21) "
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "W3P-5600",
@@ -597,12 +618,12 @@
       "labels": [
         "UnifiMobile"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-30",
       "startDate": "2026-05-19",
       "created": "2026-05-19T09:57:42.000+0900",
       "updated": "2026-06-23T21:51:08.000+0900",
       "parent": "W3P-5594",
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "Unifi 로그인 후 Kaia Wallet으로 넘어올 때 Unifi 로그인한 계정으로 Kaia Wallet에 로그인 시키기는 어렵고, Unifi에서 Kaia Wallet으로 사용자의 이메일을 넘겨줘야함.\r\n\r\n이에 대한 정보보안검토 필요\r\n\r\n슬랙: https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779097440268589?thread_ts=1778750287.865969&cid=C097X2T31FE\r\n\r\n카이아월렛에서 사용자의 유니파이 계정 정보를 보여줄 경우 정보보안 검토 필요",
       "descriptionLinks": [
         {
@@ -614,8 +635,21 @@
       ],
       "commentLinks": [],
       "links": [],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-05-22T15:34:41.995+0900",
+          "updated": "2026-05-22T15:34:41.995+0900",
+          "body": "개발팀에서 유니파이에서 자산 이동하는 기능을 구현 시 정보보안은 필요치 않음."
+        },
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-05-27T16:33:22.027+0900",
+          "updated": "2026-05-27T16:33:22.027+0900",
+          "body": "wallet connect를 이용해서 카이아월렛에서 유니파이 정보를 보여줄 필요가 없어졌음"
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-5353",
@@ -635,7 +669,7 @@
       "labels": [
         "UnifiMobile"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-03",
       "startDate": "2026-04-29",
       "created": "2026-04-29T09:53:27.000+0900",
       "updated": "2026-06-23T10:22:56.000+0900",
@@ -664,8 +698,15 @@
       ],
       "commentLinks": [],
       "links": [],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-05-18T09:52:51.329+0900",
+          "updated": "2026-05-18T09:52:51.329+0900",
+          "body": "위키에 구글 에셋 업데이트를 위해 필요한 정보 기입\nhttps://wiki.workers-hub.com/display/UNIFI/Unifi%3A+New+Stablecoin+Wallet+-+Store+Information"
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "W3P-5594",
@@ -685,12 +726,12 @@
       "labels": [
         "UnifiMobile"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-10",
       "startDate": "2026-05-14",
       "created": "2026-05-14T13:21:19.000+0900",
       "updated": "2026-06-23T10:22:34.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "Figma: https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=44995-55&t=5CvocmqqwM6uTXPB-1\r\n\r\nslack: https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1778750287865969\r\n\r\nPIA Review: https://jira.workers-hub.com/browse/LNS-1127",
       "descriptionLinks": [
         {
@@ -715,7 +756,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-6392",
@@ -735,12 +776,12 @@
       "labels": [
         "Mission&Reward"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-24",
       "startDate": "2026-05-26",
       "created": "2026-05-26T09:42:07.000+0900",
       "updated": "2026-06-23T10:22:06.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "DA Score가 없는 경우 리워드를 지급하고 있지 않음.\r\nLINE 가입한지 24시간이 지나지 않아 DA Score가 없는 사용자 기준으로 리워드를 지급하는 방안을 동욱님과 확인후 표성만님께도 공유필요\r\n\r\n개발팀 문의 스레드: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1779757036636419",
       "descriptionLinks": [
         {
@@ -773,12 +814,12 @@
       "labels": [
         "UnifiMobile"
       ],
-      "duedate": "2026-06-30",
+      "duedate": "2026-07-10",
       "startDate": "2026-05-14",
       "created": "2026-05-14T13:19:59.000+0900",
       "updated": "2026-06-23T10:21:55.000+0900",
       "parent": null,
-      "bucket": "thisWeek",
+      "bucket": "later",
       "descriptionText": "슬랙 스레드 : https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779263959266529\r\n\r\nfigma : https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=47534-5449&t=5cJ3M5ps7MzIefp3-1\r\n\r\n유니파이 제공 배너에 대한 마케팅 요건 수렴 스레드 : https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1779338598260149",
       "descriptionLinks": [
         {
@@ -803,7 +844,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-5987",
@@ -1311,6 +1352,182 @@
       },
       {
         "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-6311": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "W3P-5694": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-5269": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-5726": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "W3P-5600": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-5353": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "W3P-5594": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-5998": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
         "name": "Reopened",
         "to": "Reopened"
       }
