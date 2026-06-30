@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-29T10:53:55+09:00",
+  "generatedAt": "2026-06-30T10:24:46+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -23,8 +23,8 @@
       "summary": "스펙리뷰",
       "issuetype": "Sub-task",
       "status": {
-        "name": "Open",
-        "category": "new"
+        "name": "Closed",
+        "category": "done"
       },
       "priority": "Highest",
       "assignee": {
@@ -46,7 +46,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-7997",
@@ -92,8 +92,15 @@
           "status": "Closed"
         }
       ],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-06-26T11:49:17.199+0900",
+          "updated": "2026-06-26T11:49:17.199+0900",
+          "body": "https://jira.workers-hub.com/browse/LNS-1240"
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-7786",
@@ -131,7 +138,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-7898",
@@ -184,7 +191,7 @@
         }
       ],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-5269",
@@ -323,8 +330,15 @@
       ],
       "commentLinks": [],
       "links": [],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-06-30T10:15:23.542+0900",
+          "updated": "2026-06-30T10:15:23.542+0900",
+          "body": "Reward will automatically expire if not claimed on the same day.\n\n문구를 공통 문구로 변경"
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-8035",
@@ -397,10 +411,24 @@
           "label": "Slack"
         }
       ],
-      "commentLinks": [],
+      "commentLinks": [
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C07R7CE0B5H/p1781860598685989?thread_ts=1781860438.515149&cid=C07R7CE0B5H",
+          "text": "https://group-all-workers-hub.slack.com/archives/C07R7CE0B5H/p1781860598685989?thread_ts=1781860438.515149&cid=C07R7CE0B5H",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
       "links": [],
-      "comments": [],
-      "commentsLoaded": false
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-06-26T19:48:53.231+0900",
+          "updated": "2026-06-26T19:48:53.231+0900",
+          "body": "https://group-all-workers-hub.slack.com/archives/C07R7CE0B5H/p1781860598685989?thread_ts=1781860438.515149&cid=C07R7CE0B5H"
+        }
+      ],
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-8037",
@@ -438,7 +466,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "W3P-5694",
@@ -725,7 +753,7 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-5998",
@@ -952,9 +980,116 @@
       "links": [],
       "comments": [],
       "commentsLoaded": false
+    },
+    {
+      "key": "UNIFY-8084",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-8084",
+      "summary": "보안검수를 위한 동선 정리 후 미팅 진행",
+      "issuetype": "Task",
+      "status": {
+        "name": "Open",
+        "category": "new"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": null
+      },
+      "labels": [
+        "GuideKim"
+      ],
+      "duedate": "2026-06-30",
+      "startDate": "2026-06-30",
+      "created": "2026-06-30T10:13:32.745+0900",
+      "updated": "2026-06-30T10:13:41.638+0900",
+      "parent": null,
+      "bucket": "today",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [],
+      "comments": [],
+      "commentsLoaded": false
+    },
+    {
+      "key": "UNIFY-8085",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-8085",
+      "summary": "LV 스펙리뷰 진행",
+      "issuetype": "Task",
+      "status": {
+        "name": "Open",
+        "category": "new"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": null
+      },
+      "labels": [
+        "GuideKim"
+      ],
+      "duedate": "2026-06-30",
+      "startDate": "2026-06-30",
+      "created": "2026-06-30T10:15:11.338+0900",
+      "updated": "2026-06-30T10:15:21.880+0900",
+      "parent": null,
+      "bucket": "today",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [],
+      "comments": [],
+      "commentsLoaded": false
+    },
+    {
+      "key": "UNIFY-8086",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-8086",
+      "summary": "가이드킴 위키 업데이트 정책 및 상세 화면 업데이트",
+      "issuetype": "Task",
+      "status": {
+        "name": "Open",
+        "category": "new"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": null
+      },
+      "labels": [
+        "GuideKim"
+      ],
+      "duedate": "2026-06-30",
+      "startDate": "2026-06-30",
+      "created": "2026-06-30T10:15:12.640+0900",
+      "updated": "2026-06-30T10:15:22.745+0900",
+      "parent": null,
+      "bucket": "today",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [],
+      "comments": [],
+      "commentsLoaded": false
     }
   ],
   "labelGroups": [
+    {
+      "name": "GuideKim",
+      "count": 8,
+      "issueKeys": [
+        "UNIFY-7791",
+        "UNIFY-7997",
+        "UNIFY-7786",
+        "UNIFY-8035",
+        "UNIFY-8037",
+        "UNIFY-8084",
+        "UNIFY-8085",
+        "UNIFY-8086"
+      ]
+    },
     {
       "name": "UnifiMobile",
       "count": 6,
@@ -965,17 +1100,6 @@
         "UNIFY-5353",
         "W3P-5594",
         "UNIFY-5998"
-      ]
-    },
-    {
-      "name": "GuideKim",
-      "count": 5,
-      "issueKeys": [
-        "UNIFY-7791",
-        "UNIFY-7997",
-        "UNIFY-7786",
-        "UNIFY-8035",
-        "UNIFY-8037"
       ]
     },
     {
@@ -1014,5 +1138,182 @@
       ]
     }
   ],
-  "transitions": {}
+  "transitions": {
+    "UNIFY-7791": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-7997": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-8037": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-7786": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-7898": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-8029": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-6392": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-8044": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ]
+  }
 }
