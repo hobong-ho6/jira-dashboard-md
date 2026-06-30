@@ -21,15 +21,18 @@
 | "초기 세팅" | `config.json` 확인/생성(`04`), `web/`·`server/` 산출물 생성, README 안내 |
 | **"이 쿼리로 시작/조회: \<JQL\>"** | **시작점.** `config.json.jql`에 저장 → `04` sync 실행 → `snapshot.json` 생성 |
 | (대시보드 JQL 입력창 제출) | 큐에 `{"action":"sync","jql":...}` 적재 → "큐 처리" 시 위와 동일 흐름 |
-| "서버 켜" / serve | `python3 server/serve.py` 1회 기동, URL 안내(`http://localhost:5173`) |
+| "서버 켜" / serve | `python3 server/serve.py` 기동 **+ `tools/watch_queue.py` 워처 백그라운드 기동(항상 함께)**, URL 안내(`http://localhost:5173`) |
+| "워쳐 실행" / watch | 워처 기동. 서버가 꺼져 있으면 **서버도 함께 켠다**(아래 규칙) |
 | "동기화" / sync | 현재 `config.json.jql`로 `04` 절차 실행 |
 | "큐 처리" / process | `11` 절차로 `commands.jsonl` 드레인(`sync` 명령 포함) → MCP 실행 → ack → 영향 이슈 증분 재동기화 |
 | "전체 새로고침" | 현재 쿼리로 sync 전체 재실행 |
 | "대시보드 고쳐: …" | 해당 모듈(`05`~`12`) 규칙 내에서 수정 |
 
+> **규칙: 서버와 워쳐는 항상 함께 기동한다.** (2026-06-30 사용자 durable 지시) 워처만으로는 대시보드가 큐에 명령을 넣을 수 없고 `apply_queue.py`의 ack가 localhost:5173으로 가야 해서 동작하지 않는다. "서버 켜"/"워쳐 실행" 중 무엇을 받든 **둘 다** 떠 있게 만든다(이미 떠 있으면 그대로 둠). 한쪽을 끄라는 명시 지시가 없으면 둘을 분리해 띄우지 않는다.
+
 ## 권장 운영 사이클
 ```
-1) serve (1회)                       # 서버 상시
+1) serve + watcher (1회, 항상 함께)   # 서버 상시 + 큐 자동 감시
 2) 사용자가 필터링 쿼리(JQL) 입력      # 출발점: 채팅으로 Claude Code에 직접, 또는 대시보드 JQL바 → sync 명령
 3) sync (그 쿼리로)                   # snapshot 생성/갱신
 4) 사용자가 대시보드에서 보고/조작 → 액션이 큐에 쌓임
