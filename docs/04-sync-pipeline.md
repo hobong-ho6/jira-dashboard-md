@@ -12,8 +12,7 @@
 3. 페이지네이션 루프:
    ```
    start_at = 0
-   fields = "summary,status,issuetype,assignee,priority,labels,duedate,created,updated,description,issuelinks,parent"
-   (+ config.startDateField 있으면 콤마로 추가)
+   fields = "*all"   # ⚠️ 이 MCP는 fields 를 명시하면 issuetype 을 누락한다. issue_type 은 *all 일 때만 온다(02). startDateField 등 커스텀필드도 *all 에 포함된다.
    repeat:
      res = jira_search(jql=config.jql, fields=fields, limit=config.fetchLimit, start_at=start_at)
      수집 res.issues
@@ -22,7 +21,7 @@
    ```
    수집한 응답(`{...,"issues":[...]}` 또는 issues 배열)을 **가공 없이 그대로** `data/raw_issues.json`에 저장한다.
    - MCP는 평면(flattened) 형식을 돌려주지만, `tools/normalize.py`의 `to_v2()`가 자동으로 표준 v2로 변환한다(`02` §MCP 응답 형식). **수동 변환 스크립트는 불필요**하다.
-   - **이슈 유형(issuetype) 보강:** 이 MCP의 `jira_search`는 `issuetype`을 누락한다(`02`). 카드/상세에 유형(Epic/Task 등)을 표시하려면 각 이슈에 `jira_get_issue(issue_key, fields="issuetype")`로 `issue_type`을 받아 raw 이슈에 주입한다(이슈당 1콜). `to_v2()`가 `issue_type`→`issuetype`으로 매핑한다. 유형은 거의 안 바뀌므로 1회성 보강 성격.
+   - **이슈 유형(issuetype):** `*all` 응답엔 유형이 `issue_type`(snake_case) 키, `{"name":"Epic"}` 형태로 들어온다. `to_v2()`가 `issue_type`→`issuetype`으로 매핑하고 `normalize_issue`가 둘 다 폴백으로 읽는다. ⚠️ **`fields`를 명시하면(`issuetype`을 넣어도) MCP가 유형을 누락**하고, `jira_get_issue(fields="issuetype")`로도 못 받는다 — 과거 이 함정으로 모든 이슈가 `Task`로 오염된 적이 있다(예: Epic `UNIFY-7786`이 Task로 표시). **반드시 `*all`로 받는다.**
 4. `python3 tools/normalize.py` 실행 → `config.json`을 읽어 `data/snapshot.json`을 원자적으로 생성. 각 이슈 정규화(`03` 스키마):
    - 상태/우선순위/담당자/라벨/타입/부모를 02 §응답경로대로 추출.
    - `startDate` = `startDateField` 값 → 없으면 `created`의 날짜(YYYY-MM-DD) → 없으면 `duedate`.

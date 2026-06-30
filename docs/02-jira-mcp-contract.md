@@ -24,12 +24,14 @@
 | `jira_search_fields` | 커스텀 필드 id 발견 | `keyword` |
 | `jira_get_agile_boards` / `jira_get_board_issues` / `jira_get_sprint_issues` | 보드·스프린트 범위가 필요할 때 | — |
 
-## sync용 권장 `fields` (N+1 회피)
-`jira_search` 한 번으로 카드·간트·라벨·링크에 필요한 거의 모든 것을 가져온다:
+## sync용 `fields`: 반드시 `*all` (N+1 회피 + issuetype)
+`jira_search`를 **`fields="*all"`** 로 한 번 호출해 카드·간트·라벨·링크·유형에 필요한 모든 것을 가져온다:
 ```
-summary,status,issuetype,assignee,priority,labels,duedate,created,updated,description,issuelinks,parent
+*all
 ```
-- `issuelinks` 를 포함하면 연결관계(A3)를 검색 결과에서 바로 얻는다 → 이슈별 추가 호출 불필요.
+- ⚠️ **유형(issuetype)은 `*all` 일 때만** 온다 — `fields`를 명시하면(`issuetype`을 넣어도) MCP가 누락한다(아래 §issuetype 함정). 그래서 `*all`이 필수다.
+- `*all`엔 `issuelinks`(연결관계 A3)·`issue_type`·커스텀필드(startDate/epic)가 모두 포함된다 → 이슈별 추가 호출 불필요.
+- `*all`은 devstatus 등 큰 커스텀필드도 함께 오지만, `normalize.py`가 필요한 필드만 추출하므로 snapshot은 깔끔하다(부피는 `data/raw_issues.json`에만 남는다).
 - **코멘트는 검색 결과에 없다.** 상세 진입 시 `jira_get_issue(issue_key, fields="comment", comment_limit=N)`로 가져온다(`10`). ⚠️ **이 MCP는 `fields`에 `comment`가 없으면 `comment_limit`을 줘도 코멘트를 반환하지 않는다**(기본 `fields`엔 comment 미포함 → 빈 것처럼 보임). 코멘트 0건 이슈는 응답에 `comments` 키 자체가 없으니 `[]`로 취급한다. 또한 `jira_get_issue`의 코멘트는 평면 형식이라 `comments[].author`가 **객체**(`{display_name,...}`)다 — snapshot/`apply_queue`에는 `author`를 **문자열(displayName)** 로 변환해 넣는다(프런트 `detail.js`가 문자열로 렌더).
 
 ## 응답에서 읽어야 할 경로 (정규화 기준)
@@ -38,7 +40,7 @@ summary,status,issuetype,assignee,priority,labels,duedate,created,updated,descri
 - 라벨: `fields.labels` (문자열 배열)
 - 담당자: `fields.assignee.displayName` / `.name` / `.avatarUrls`
 - 우선순위: `fields.priority.name`
-- 타입: `fields.issuetype.name`
+- 타입: `fields.issuetype.name` — 단 평면 `*all` 응답은 `issue_type`(snake), `to_v2`가 `issuetype`으로 매핑(아래 §issuetype 함정)
 - 부모/에픽: `fields.parent.key` (또는 에픽 링크 커스텀 필드 — §커스텀 필드 발견)
 - 설명: `fields.description` — **Jira wiki markup 원문**(v2). 링크 파싱은 이 원문에서 한다(`08`).
 - 링크: `fields.issuelinks[]` — 각 항목은
@@ -66,7 +68,7 @@ summary,status,issuetype,assignee,priority,labels,duedate,created,updated,descri
 
 - `status.category` → `statusCategory.key` 매핑: `"To Do"→new`, `"In Progress"→indeterminate`, `"Done"→done`.
 - **커스텀필드 언래핑이 중요**: `{"value": null}`을 그대로 두면 `startDate` 추출이 깨진다(과거 수동 변환의 버그). `to_v2()`는 `{value:X}`→`X`로 풀며, 이미 v2인 입력에도 멱등하게 적용된다.
-- 검색 결과는 **`issuetype`을 누락한다**(이 MCP의 한계). 유형이 필요하면 `jira_get_issue(fields="issuetype")`로 받는다(응답 키는 snake_case `issue_type`). sync에서 유형 표시가 필요하면 이슈당 1콜로 보강한다(`04`). 보강 안 하면 타입은 빈 문자열.
+- **issuetype 함정:** `fields`를 명시하면(`issuetype`을 넣어도) 검색·`jira_get_issue` 응답에서 **유형이 누락**된다. `jira_get_issue(fields="issuetype")`로도 **못 받는다.** 오직 **`fields="*all"`** 일 때만 유형이 `issue_type`(snake_case) 키, `{"name":"Epic"}` 형태로 온다. `to_v2()`가 `issue_type`→`issuetype`으로 매핑하고 `normalize_issue`가 둘 다 폴백으로 읽는다. ⚠️ 이 함정을 놓치면 모든 이슈 유형이 빈 문자열/`Task`로 오염된다(실제로 Epic `UNIFY-7786`이 Task로 표시된 적 있음). → **sync는 항상 `*all`(`04`).**
 
 ## 함정 / 반드시 지킬 것
 1. **상태 변경은 2단계.** 상태 *이름*으로 못 바꾼다.

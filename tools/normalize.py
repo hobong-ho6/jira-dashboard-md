@@ -247,7 +247,7 @@ def normalize_issue(issue, cfg, today):
         "key": key,
         "url": "%s/browse/%s" % (base, key) if base else key,
         "summary": f.get("summary", ""),
-        "issuetype": (f.get("issuetype") or {}).get("name", ""),
+        "issuetype": (f.get("issuetype") or f.get("issue_type") or {}).get("name", ""),
         "status": {
             "name": status.get("name", ""),
             "category": (status.get("statusCategory") or {}).get("key", ""),
