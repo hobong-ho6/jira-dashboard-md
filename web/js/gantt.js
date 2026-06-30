@@ -144,6 +144,7 @@ export function renderGantt(root, groups, byKey, weekStart) {
   const bars = el("div", "gantt-bars");
   bars.style.top = HEAD_H + "px";
   const geom = new Map(); // key -> {left,right,yMid}
+  const labelBars = []; // {bar,left} - 라벨을 가시영역 시작으로 클램프하기 위한 목록
 
   for (const row of layout) {
     if (row.type === "group") {
@@ -191,6 +192,7 @@ export function renderGantt(root, groups, byKey, weekStart) {
     bar.innerHTML = `<span class="g-bar-key">${escapeHtml(it.key)}</span><span class="g-bar-sum">${escapeHtml(it.summary)}</span>`;
     if (state.selectedKey === it.key) bar.classList.add("sel");
     bars.append(bar);
+    labelBars.push({ bar, left });
     if (!geom.has(it.key)) geom.set(it.key, { left, right: left + width, yMid: HEAD_H + row.y + ROW_H / 2 });
     issueGeomKeys.add(it.key);
   }
@@ -261,10 +263,21 @@ export function renderGantt(root, groups, byKey, weekStart) {
   lhead.style.height = HEAD_H + "px";
   labels.style.flex = `0 0 ${LABEL_W}px`;
 
-  // 세로 스크롤 동기화 (타임라인 -> 라벨) + 스크롤 위치 보존
+  // 막대가 가시영역 왼쪽 밖에서 시작하면 라벨(번호+제목)을 보이는 시작 지점으로 밀어 넣는다.
+  // 막대 content 시작을 max(막대 left, 현재 스크롤 위치)로 맞춰, 가로 스크롤에도 라벨이 따라온다.
+  const BASE_PAD = 7; // .g-bar 의 좌우 padding(7px)과 일치
+  const clampLabels = () => {
+    const sx = scroll.scrollLeft;
+    for (const { bar, left } of labelBars) {
+      bar.style.paddingLeft = Math.max(BASE_PAD, sx - left + BASE_PAD) + "px";
+    }
+  };
+
+  // 세로 스크롤 동기화 (타임라인 -> 라벨) + 스크롤 위치 보존 + 라벨 클램프
   scroll.addEventListener("scroll", () => {
     lbody.style.transform = `translateY(${-scroll.scrollTop}px)`;
     state._gx = scroll.scrollLeft;
+    clampLabels();
   });
 
   root.append(wrap);
@@ -272,6 +285,7 @@ export function renderGantt(root, groups, byKey, weekStart) {
   // 스크롤 복원: 이전 위치가 있으면 유지, 없으면 오늘 중심
   requestAnimationFrame(() => {
     scroll.scrollLeft = (state._gx != null) ? state._gx : Math.max(0, x(today) - 120);
+    clampLabels();
   });
 
   // ----- 범위 밖 티켓을 별도 컨테이너에 렌더링 -----
