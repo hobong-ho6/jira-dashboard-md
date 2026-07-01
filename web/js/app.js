@@ -1,5 +1,5 @@
 // app.js — 오케스트레이터: 필터바, 가시 집합 계산, 렌더 연결
-import { state, subscribe, setFilter, collapseAll, clearSelection, setUiPersister } from "./state.js";
+import { state, subscribe, setFilter, collapseAll, clearSelection, setUiPersister, isLabelHidden } from "./state.js";
 import { loadSnapshot, startPolling, lastSynced, loadUiState, saveUiState } from "./data.js";
 import { renderGantt } from "./gantt.js";
 import { renderCards } from "./cards.js";
@@ -43,6 +43,7 @@ function visibleGroups() {
   if (!snap) return [];
   const out = [];
   for (const g of (snap.labelGroups || [])) {
+    if (isLabelHidden(g.name)) continue;   // 숨긴 라벨 그룹 제외 (docs/05)
     const keys = (g.issueKeys || []).filter((k) => {
       const it = state.byKey.get(k);
       return it && issueVisible(it);
@@ -59,6 +60,7 @@ function todayGroups() {
   const today = todayDate(), ws = weekStart();
   const out = [];
   for (const g of (snap.labelGroups || [])) {
+    if (isLabelHidden(g.name)) continue;   // 숨긴 라벨 그룹 제외 (docs/05)
     const keys = (g.issueKeys || []).filter((k) => {
       const it = state.byKey.get(k);
       return it && passesBaseFilters(it) && bucketOf(it.duedate, today, ws) === "today";

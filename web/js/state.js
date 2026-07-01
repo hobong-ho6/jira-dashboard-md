@@ -12,7 +12,7 @@ export const state = {
     bucket: "all",             // all | overdue | today | thisWeek (상태줄 카운트 클릭 필터)
   },
   byKey: new Map(),            // key -> issue (스냅샷 갱신 시 재구성)
-  ui: { groupOrder: [], collapsed: [], sectionOrder: [] }, // 로컬 보기 설정(서버 data/ui-state.json 에 영속, docs/12)
+  ui: { groupOrder: [], collapsed: [], sectionOrder: [], hiddenLabels: [] }, // 로컬 보기 설정(서버 data/ui-state.json 에 영속, docs/12)
 };
 
 const listeners = new Set();
@@ -53,3 +53,13 @@ export function clearSelection() { state.selectedKey = null; emit(); }
 export function setFilter(patch) { Object.assign(state.filters, patch); emit(); }
 
 export function setUiState(patch) { Object.assign(state.ui, patch); emit(); persistUi(); }
+
+// 라벨 숨김(로컬 보기설정) — 숨긴 라벨 그룹은 간트·카드에서 제외한다. Jira 무관.
+export function isLabelHidden(name) { return (state.ui.hiddenLabels || []).includes(name); }
+export function toggleLabelHidden(name) {
+  const arr = state.ui.hiddenLabels || (state.ui.hiddenLabels = []);
+  const i = arr.indexOf(name);
+  if (i >= 0) arr.splice(i, 1); else arr.push(name);
+  emit(); persistUi();
+}
+export function setHiddenLabels(names) { state.ui.hiddenLabels = [...new Set(names)]; emit(); persistUi(); }

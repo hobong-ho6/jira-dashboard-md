@@ -1,5 +1,5 @@
 // reorder.js — 그룹 순서 조정 모달 (로컬 보기 설정, docs/05·docs/12)
-import { state, setUiState } from "./state.js";
+import { state, setUiState, isLabelHidden } from "./state.js";
 import { saveUiState } from "./data.js";
 import { toast } from "./actions.js";
 import { labelColor, applyGroupOrder } from "./util.js";
@@ -18,7 +18,7 @@ export function openReorderModal() {
 
   // 현재 적용된 순서(저장된 그룹 순서 반영)대로 모달에 표시
   currentOrder = applyGroupOrder(snap.labelGroups, state.ui.groupOrder)
-    .map(g => ({ name: g.name, count: g.count }));
+    .map(g => ({ name: g.name, count: g.count, hidden: isLabelHidden(g.name) }));
 
   renderReorderList();
   $("#reorder-modal").style.display = "flex";
@@ -35,13 +35,14 @@ function renderReorderList() {
   list.innerHTML = currentOrder.map((g, idx) => {
     const color = labelColor(g.name);
     return `
-      <div class="reorder-item" draggable="true" data-idx="${idx}">
+      <div class="reorder-item${g.hidden ? " is-hidden" : ""}" draggable="true" data-idx="${idx}">
         <span class="reorder-handle">⋮⋮</span>
         <span class="reorder-label">
           <span class="label-chip" style="background:${color};"></span>
           ${escapeHtml(g.name)}
         </span>
         <span class="reorder-count">${g.count}개</span>
+        <button class="reorder-vis" data-vis="${idx}" title="${g.hidden ? "대시보드에 표시" : "대시보드에서 숨기기"}">${g.hidden ? "🙈 숨김" : "👁 표시"}</button>
       </div>
     `;
   }).join("");
@@ -53,6 +54,15 @@ function renderReorderList() {
     item.addEventListener("dragover", handleDragOver);
     item.addEventListener("drop", handleDrop);
     item.addEventListener("dragleave", handleDragLeave);
+  });
+  // 숨김/표시 토글 (드래그와 무관하게 클릭)
+  list.querySelectorAll(".reorder-vis").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const i = parseInt(btn.dataset.vis, 10);
+      currentOrder[i].hidden = !currentOrder[i].hidden;
+      renderReorderList();
+    });
   });
 }
 
@@ -102,14 +112,16 @@ function handleDrop(e) {
 }
 
 function saveReorderChanges() {
-  // (no label) 제외한 순서를 보기 설정으로 저장
+  // (no label) 제외한 순서 + 숨긴 라벨을 보기 설정으로 저장
   const groupOrder = currentOrder
     .map(g => g.name)
     .filter(name => name !== "(no label)");
+  const hiddenLabels = currentOrder.filter(g => g.hidden).map(g => g.name);
 
-  setUiState({ groupOrder });   // 메모리 반영 + 즉시 재렌더(emit)
-  saveUiState();                // 서버 data/ui-state.json 에 영속화 (fire-and-forget)
-  toast("그룹 순서를 저장했습니다.", "ok");
+  setUiState({ groupOrder, hiddenLabels });   // 메모리 반영 + 즉시 재렌더(emit)
+  saveUiState();                              // 서버 data/ui-state.json 에 영속화 (fire-and-forget)
+  const n = hiddenLabels.length;
+  toast(n ? `그룹 순서 저장 · 숨긴 라벨 ${n}개` : "그룹 순서를 저장했습니다.", "ok");
   closeReorderModal();
 }
 

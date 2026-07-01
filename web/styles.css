@@ -147,6 +147,10 @@ a { color: var(--accent); text-decoration: none; }
 .cgroup-dot { width: 9px; height: 9px; border-radius: 50%; }
 .cgroup-name { font-weight: 700; }
 .cgroup-count { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+.cgroup-hide { margin-left: auto; background: transparent; border: 1px solid var(--border); color: var(--muted);
+  border-radius: 6px; font-size: 10px; padding: 2px 7px; cursor: pointer; opacity: .45; transition: opacity .12s; }
+.cgroup-head:hover .cgroup-hide { opacity: 1; }
+.cgroup-hide:hover { border-color: var(--accent); color: var(--text); }
 .cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
 
 .card { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--bk-later);
@@ -299,6 +303,11 @@ a.d-key:hover { text-decoration: underline; }
 .reorder-label .label-chip { display: inline-block; width: 12px; height: 12px; border-radius: 3px;
   margin-right: 8px; vertical-align: middle; }
 .reorder-count { color: var(--muted); font-size: 11px; font-family: var(--mono); }
+.reorder-vis { background: transparent; border: 1px solid var(--border); color: var(--muted);
+  border-radius: 6px; font-size: 11px; padding: 3px 9px; cursor: pointer; white-space: nowrap; }
+.reorder-vis:hover { border-color: var(--accent); color: var(--text); }
+.reorder-item.is-hidden { opacity: .5; }
+.reorder-item.is-hidden .reorder-label { text-decoration: line-through; }
 
 /* ---- 새 티켓 생성 폼 ---- */
 .create-form { display: flex; flex-direction: column; gap: 14px; }

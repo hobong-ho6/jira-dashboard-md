@@ -1,5 +1,5 @@
 // cards.js — 라벨 그룹별 티켓 카드 (docs/09)
-import { state, isCollapsed, toggleGroup, select } from "./state.js";
+import { state, isCollapsed, toggleGroup, select, toggleLabelHidden } from "./state.js";
 import {
   bucketOf, fmtDate, fmtDateFull, escapeHtml, labelColor, todayDate,
   BUCKET_LABEL, BUCKET_RANK, statusCategoryClass,
@@ -15,8 +15,12 @@ export function renderCards(root, groups, byKey, weekStart) {
     header.innerHTML = `<span class="caret">${isCollapsed(g.name) ? "▸" : "▾"}</span>
       <span class="cgroup-dot" style="background:${labelColor(g.name)}"></span>
       <span class="cgroup-name">${escapeHtml(g.name)}</span>
-      <span class="cgroup-count">${g.keys.length}</span>`;
-    header.addEventListener("click", () => toggleGroup(g.name));
+      <span class="cgroup-count">${g.keys.length}</span>
+      <button class="cgroup-hide" title="이 라벨 숨기기 (그룹 순서 조정에서 복원)">🙈 숨김</button>`;
+    header.addEventListener("click", (e) => {
+      if (e.target.closest(".cgroup-hide")) { e.stopPropagation(); toggleLabelHidden(g.name); return; }
+      toggleGroup(g.name);
+    });
     section.append(header);
 
     if (!isCollapsed(g.name)) {

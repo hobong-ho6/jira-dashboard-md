@@ -119,10 +119,12 @@
 {
   "groupOrder": ["GuideKim", "Mission&Reward", "UnifiMobile"],
   "collapsed": ["group:UnifiMobile"],
-  "sectionOrder": ["timeline", "outOfRange", "cards"]
+  "sectionOrder": ["timeline", "outOfRange", "cards"],
+  "hiddenLabels": ["backlog", "archive"]
 }
 ```
 - `groupOrder`: 라벨 그룹 표시 순서(사용자가 "그룹 순서 조정"에서 드래그한 결과). `"(no label)"`은 제외(항상 맨 끝). 렌더 시 `snapshot.labelGroups`(시드: `config.labelOrder`) 위에 적용된다. 없으면 시드 순서 그대로.
 - `collapsed`: 접힌 그룹 키 배열(`group:<라벨명>`). 타임라인·카드가 공유하는 접힘 상태를 영속해 다음 실행 시 복원한다(`12`).
 - `sectionOrder`: 본문 영역 표시 순서. 값은 `today`(오늘 마감 강조 섹션)·`timeline`·`outOfRange`·`cards`. 패널 헤더의 ▲▼로 조정(`12`). 누락 항목은 기본 순서로 보충.
+- `hiddenLabels`: 대시보드에서 **숨긴 라벨명** 배열. 여기 있는 라벨 그룹은 간트·카드·오늘 마감에서 제외된다. 카드 그룹 헤더의 "숨김" 버튼 또는 "그룹 순서 조정" 모달의 표시/숨김 토글로 설정하며, 복원도 그 모달에서 한다(`05`,`12`). Jira 무관.
 - 스키마는 자유 확장 가능(향후 다른 보기 설정 추가 시 키만 늘린다). 서버는 객체면 그대로 저장한다.
