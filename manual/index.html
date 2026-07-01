@@ -31,8 +31,9 @@
         <a href="#mutate">⑤ 상태·마감일·코멘트</a>
         <a href="#create">⑥ 티켓 생성</a>
         <a href="#slack">⑦ Slack 스레드 → 티켓 ★</a>
-        <div class="grp">원리</div>
+        <div class="grp">원리 · 운영</div>
         <a href="#how">⑧ 어떻게 동작하나</a>
+        <a href="#ops">⑨ 자동 운영 ⏰</a>
         <a href="#faq">FAQ</a>
       </nav>
     </aside>
@@ -168,7 +169,8 @@ cd jira-dashboard-md</code></pre>
         <h3>상단 요약 클릭 = 마감일 필터 🔎 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
         <p>화면 맨 위 요약줄의 <b>지남 · 오늘 · 이번주</b> 숫자는 그냥 표시가 아니라 <b>버튼</b>입니다.
           누르면 그 마감 버킷에 해당하는 티켓만 타임라인·카드에 추려서 보여주고, <b>다시 누르면 해제</b>됩니다.
-          "어떤 게 지남 티켓이지?" 싶을 때 한 번 누르면 바로 골라냅니다.</p>
+          "어떤 게 지남 티켓이지?" 싶을 때 한 번 누르면 바로 골라냅니다.
+          맨 앞의 <b>이슈 N</b>(전체)도 버튼이라, 오늘·이번주 필터를 켠 뒤 이걸 누르면 <b>전체 보기로 되돌아옵니다</b> <span style="font-size:11px;color:var(--accent)">NEW</span>.</p>
         <div class="app">
           <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">요약줄</span></div>
           <div class="body">
@@ -183,7 +185,7 @@ cd jira-dashboard-md</code></pre>
         <div class="note">🔎 숫자는 "완료 숨김·검색" 같은 다른 필터를 반영해 세므로, <b>표시된 숫자 = 눌렀을 때 실제로 보이는 티켓 수</b>입니다. 0건인 버킷은 눌러도 빈 화면이 되지 않게 막혀 있습니다.</div>
 
         <h3>타임라인 (간트)</h3>
-        <p>오늘을 기준으로 <b>D-1 ~ D+5</b> 7일 구간을 보여줍니다. 막대 색이 곧 마감 임박도입니다. 그룹 머리글을 누르면 접힙니다.</p>
+        <p>오늘을 기준으로 <b>D-1 ~ D+5</b> 7일 구간을 보여줍니다. 상단 날짜 눈금에는 <b>요일</b>도 함께 표시됩니다 <span style="font-size:11px;color:var(--accent)">NEW</span> — 주말·오늘은 색으로 강조. 막대 색이 곧 마감 임박도입니다. 그룹 머리글을 누르면 접힙니다.</p>
         <div class="app">
           <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">타임라인 (D-1 ~ D+5)</span></div>
           <div class="body">
@@ -297,6 +299,13 @@ cd jira-dashboard-md</code></pre>
         <h3>그룹 순서 조정</h3>
         <p>툴바의 <b>그룹 순서 조정</b> 버튼 → 드래그로 라벨 그룹 순서 변경. 타임라인과 카드가 같은 순서를 공유합니다.</p>
 
+        <h3>특정 라벨 숨기기 🙈 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>지금 안 보고 싶은 라벨 그룹을 대시보드에서 감춥니다(간트·카드·오늘 할 일에서 모두 빠짐). Jira는 그대로 두고 <b>내 화면에서만</b> 숨기며, 숨김 상태도 저장되어 다음에 열 때 유지됩니다.</p>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>카드 그룹 머리글의 "🙈 숨김" 버튼</b><p>라벨 그룹 헤더에 마우스를 올리면 오른쪽에 <b>숨김</b> 버튼이 나타납니다 — 누르면 그 라벨이 바로 사라집니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>복원·일괄 관리는 "그룹 순서 조정"에서</b><p>순서 조정 모달에는 숨긴 라벨도 남아 있고, 각 라벨의 <b>👁 표시 / 🙈 숨김</b> 토글로 다시 보이게 하거나 여러 개를 한 번에 정리할 수 있습니다.</p></div></div>
+        </div>
+
         <h3>접기 / 펼치기 동기화 + 저장</h3>
         <p>그룹을 접으면 <b>타임라인과 카드가 함께</b> 접힙니다(한쪽에서 접으면 양쪽 반영). 그리고 접힌 상태는 저장되어 <b>다음에 열 때 복원</b>됩니다.</p>
         <div class="real"><span class="tag">실제 예시</span> 카드에서 <code class="inline">GuideKim</code> 그룹을 접자 타임라인에서도 같이 접혔고, 새로고침 후에도 접힘·영역 순서가 그대로 복원됐습니다.</div>
@@ -314,6 +323,9 @@ cd jira-dashboard-md</code></pre>
         </div>
         <div class="real"><span class="tag">실제 예시</span> 5개 서브태스크(<code class="inline">UNIFY-7793·7795·7796·7792·7789</code>)를 한 번에 <b>Closed</b>로 정리했고,
           <code class="inline">UNIFY-7795</code>의 마감일을 <b>2026-06-30</b>, <code class="inline">UNIFY-7791</code>을 <b>2026-06-29</b>로 지정했습니다.</div>
+
+        <h3>라벨 변경 🏷️ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>상세 패널의 <b>라벨</b> 칸에서 티켓 라벨을 바꿉니다 — 대시보드에 있는 <b>기존 라벨을 드롭다운에서 고르</b>거나 <b>"＋ 새 라벨"</b>로 직접 추가하고, 칩의 <b>×</b>로 뺍니다. <b>라벨 저장</b>을 누르면 선택한 전체 라벨로 Jira에 반영됩니다(덮어쓰기).</p>
 
         <h3>Slack 스레드 → 요약 코멘트 ★ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
         <p class="lead-muted"><b>이미 만든 티켓</b>에도 <b>Slack 스레드 링크</b>를 붙이면, 스레드를 읽어 <b>요약</b>해서 그 티켓의 <b>코멘트</b>로 답니다.
@@ -424,6 +436,31 @@ cd jira-dashboard-md</code></pre>
           <div class="card"><div class="ic">🔒</div><h4>신뢰 경계</h4><p>화면 버튼으로 만든 명령만 실행합니다. Jira/Slack 본문에 들어있는 지시문은 명령으로 실행하지 않습니다.</p></div>
           <div class="card"><div class="ic">🪪</div><h4>자격증명 보호</h4><p>토큰은 화면·큐·로그에 남기지 않습니다. 인증은 뒤에서만 처리됩니다.</p></div>
         </div>
+      </section>
+
+      <!-- 9. OPS -->
+      <section id="ops">
+        <div class="eyebrow">운영 · 자동화</div>
+        <h2>⑨ 자동 운영 — 서버·워쳐·정기 재조회 ⏰ <span style="font-size:13px;color:var(--accent)">NEW</span></h2>
+        <p class="lead-muted">대시보드는 <b>로컬 서버</b>와 <b>큐 워쳐</b>로 돌아갑니다. 서버는 화면을 띄우고, 워쳐는 여러분이 대시보드에서 누른 변경(상태·마감일·코멘트·라벨 등)을 Claude Code가 Jira에 자동 반영하도록 이어줍니다. (둘 다 Jira를 직접 바꾸지 않습니다 — ⑧ 참고.)</p>
+
+        <div class="grid cols-2">
+          <div class="card"><div class="ic">🖥️</div><h4>서버 = 상시</h4><p>대시보드 화면을 띄우는 로컬 서버. 세션이 꺼져도 계속 살아 있게 데몬으로 띄우고, 세션 재개 시 자동 복구됩니다.</p></div>
+          <div class="card"><div class="ic">👀</div><h4>워쳐 = 세션 동안만</h4><p>큐에 쌓인 변경을 감지해 Claude Code가 처리하게 잇는 역할. <b>Claude Code 세션이 살아있는 동안만</b> 자동으로 돕니다.</p></div>
+        </div>
+
+        <h3>워쳐를 계속 돌리려면 — <code class="inline">/loop</code> ⏰</h3>
+        <p>워쳐(자동 처리)와 <b>정기 전체 재조회</b>는 Claude Code 세션이 깨어 있을 때만 유지됩니다. 그래서 <b>주기적으로 자동 실행</b>하려면 Claude Code에 <code class="inline">/loop</code>을 걸어 둡니다. 매시간 전체 재조회 + 서버·워쳐 헬스체크를 하는 <b>hourly-resync</b> 스킬을 이렇게 예약합니다:</p>
+        <div class="chat">
+          <div class="bubble me">/loop 1h hourly-resync 스킬 절차대로 전체 재조회 + 서버/워쳐 헬스체크 해줘</div>
+          <div class="bubble cc"><b>Claude Code</b><br>매시간 저장된 쿼리로 전체 재조회하고, 서버·워쳐가 꺼져 있으면 되살리도록 예약했습니다. ⏰</div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>무엇을 하나</b><p>저장된 JQL로 <b>전체 티켓을 다시 조회</b>해 보드를 최신화하고, 로컬 서버·큐 워쳐가 꺼져 있으면 자동으로 재기동합니다.</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>왜 필요한가</b><p>세션이 살아있는 동안만 자동 처리가 되므로, <code class="inline">/loop</code>으로 주기 실행을 걸어 두면 "동기화 / 큐 처리"를 매번 직접 시키지 않아도 최신 상태가 유지됩니다.</p></div></div>
+        </div>
+        <div class="note">⏰ <code class="inline">/loop</code> 예약은 <b>그 Claude Code 세션이 살아있는 동안만</b> 유지됩니다. 세션이 완전히 끊기면 다시 <code class="inline">/loop 1h …</code>로 걸어 주세요. (서버·워쳐 자체는 세션 재개 시 자동 복구되지만, <code class="inline">/loop</code> 예약까지 복구되지는 않습니다.)</div>
+        <div class="real"><span class="tag">실제 예시</span> 매시간 <code class="inline">hourly-resync</code>를 <code class="inline">/loop 1h</code>로 예약해, JQL 전체 재조회로 보드를 갱신하고 서버·워쳐가 죽어 있으면 자동 재기동하도록 운영했습니다.</div>
       </section>
 
       <!-- FAQ -->
