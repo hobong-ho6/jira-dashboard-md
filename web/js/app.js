@@ -124,7 +124,11 @@ function render() {
     const tip = fb === bucket ? `${label} 필터 해제` : `${label} 티켓만 보기`;
     return `<button type="button" class="stat-btn ${cls}${active}${clickable}" data-bucket="${bucket}" data-count="${n}" title="${tip}">${label} ${n}</button>`;
   };
-  status.innerHTML = `이슈 ${total} · ${stat("overdue", "c-overdue", "지남", counts.overdue)}`
+  // "이슈 N" = 전체 보기(필터 해제) 토글. 버킷 필터가 없을 때(=all) 활성 표시.
+  const allActive = fb === "all" ? " active" : "";
+  const allTip = fb === "all" ? "전체 이슈 보기 (현재)" : "전체 이슈 보기 — 마감 필터 해제";
+  status.innerHTML = `<button type="button" class="stat-btn stat-all clickable${allActive}" data-bucket="all" title="${allTip}">이슈 ${total}</button>`
+    + ` · ${stat("overdue", "c-overdue", "지남", counts.overdue)}`
     + ` · ${stat("today", "c-today", "오늘", counts.today)}`
     + ` · ${stat("thisWeek", "c-week", "이번주", counts.thisWeek)} · 동기화 ${synced}`;
 }
@@ -157,7 +161,8 @@ function buildFilterBar() {
     const btn = e.target.closest("[data-bucket]");
     if (!btn) return;
     const bucket = btn.dataset.bucket;
-    if (state.filters.bucket === bucket) setFilter({ bucket: "all" });   // 토글 해제
+    if (bucket === "all") { setFilter({ bucket: "all" }); return; }      // 전체 보기(필터 해제)
+    if (state.filters.bucket === bucket) setFilter({ bucket: "all" });   // 활성 버킷 재클릭 → 해제
     else if (Number(btn.dataset.count || 0) > 0) setFilter({ bucket });  // 0개면 무시
   });
   // 카드 라벨칩 클릭 -> 검색 필터로

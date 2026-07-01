@@ -123,6 +123,7 @@ export function renderGantt(root, groups, byKey, weekStart) {
   // ----- 헤더 눈금 -----
   const head = el("div", "gantt-thead");
   head.style.width = timelineW + "px";
+  const WD = ["일", "월", "화", "수", "목", "금", "토"];
   let lastMonth = -1;
   for (let i = 0; i < numDays; i++) {
     const d = new Date(rangeStart); d.setDate(rangeStart.getDate() + i);
@@ -135,7 +136,7 @@ export function renderGantt(root, groups, byKey, weekStart) {
     const mm = d.getMonth();
     const monthTag = (mm !== lastMonth) ? `<span class="g-mon">${mm + 1}월</span>` : "";
     lastMonth = mm;
-    cell.innerHTML = `${monthTag}<span class="g-day">${d.getDate()}</span>`;
+    cell.innerHTML = `${monthTag}<span class="g-day">${d.getDate()}</span><span class="g-wday">${WD[d.getDay()]}</span>`;
     head.append(cell);
   }
   inner.append(head);

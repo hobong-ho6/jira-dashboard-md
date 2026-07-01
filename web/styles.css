@@ -108,7 +108,10 @@ a { color: var(--accent); text-decoration: none; }
 .g-tick.is-weekend { background: rgba(255,255,255,.015); }
 .g-tick.is-today { background: rgba(255,176,46,.12); color: var(--bk-today); }
 .g-mon { display: block; font-size: 9px; color: var(--accent); }
-.g-day { display: block; }
+.g-day { display: block; line-height: 1.15; }
+.g-wday { display: block; font-size: 9px; line-height: 1.1; color: var(--muted); }
+.g-tick.is-weekend .g-wday { color: var(--bk-overdue); opacity: .9; }
+.g-tick.is-today .g-wday { color: var(--bk-today); }
 
 .gantt-bg { position: absolute; left: 0; z-index: 0; }
 .g-weekend { position: absolute; top: 0; bottom: 0; height: 100%; background: rgba(255,255,255,.02); }
