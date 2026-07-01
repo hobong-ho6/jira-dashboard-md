@@ -10,6 +10,7 @@
 ## 카드 구성요소
 - 상단: `KEY` + 상태 pill(상태 카테고리 색) + 우선순위 아이콘.
 - 본문: `summary`(2줄 말줄임).
+- 상위 티켓 줄(sub-task 등 `parent` 있을 때만): `↳ 상위 {부모KEY} {부모summary}`. 클릭 시 부모가 snapshot에 있으면 상세로 이동, 없으면 Jira로 연다(카드 본문 클릭과 분리, stopPropagation). `parent`는 `{key, summary}` 객체(`03`).
 - 메타 행: Due 칩(bucket 색 + 날짜, `06`), 담당자 아바타/이름.
 - 라벨 칩들(`05` 색).
 - Description 링크 칩들(`08`).

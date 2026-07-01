@@ -170,6 +170,12 @@ a { color: var(--accent); text-decoration: none; }
 .card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
 .card-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
 .card-rel { margin-top: 6px; font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.card-parent { margin: -1px 0 5px; font-size: 11px; color: var(--muted); font-family: var(--mono);
+  cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-parent .cp-key { color: var(--accent); font-weight: 700; }
+.card-parent .cp-sum { color: var(--muted); font-family: inherit; margin-left: 5px; }
+.card-parent:hover .cp-key { text-decoration: underline; }
+.gi-sub { color: var(--muted); font-size: 11px; flex: none; }
 
 .pill { font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 600; border: 1px solid var(--border); }
 .pill.st-new { color: var(--st-new); }
@@ -231,6 +237,8 @@ a { color: var(--accent); text-decoration: none; }
   cursor: pointer; padding: 3px 4px; border-radius: 5px; font-size: 12px; }
 .rel-chip:hover { background: var(--surface3); }
 .rel-chip em { color: var(--muted); font-style: normal; font-family: var(--mono); font-size: 10px; }
+a.rel-chip { text-decoration: none; box-sizing: border-box; }
+a.rel-chip.parent-link { color: var(--accent); font-family: var(--mono); }
 .cmts { display: flex; flex-direction: column; gap: 8px; }
 .cmt { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; }
 .cmt-h { font-size: 11px; margin-bottom: 3px; }

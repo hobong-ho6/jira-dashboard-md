@@ -2,7 +2,7 @@
 import { state, isCollapsed, toggleGroup, select, toggleLabelHidden } from "./state.js";
 import {
   bucketOf, fmtDate, fmtDateFull, escapeHtml, labelColor, todayDate,
-  BUCKET_LABEL, BUCKET_RANK, statusCategoryClass,
+  BUCKET_LABEL, BUCKET_RANK, statusCategoryClass, parentOf,
 } from "./util.js";
 
 export function renderCards(root, groups, byKey, weekStart) {
@@ -31,14 +31,14 @@ export function renderCards(root, groups, byKey, weekStart) {
         if (ra !== rb) return ra - rb;
         return String(a.duedate || "9999").localeCompare(String(b.duedate || "9999"));
       });
-      for (const it of sorted) grid.append(card(it, today, weekStart));
+      for (const it of sorted) grid.append(card(it, today, weekStart, byKey));
       section.append(grid);
     }
     root.append(section);
   }
 }
 
-function card(it, today, weekStart) {
+function card(it, today, weekStart, byKey) {
   const bk = bucketOf(it.duedate, today, weekStart);
   const c = el("div", "card bd-" + bk);
   c.dataset.key = it.key;
@@ -59,6 +59,11 @@ function card(it, today, weekStart) {
   const rel = (it.links || []).length
     ? `<div class="card-rel">🔗 ${it.links.length}개 연결</div>` : "";
 
+  const p = parentOf(it, byKey);
+  const parentLine = p
+    ? `<div class="card-parent" data-parent="${escapeHtml(p.key)}" title="상위 티켓 ${escapeHtml(p.key)}${p.summary ? " · " + escapeHtml(p.summary) : ""}">↳ 상위 <span class="cp-key">${escapeHtml(p.key)}</span>${p.summary ? `<span class="cp-sum">${escapeHtml(p.summary)}</span>` : ""}</div>`
+    : "";
+
   const due = it.duedate
     ? `<span class="due bk-${bk}">${BUCKET_LABEL[bk]} · ${escapeHtml(it.duedate)}</span>`
     : `<span class="due bk-none">마감일 없음</span>`;
@@ -75,6 +80,7 @@ function card(it, today, weekStart) {
       <span class="prio prio-${escapeHtml((it.priority || "").toLowerCase())}">${escapeHtml(it.priority || "")}</span>
     </div>
     <div class="card-sum">${escapeHtml(it.summary)}</div>
+    ${parentLine}
     <div class="card-meta">${due}${assignee}</div>
     ${labelChips ? `<div class="card-chips">${labelChips}</div>` : ""}
     ${linkChips ? `<div class="card-chips">${linkChips}</div>` : ""}
@@ -82,11 +88,16 @@ function card(it, today, weekStart) {
   `;
 
   c.addEventListener("click", (e) => {
-    const chip = e.target.closest("[data-url],[data-label]");
+    const chip = e.target.closest("[data-url],[data-label],[data-parent]");
     if (chip) {
       e.stopPropagation();
       if (chip.dataset.url) window.open(chip.dataset.url, "_blank", "noopener");
       else if (chip.dataset.label) document.dispatchEvent(new CustomEvent("labelfilter", { detail: chip.dataset.label }));
+      else if (chip.dataset.parent) {
+        const pk = chip.dataset.parent;
+        if (byKey && byKey.has(pk)) select(pk);
+        else window.open(`${state.snapshot.jiraBaseUrl}/browse/${pk}`, "_blank", "noopener");
+      }
       return;
     }
     select(it.key);

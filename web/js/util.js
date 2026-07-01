@@ -93,6 +93,19 @@ export function statusCategoryClass(cat) {
   return "st-new";
 }
 
+// 상위(부모) 티켓 표시 정보. parent 가 있으면 {key, summary, inSnapshot}, 없으면 null.
+// snapshot 의 parent 는 {key, summary} 객체이지만 구버전(문자열 key)도 허용한다.
+// summary 는 (a) 부모가 snapshot 에 있으면 그 최신 summary, (b) 없으면 parent 객체에 실린 summary 순으로 택한다.
+export function parentOf(it, byKey) {
+  const p = it && it.parent;
+  if (!p) return null;
+  const key = typeof p === "string" ? p : p.key;
+  if (!key) return null;
+  const inSnap = byKey ? byKey.get(key) : null;
+  const summary = (inSnap && inSnap.summary) || (typeof p === "object" ? p.summary : null) || null;
+  return { key, summary, inSnapshot: !!inSnap };
+}
+
 // 저장된 그룹 순서(이름 배열)대로 그룹 배열을 재정렬.
 // order에 있는 이름이 먼저(그 순서대로), 나머지는 기존 순서 유지, NO_LABEL은 항상 맨 끝.
 export function applyGroupOrder(groups, order) {

@@ -2,7 +2,7 @@
 import { state, clearSelection, select } from "./state.js";
 import {
   escapeHtml, fmtDateTime, fmtDateFull, bucketOf, todayDate,
-  BUCKET_LABEL, statusCategoryClass,
+  BUCKET_LABEL, statusCategoryClass, parentOf,
 } from "./util.js";
 import { actions, runAction, toast } from "./actions.js";
 import { mountLabelPicker } from "./label-picker.js";
@@ -31,6 +31,16 @@ export function renderDetail(root, byKey, weekStart) {
   ).join("");
   const linkChips = (descLinkChips + cmtLinkChips) || `<span class="muted">없음</span>`;
 
+  // 상위(부모) 티켓: sub-task 등. 우측 상세에서는 실제 Jira 이슈로 이동한다(새 탭). 카드의 "↳ 상위" 줄은 대시보드 내 이동(09).
+  const parent = parentOf(it, byKey);
+  const parentUrl = parent
+    ? (((byKey.get(parent.key) || {}).url) || (state.snapshot.jiraBaseUrl + "/browse/" + parent.key))
+    : "";
+  const parentHtml = parent
+    ? `<div class="d-field"><label>상위 티켓 (Parent)</label>
+        <a class="rel-chip parent-link" href="${escapeHtml(parentUrl)}" target="_blank" rel="noopener" title="Jira에서 열기">${escapeHtml(parent.key)}${parent.summary ? ` · ${escapeHtml(parent.summary)}` : ""} ↗</a></div>`
+    : "";
+
   // 연결관계: 방향/관계문구별 그룹
   const relGroups = {};
   for (const l of (it.links || [])) (relGroups[l.relation] ||= []).push(l);
@@ -40,6 +50,24 @@ export function renderDetail(root, byKey, weekStart) {
         ${arr.map((l) => `<button class="rel-chip" data-go="${escapeHtml(l.key)}" title="${escapeHtml(l.summary)}">${escapeHtml(l.key)} · ${escapeHtml(l.summary)} <em>${escapeHtml(l.status)}</em></button>`).join("")}
         </div>`).join("")
     : `<span class="muted">연결 없음</span>`;
+
+  // 연결 추가: 링크 타입별 방향(outward/inward)을 자연문으로 고른다. 타입 목록은 config에서 실측(docs/07·11).
+  const linkTypes = (state.snapshot.config && state.snapshot.config.linkTypes) || [];
+  const linkOpts = linkTypes.map((t) => {
+    const out = `<option value="${escapeHtml(t.name)}::out">${escapeHtml(t.outward)}</option>`;
+    const inn = (t.inward && t.inward !== t.outward)
+      ? `<option value="${escapeHtml(t.name)}::in">${escapeHtml(t.inward)}</option>` : "";
+    return `<optgroup label="${escapeHtml(t.name)}">${out}${inn}</optgroup>`;
+  }).join("");
+  const linkAddHtml = linkOpts
+    ? `<div class="d-field"><label>연결 추가</label>
+        <div class="row">
+          <select id="d-link-rel">${linkOpts}</select>
+          <input type="text" id="d-link-target" placeholder="상대 티켓 키 (예: UNIFY-1234)">
+          <button class="btn" id="d-link-add">연결</button>
+        </div>
+        <p class="hint" id="d-link-preview"></p></div>`
+    : `<div class="d-field"><label>연결 추가</label><p class="hint">연결 타입 정보가 없습니다. 재sync 후 사용할 수 있습니다.</p></div>`;
 
   const commentsHtml = it.commentsLoaded
     ? ((it.comments || []).length
@@ -59,6 +87,7 @@ export function renderDetail(root, byKey, weekStart) {
       <button class="d-close" id="d-close" aria-label="닫기">✕</button>
     </div>
     <div class="d-sum">${escapeHtml(it.summary)}</div>
+    ${parentHtml}
 
     <div class="d-grid">
       <div class="d-field"><label>상태 변경</label>
@@ -82,6 +111,7 @@ export function renderDetail(root, byKey, weekStart) {
     <div class="d-field"><label>링크</label><div class="chips">${linkChips}</div></div>
 
     <div class="d-field"><label>연결관계</label><div class="rels">${relHtml}</div></div>
+    ${linkAddHtml}
 
     <div class="d-field"><label>코멘트</label><div class="cmts" id="d-cmts">${commentsHtml}</div></div>
     <div class="d-field"><label>코멘트 추가</label>
@@ -154,6 +184,32 @@ export function renderDetail(root, byKey, weekStart) {
     requestedComments.add(key);
     runAction(actions.loadComments(key), `${key} 코멘트 로드 요청`, 'load_comments');
   });
+
+  // 연결 추가: 방향(outward/inward)에 따라 inward/outward 이슈 키를 매핑해 create_link 큐잉.
+  const relSel = root.querySelector("#d-link-rel");
+  if (relSel) {
+    const relTarget = root.querySelector("#d-link-target");
+    const relPreview = root.querySelector("#d-link-preview");
+    const phraseOf = () => relSel.selectedOptions[0] ? relSel.selectedOptions[0].textContent : "";
+    const updatePreview = () => {
+      relPreview.textContent = `${key} ${phraseOf()} ${(relTarget.value || "").trim().toUpperCase() || "상대 티켓"}`;
+    };
+    relSel.addEventListener("change", updatePreview);
+    relTarget.addEventListener("input", updatePreview);
+    updatePreview();
+    root.querySelector("#d-link-add").addEventListener("click", () => {
+      const target = (relTarget.value || "").trim().toUpperCase();
+      if (!/^[A-Z][A-Z0-9]+-\d+$/.test(target)) { toast("상대 티켓 키 형식이 아닙니다 (예: UNIFY-1234).", "warn"); return; }
+      if (target === key) { toast("자기 자신과는 연결할 수 없습니다.", "warn"); return; }
+      const [name, dir] = relSel.value.split("::");
+      // "현재 {outward} 대상": 현재=outward 이슈, 대상=inward 이슈. "현재 {inward} 대상"은 반대.
+      const inward = dir === "out" ? target : key;
+      const outward = dir === "out" ? key : target;
+      runAction(actions.createLink(inward, name, outward), `연결 추가: ${key} ${phraseOf()} ${target}`);
+      relTarget.value = "";
+      updatePreview();
+    });
+  }
 
   root.querySelectorAll("[data-url]").forEach((b) =>
     b.addEventListener("click", () => window.open(b.dataset.url, "_blank", "noopener")));

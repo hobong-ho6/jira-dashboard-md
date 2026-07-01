@@ -31,6 +31,7 @@
 - `startDateField`/`epicLinkField`: `jira_search_fields`로 발견한 `customfield_xxxxx`를 넣는다. 없으면 `null` 유지.
 - `descriptionLinkRules`: 위에서부터 첫 매칭 적용. `"*"`는 폴백. (`08`)
 - `ganttDependencyLinkTypes`: 간트 화살표로 그릴 링크 타입(`06`,`07`).
+- `linkTypes`: `jira_get_link_types`로 **실측**한 이슈 링크 타입 배열 `{name, inward, outward}`. 대시보드 상세의 "연결 추가" 방향 드롭다운 재료(`07`,`10`). 추측 금지 — 인스턴스 실제 값으로 채운다. sync가 snapshot.config로 복사한다.
 
 ## `data/snapshot.json` (Claude Code 작성, 브라우저 읽기 전용 소스)
 ```json
@@ -53,7 +54,7 @@
       "startDate": "2026-06-20",
       "created": "2026-06-18T10:00:00+09:00",
       "updated": "2026-06-22T18:00:00+09:00",
-      "parent": "PROJ-100",
+      "parent": { "key": "PROJ-100", "summary": "결제 모듈 리뉴얼(에픽)" },
       "bucket": "thisWeek",
       "descriptionText": "표시용 정리 텍스트(선택)",
       "descriptionLinks": [
@@ -83,6 +84,7 @@
 - `query`: 이 스냅샷을 만든 JQL(=`config.jql`). 대시보드 JQL 입력창은 이 값으로 채워진다.
 - `bucket` ∈ `overdue|today|thisWeek|later|none` — sync가 `generatedAt`과 `weekStart` 기준으로 계산(`06`).
 - `startDate`: `config.startDateField` 값 → 없으면 `created`의 날짜 → 그래도 없으면 `duedate`와 동일(0일 막대). (`06`)
+- `parent`: 상위(부모/에픽) 티켓. sub-task 등에만 있고 없으면 `null`. `{key, summary}` 객체 — summary는 검색 응답의 `parent.fields.summary`에서 가져오므로 **부모가 JQL 결과 밖(예: Closed)이라 `issues[]`에 없어도** 제목을 표시할 수 있다. summary가 없으면 `null`. UI는 sub-task 카드/상세/간트에서 이 값을 "↳ 상위" 로 표시한다. **카드/간트**의 상위는 클릭 시 부모가 snapshot 내면 상세로, 밖이면 Jira로 연다(`09`,`06`). **상세 패널**의 상위 필드는 클릭 시 **항상 실제 Jira 이슈를 새 탭으로 연다**(`10`). ⚠️ 이 `parent`(snapshot 이슈 필드)는 `create_issue` **명령**의 `parent`(문자열 key)와 별개다.
 - `links[].direction` ∈ `inward|outward`, `relation`은 표시 문구(`type.inward`/`outward`).
 - `descriptionLinks`: description 원문에서 추출(sync, `08`). `commentLinks`: 코멘트 본문에서 **같은 규칙**으로 추출하되 코멘트 로드 시에만 채워짐(지연, description url과 중복 제거). UI는 둘을 함께 표시(`08`).
 - `comments`/`commentsLoaded`: 상세 진입 시 지연 로드로 채움(`10`).
@@ -90,6 +92,7 @@
 - 라벨이 없는 이슈는 `labelGroups`의 `"(no label)"`에 모은다.
 - `config.projects`: `config.json`의 `projects` 사본. 대시보드 "새 티켓" 폼의 프로젝트 선택지로 쓰인다(`12`). 없으면 프런트가 이슈 키 접두사에서 폴백 추출.
 - `config.currentUser`: `config.json`의 `currentUser`(이 Jira 인스턴스의 username, 예: `hogeun.kim`). "새 티켓" 폼의 담당자 기본값으로 쓰인다(`12`). 이메일/표시명이 아니라 **username/key**여야 조회·배정이 된다.
+- `config.linkTypes`: `config.json`의 `linkTypes` 사본. 상세 "연결 추가" 방향 드롭다운에 쓰인다(`07`,`10`,`11`). 없으면 프런트는 "연결 타입 정보 없음" 안내만 표시.
 
 ## `data/commands.jsonl` (브라우저 append, Claude Code 드레인)
 한 줄당 JSON 하나. 모든 명령은 `id`, `ts`, `status` 보유.

@@ -174,6 +174,15 @@ function buildFilterBar() {
   });
   // ESC 로 상세 닫기
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") clearSelection(); });
+  // 상세 영역 밖을 클릭하면 티켓 닫기. 단 티켓 선택/이동 요소(카드·간트 막대·라벨행·관계칩·부모줄)와
+  // 모달·토스트는 제외한다(그들 자신의 동작 유지). 카드 클릭은 data-key 로 걸러져 상세가 닫히지 않고 전환된다.
+  document.addEventListener("click", (e) => {
+    if (!state.selectedKey) return;
+    if (e.target.closest("#detail")) return;
+    if (e.target.closest("[data-key],[data-go],[data-parent]")) return;
+    if (e.target.closest(".modal, .toast")) return;
+    clearSelection();
+  });
 }
 
 async function main() {

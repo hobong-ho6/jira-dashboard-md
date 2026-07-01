@@ -22,9 +22,11 @@
 - 사이클이 있어도 렌더가 멈추지 않게(방문 표시). 위상정렬은 best-effort, 실패 시 입력 순서.
 - 상대 이슈가 현재 스냅샷 밖이면 칩에 "(외부)" 표시 + 외부 링크로만 연결.
 
-## 연결 생성(쓰기, 선택)
-- 상세에서 "연결 추가" → `create_link` 명령(`03`/`11`) → `jira_create_issue_link(inward, link_type, outward)`.
-- `link_type`은 `02`의 실측 name 목록에서 선택(드롭다운으로 고정 제공).
+## 연결 생성(쓰기) — 구현됨
+- 상세 패널 "연결 추가": 방향 드롭다운(`snapshot.config.linkTypes` 재료, 타입별 outward/inward 문구를 자연문 옵션으로 제공; 대칭 타입인 Relates는 1개로 dedupe) + 상대 티켓 키 입력 + 미리보기 문장.
+- 방향 매핑(중요): 옵션이 **outward**(예: "blocks")면 "현재티켓 blocks 대상" → `outward_issue=현재`, `inward_issue=대상`. **inward**(예: "is blocked by")면 반대. → `create_link` 명령 `{inward, type, outward}`(이슈 키)로 큐잉(`03`/`11`) → `jira_create_issue_link(inward, link_type=type, outward)`.
+- 키 형식 검증(`^[A-Z][A-Z0-9]+-\d+$`)·자기연결 금지는 프런트에서 막는다.
+- `link_type`은 추측하지 않고 `jira_get_link_types` 실측값(`config.linkTypes`)에서 고른다(`02`).
 
 ## Definition of Done
 - 모든 이슈의 연결관계가 카드/상세에 방향·관계문구와 함께 보인다.

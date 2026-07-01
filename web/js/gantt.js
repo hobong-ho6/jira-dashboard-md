@@ -2,7 +2,7 @@
 import { state, isCollapsed, toggleGroup, select } from "./state.js";
 import {
   parseDate, todayDate, daysBetween, weekRange, bucketOf, fmtDate,
-  escapeHtml, BUCKET_LABEL,
+  escapeHtml, BUCKET_LABEL, parentOf,
 } from "./util.js";
 
 const LABEL_W = 300, HEAD_H = 44, ROW_H = 36, GROUP_H = 36, MIN_BAR = 12;
@@ -189,7 +189,8 @@ export function renderGantt(root, groups, byKey, weekStart) {
     bar.style.top = (row.y + ROW_H / 2 - 9) + "px";
     bar.style.width = width + "px";
     bar.dataset.key = it.key;
-    bar.title = `${it.key} · ${it.summary} · ~${it.duedate}`;
+    const barParent = parentOf(it, byKey);
+    bar.title = `${it.key} · ${it.summary} · ~${it.duedate}${barParent ? `\n↳ 상위 ${barParent.key}${barParent.summary ? " · " + barParent.summary : ""}` : ""}`;
     bar.innerHTML = `<span class="g-bar-key">${escapeHtml(it.key)}</span><span class="g-bar-sum">${escapeHtml(it.summary)}</span>`;
     if (state.selectedKey === it.key) bar.classList.add("sel");
     bars.append(bar);
@@ -244,10 +245,12 @@ export function renderGantt(root, groups, byKey, weekStart) {
       lbody.append(gh);
     } else {
       const it = byKey.get(row.key);
+      const gp = it ? parentOf(it, byKey) : null;
       const c = el("div", "glabel-issue");
       c.style.height = ROW_H + "px";
       c.dataset.key = row.key;
-      c.innerHTML = `<span class="gi-key">${escapeHtml(row.key)}</span>
+      if (gp) c.title = `↳ 상위 ${gp.key}${gp.summary ? " · " + gp.summary : ""}`;
+      c.innerHTML = `${gp ? `<span class="gi-sub" title="Sub-task · 상위 ${escapeHtml(gp.key)}">↳</span>` : ""}<span class="gi-key">${escapeHtml(row.key)}</span>
         <span class="gi-sum">${escapeHtml(it ? it.summary : "")}</span>`;
       c.addEventListener("click", () => select(row.key));
       lbody.append(c);
@@ -369,7 +372,8 @@ function createSimpleIssueItem(it) {
   const item = el("div", "oor-simple-item");
   item.dataset.key = it.key;
   item.textContent = `${it.key}`;
-  item.title = `${it.summary} (${it.status.name})`;
+  const gp = parentOf(it, null);
+  item.title = `${it.summary} (${it.status.name})${gp ? `\n↳ 상위 ${gp.key}${gp.summary ? " · " + gp.summary : ""}` : ""}`;
   item.addEventListener("click", () => select(it.key));
   return item;
 }

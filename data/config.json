@@ -15,6 +15,20 @@
     "Finish-to-Start link (WBSGantt)",
     "Blocks"
   ],
+  "linkTypes": [
+    { "name": "Blocks", "inward": "is blocked by", "outward": "blocks" },
+    { "name": "Relates", "inward": "relates to", "outward": "relates to" },
+    { "name": "Duplicate", "inward": "is duplicated by", "outward": "duplicates" },
+    { "name": "Cloners", "inward": "is cloned by", "outward": "clones" },
+    { "name": "Problem/Incident", "inward": "is caused by", "outward": "causes" },
+    { "name": "Defect", "inward": "is defect of", "outward": "has defect" },
+    { "name": "Issue split", "inward": "split from", "outward": "split to" },
+    { "name": "Hierarchy link (WBSGantt)", "inward": "is contained in", "outward": "contains" },
+    { "name": "Finish-to-Start link (WBSGantt)", "inward": "Cannot start until linked issue finishes.", "outward": "Linked issue cannot start until this issue finishes." },
+    { "name": "Finish-to-Finish link (WBSGantt)", "inward": "Cannot finish until linked issue is finished.", "outward": "Linked issue cannot finish until this issue finishes." },
+    { "name": "Start-to-Start link (WBSGantt)", "inward": "Cannot start until linked issue starts.", "outward": "Linked issue can start after this issue starts." },
+    { "name": "Start-to-Finish link (WBSGantt)", "inward": "Cannot finish until linked issue starts.", "outward": "Linked issue cannot finish until this issue starts." }
+  ],
   "descriptionLinkRules": [
     {
       "match": [
