@@ -325,6 +325,7 @@ a.d-key:hover { text-decoration: underline; }
 .cf-label-chip button:hover { opacity: 1; }
 .cf-label-add { display: flex; gap: 8px; }
 .cf-label-add select, .cf-label-add input { flex: 1; min-width: 0; }
+#d-label-apply { margin-top: 8px; }
 
 /* ---- 본문 영역 순서 조정 (▲▼) ---- */
 .sec-move { margin-left: auto; display: inline-flex; gap: 2px; }

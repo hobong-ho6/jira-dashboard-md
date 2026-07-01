@@ -1,10 +1,11 @@
 // detail.js — 티켓 상세 패널 + 코멘트 + 변경 액션 (docs/10, docs/11)
 import { state, clearSelection, select } from "./state.js";
 import {
-  escapeHtml, fmtDateTime, fmtDateFull, bucketOf, todayDate, labelColor,
+  escapeHtml, fmtDateTime, fmtDateFull, bucketOf, todayDate,
   BUCKET_LABEL, statusCategoryClass,
 } from "./util.js";
 import { actions, runAction, toast } from "./actions.js";
+import { mountLabelPicker } from "./label-picker.js";
 
 let requestedComments = new Set();
 
@@ -29,9 +30,6 @@ export function renderDetail(root, byKey, weekStart) {
     `<button class="chip cat-${escapeHtml(ln.category)}" data-url="${escapeHtml(ln.url)}" title="코멘트 링크">💬 ${escapeHtml(ln.label)} · ${escapeHtml(ln.text)}</button>`
   ).join("");
   const linkChips = (descLinkChips + cmtLinkChips) || `<span class="muted">없음</span>`;
-
-  const labelChips = (it.labels || []).map((l) =>
-    `<span class="chip lab" style="--lc:${labelColor(l)}">${escapeHtml(l)}</span>`).join("") || `<span class="muted">없음</span>`;
 
   // 연결관계: 방향/관계문구별 그룹
   const relGroups = {};
@@ -72,7 +70,9 @@ export function renderDetail(root, byKey, weekStart) {
     </div>
 
     <div class="d-field"><label>담당자</label><div>${it.assignee ? escapeHtml(it.assignee.displayName || it.assignee.name) : `<span class="muted">미배정</span>`}</div></div>
-    <div class="d-field"><label>라벨</label><div class="chips">${labelChips}</div></div>
+    <div class="d-field"><label>라벨</label>
+      <div id="d-label-host"></div>
+      <button class="btn sm" id="d-label-apply">라벨 저장</button></div>
 
     <div class="d-field"><label>설명</label>
       <textarea id="d-desc-body" rows="5" placeholder="설명 (Jira wiki markup)">${escapeHtml(it.descriptionText || "")}</textarea>
@@ -121,6 +121,15 @@ export function renderDetail(root, byKey, weekStart) {
   root.querySelector("#d-desc-apply").addEventListener("click", () => {
     const body = root.querySelector("#d-desc-body").value;
     runAction(actions.setDescription(key, body), `${key} 설명 수정`);
+  });
+  // 라벨 편집: 대시보드 라벨 선택 + 새 라벨 추가 → 전체 배열로 덮어쓰기(set_labels, docs/05·11)
+  const labelPicker = mountLabelPicker(root.querySelector("#d-label-host"), {
+    initial: it.labels || [],
+    getSnapshot: () => state.snapshot,
+  });
+  root.querySelector("#d-label-apply").addEventListener("click", () => {
+    const labels = labelPicker.getLabels();
+    runAction(actions.setLabels(key, labels), `${key} 라벨 → [${labels.join(", ")}]`);
   });
   root.querySelector("#d-cmt-add").addEventListener("click", () => {
     const body = root.querySelector("#d-cmt-body").value.trim();
