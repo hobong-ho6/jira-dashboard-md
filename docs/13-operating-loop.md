@@ -38,6 +38,11 @@
 - **SessionStart 훅 자동복구.** `.claude/settings.local.json`의 `SessionStart` 훅이 매 세션 시작/재개 때 `tools/ensure_services.sh`를 돌려 (a) 서버 데몬을 보장하고 (b) 워쳐 상태를 stdout으로 보고한다. 워쳐가 `DOWN`이면 보고에 `ACTION:` 줄이 떠서 Claude가 `python3 tools/watch_queue.py`를 `run_in_background`로 (재)기동한다. → 사용자는 수동 재기동 없이 세션 재개만으로 서버·워쳐가 자동 복구된다.
   - 훅 설정은 `.claude/settings.local.json`에 있고 이 파일은 **gitignore(토큰 포함 가능 정책, docs/02)** 라 커밋되지 않는다. 새 클론에서 자동복구를 쓰려면 같은 `SessionStart` 훅을 로컬에 추가해야 한다(스크립트 `tools/ensure_services.sh`는 커밋됨). 훅 미설정 시에는 "서버 켜"/"워쳐 실행"으로 수동 기동.
 
+### 정기 전체 재조회 (`hourly-resync` 스킬 + `/loop`)
+- 증분 sync(mutation 후 영향 이슈만 재조회)와 별개로, **전체 재조회**를 주기적으로 돌리고 싶을 때는 `.claude/skills/hourly-resync/SKILL.md` 절차(전체 sync + 서버·워쳐 헬스체크)를 따른다.
+- 자동 반복은 `/loop 1h`로 이 스킬을 예약한다: `Skill(loop, "1h hourly-resync 스킬(.claude/skills/hourly-resync/SKILL.md) 절차대로 전체 재조회 + 서버/워쳐 헬스체크 수행")`.
+- **워쳐와 동일한 제약**: `/loop`는 `ScheduleWakeup`으로 **이 세션을 다시 깨우는 방식**이라, 세션이 완전히 끊기면 예약도 함께 끊긴다. 세션 재개 후 다시 자동으로 이어지지 않으므로, 필요하면 사용자가 `/loop 1h`를 재요청해야 한다(SessionStart 훅은 서버·워쳐만 자동복구하고 `/loop` 예약까지는 복구하지 않는다).
+
 ## 권장 운영 사이클
 ```
 1) serve + watcher (1회, 항상 함께)   # 서버 상시 + 큐 자동 감시
