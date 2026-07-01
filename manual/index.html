@@ -94,6 +94,21 @@ cd jira-dashboard-md</code></pre>
         </div>
         <div class="note">⚙️ 처음 <code class="inline">git</code>을 쓰면 "명령어 도구 설치" 팝업이 뜰 수 있습니다 — <b>설치</b>를 누르고, 끝나면 위 명령을 다시 붙여넣으면 됩니다.</div>
 
+        <h3>이미 받았다면 · 최신 버전으로 업데이트 (git pull) 🔄 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>대시보드는 계속 개선됩니다(요일 표시·라벨 편집/숨김·자동 운영 등). <b>이미 클론한 폴더</b>가 있다면 다시 클론하지 말고, 그 폴더에서 <code class="inline">git pull</code>로 최신 코드만 받으면 됩니다.</p>
+        <div class="steps">
+          <div class="step"><div class="n"></div><div class="b"><b>받아 둔 폴더에서 터미널 열기</b><p><b>Finder</b>에서 <code class="inline">jira-dashboard-md</code> 폴더 우클릭 → "<b>폴더에서 새로운 터미널 열기</b>". (또는 터미널에서 <code class="inline">cd jira-dashboard-md</code>)</p></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>아래를 붙여넣고 <span class="kbd">Enter</span></b><p>origin(GitHub)의 최신 변경을 받아 코드가 갱신됩니다.</p>
+            <pre><code>git pull</code></pre></div></div>
+          <div class="step"><div class="n"></div><div class="b"><b>브라우저 강력 새로고침</b><p><span class="kbd">⌘</span>+<span class="kbd">Shift</span>+<span class="kbd">R</span> 로 새 기능을 불러옵니다.</p></div></div>
+        </div>
+        <div class="chat">
+          <div class="bubble me">최신으로 업데이트해줘 (git pull)</div>
+          <div class="bubble cc"><b>Claude Code</b><br>origin/main에서 최신 변경을 받아왔습니다. 브라우저를 ⌘⇧R로 새로고침하면 새 기능이 보입니다. 🔄</div>
+        </div>
+        <div class="note">💡 터미널이 낯설면 Claude Code 채팅에 "<b>최신으로 업데이트해줘</b>"라고만 해도 됩니다.</div>
+        <div class="warn">⚠️ 내가 로컬에서 직접 바꾼 파일과 충돌해 <code class="inline">git pull</code>이 멈추면, 그 내용을 Claude Code에게 그대로 붙여넣어 물어보세요(강제로 덮어쓰지 마세요).</div>
+
         <h3>2단계 · 서버 실행은 Claude Code에게 (터미널 ❌)</h3>
         <p>이 대시보드의 Jira 조회·변경은 <b>Claude Code</b>가 합니다. 그래서 서버도 터미널에서 직접 켜지 않고, Claude Code 채팅에 <b>말로</b> 시키는 게 정석입니다 — 명령어를 외울 필요가 없습니다.</p>
         <div class="steps">
