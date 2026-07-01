@@ -241,7 +241,16 @@ def normalize_issue(issue, cfg, today):
         start_date = duedate
 
     desc = f.get("description") or ""
-    parent = (f.get("parent") or {}).get("key") if f.get("parent") else None
+    # parent: 상위(에픽/스토리) 티켓. 검색 응답의 parent 객체에 summary 가 함께 오므로
+    # 부모가 JQL 결과 밖이어도 제목을 표시할 수 있게 {key, summary} 로 저장한다.
+    # create_issue 병합 등 다른 경로가 parent 를 문자열 key 로만 줄 수도 있어 둘 다 받는다.
+    p_raw = f.get("parent")
+    if isinstance(p_raw, dict):
+        parent = {"key": p_raw.get("key"), "summary": (p_raw.get("fields") or {}).get("summary")}
+    elif p_raw:
+        parent = {"key": str(p_raw), "summary": None}
+    else:
+        parent = None
 
     return {
         "key": key,
@@ -315,6 +324,7 @@ def normalize_snapshot(raw, cfg, today=None):
             "projects": cfg.get("projects", []),
             "currentUser": cfg.get("currentUser", ""),
             "ganttDependencyLinkTypes": cfg.get("ganttDependencyLinkTypes", []),
+            "linkTypes": cfg.get("linkTypes", []),
         },
         "issues": issues,
         "labelGroups": build_label_groups(issues, label_order),
@@ -336,7 +346,23 @@ def main():
     if raw is None:
         print("입력이 없습니다: %s 를 먼저 만들어 주세요 (MCP 결과 저장)." % RAW, file=sys.stderr)
         sys.exit(1)
+    old_snap = load_json(SNAPSHOT, {}) or {}
+    old_by_key = {it.get("key"): it for it in old_snap.get("issues", [])}
+    old_transitions = old_snap.get("transitions", {})
+
     snap = normalize_snapshot(raw, cfg)
+
+    # 전체 재조회(sync)가 이미 지연 로드된 코멘트/전이를 지우지 않도록 이전 snapshot에서 이어받는다.
+    # (안 그러면 상세 패널을 열어둔 이슈마다 재조회 후 load_comments/load_transitions 가 매번 재요청됨)
+    for it in snap["issues"]:
+        old = old_by_key.get(it["key"])
+        if old and old.get("commentsLoaded"):
+            it["comments"] = old.get("comments", [])
+            it["commentsLoaded"] = True
+            it["commentLinks"] = old.get("commentLinks", [])
+    current_keys = {it["key"] for it in snap["issues"]}
+    snap["transitions"] = {k: v for k, v in old_transitions.items() if k in current_keys}
+
     atomic_write(SNAPSHOT, snap)
     print("snapshot 작성 완료: %s (issues=%d, labelGroups=%d)" %
           (SNAPSHOT, len(snap["issues"]), len(snap["labelGroups"])))
