@@ -31,8 +31,9 @@ weekStart <= duedate <= weekEnd -> thisWeek   (단, today 우선)
 - 그룹 헤더 행 자체에 그룹 요약 막대(그룹 내 최소 start ~ 최대 due의 범위 바)를 옅게 표시하면 접은 상태에서도 기간 감을 준다(선택).
 
 ## 의존성 화살표 (A3 연동)
-- `config.ganttDependencyLinkTypes`(기본: `Finish-to-Start link (WBSGantt)`, `Blocks`)에 해당하는 `links`만 화살표로 그린다.
+- `config.ganttDependencyLinkTypes`(기본: `Finish-to-Start link (WBSGantt)`, `Blocks`, `Relates`)에 해당하는 `links`만 화살표로 그린다.
 - 선행(blocking) 막대 끝 → 후행 막대 시작으로 화살표. 방향은 `07`의 정규화 결과 사용.
+- **`Relates` 는 대칭 관계**라 선/후행이 의존성처럼 확정적이지 않다 → 하드 의존성(Blocks/WBS FS)과 구분해 **회색 점선 화살표**(`.dep-rel`)로 그린다. 방향은 링크 생성 방향(outward 쪽이 선행)을 따르며 dedupe 로 한 쌍당 하나만 그린다(`07` 그래프 미니뷰의 Relates=회색 점선과 일관).
 - 화살표가 많아 지저분하면 "의존성 표시" 토글로 on/off. 상세(`10`) 진입 이슈의 의존성만 하이라이트하는 모드 권장.
 
 ## 렌더 기술

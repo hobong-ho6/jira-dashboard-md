@@ -137,6 +137,7 @@ a { color: var(--accent); text-decoration: none; }
 
 .gantt-arrows { position: absolute; top: 0; left: 0; z-index: 3; pointer-events: none; }
 .dep-path { fill: none; stroke: var(--dep); stroke-width: 1.5; opacity: .8; }
+.dep-path.dep-rel { stroke: var(--muted); stroke-dasharray: 5 3; opacity: .6; }
 
 /* ---- 카드 ---- */
 .cards-host { display: flex; flex-direction: column; gap: 12px; }

@@ -9,16 +9,13 @@ const LABEL_W = 300, HEAD_H = 44, ROW_H = 36, GROUP_H = 36, MIN_BAR = 12;
 
 function depTypes() {
   const c = (state.snapshot && state.snapshot.config) || {};
-  return new Set(c.ganttDependencyLinkTypes || ["Finish-to-Start link (WBSGantt)", "Blocks"]);
+  return new Set(c.ganttDependencyLinkTypes || ["Finish-to-Start link (WBSGantt)", "Blocks", "Relates"]);
 }
 
-// 링크 한 개 -> {pred, succ} (선행 -> 후행) 또는 null
+// 링크 한 개 -> {pred, succ} (선행 -> 후행). depTypes() 로 이미 필터된 링크만 들어온다.
+// outward: 이 이슈가 선행. inward: 상대가 선행.
+// (Relates 는 대칭이라 선/후행이 임의지만, 생성 방향을 따르며 dedupe 로 한 번만 그린다.)
 function depEdge(issueKey, link) {
-  const t = link.type || "";
-  const isWBS = t.startsWith("Finish-to-Start");
-  const isBlocks = t === "Blocks";
-  if (!isWBS && !isBlocks) return null;
-  // outward: 이 이슈가 선행. inward: 상대가 선행.
   if (link.direction === "outward") return { pred: issueKey, succ: link.key };
   return { pred: link.key, succ: issueKey };
 }
@@ -208,7 +205,9 @@ export function renderGantt(root, groups, byKey, weekStart) {
     svg.setAttribute("width", timelineW);
     svg.setAttribute("height", HEAD_H + totalRowsH);
     svg.innerHTML = `<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L6,3 L0,6 Z" fill="var(--dep)"/></marker></defs>`;
+      <path d="M0,0 L6,3 L0,6 Z" fill="var(--dep)"/></marker>
+      <marker id="ah-rel" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="var(--muted)"/></marker></defs>`;
     const drawn = new Set();
     for (const key of issueGeomKeys) {
       const it = byKey.get(key); if (!it) continue;
@@ -225,8 +224,10 @@ export function renderGantt(root, groups, byKey, weekStart) {
         const midx = Math.max(x1 + 12, (x1 + x2) / 2);
         const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
         p.setAttribute("d", `M${x1},${y1} C${midx},${y1} ${midx},${y2} ${x2},${y2}`);
-        p.setAttribute("class", "dep-path");
-        p.setAttribute("marker-end", "url(#ah)");
+        // Relates 는 대칭 관계라 하드 의존성(Blocks/WBS)과 구분해 회색 점선으로 그린다.
+        const isRel = link.type === "Relates";
+        p.setAttribute("class", isRel ? "dep-path dep-rel" : "dep-path");
+        p.setAttribute("marker-end", isRel ? "url(#ah-rel)" : "url(#ah)");
         svg.append(p);
       }
     }

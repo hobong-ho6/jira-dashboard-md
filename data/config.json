@@ -13,7 +13,8 @@
   "epicLinkField": "customfield_10108",
   "ganttDependencyLinkTypes": [
     "Finish-to-Start link (WBSGantt)",
-    "Blocks"
+    "Blocks",
+    "Relates"
   ],
   "linkTypes": [
     { "name": "Blocks", "inward": "is blocked by", "outward": "blocks" },

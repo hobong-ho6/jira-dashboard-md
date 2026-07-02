@@ -15,7 +15,7 @@
 3. **의존성 미니 그래프** (선택, 권장): 현재 필터된 이슈 집합으로 방향 그래프(SVG). 노드=이슈, 엣지=링크. 블로킹 체인을 시각화.
 
 ## 간트 의존성과의 관계
-- 간트 화살표(`06`)는 `links` 중 `config.ganttDependencyLinkTypes`만 사용.
+- 간트 화살표(`06`)는 `links` 중 `config.ganttDependencyLinkTypes`(기본 `Finish-to-Start link (WBSGantt)`·`Blocks`·`Relates`)만 사용. `Relates`는 대칭이라 회색 점선 화살표로 구분해 그린다(`06`).
 - 그래프 미니뷰는 전체 링크 타입을 색으로 구분(Blocks=빨강 실선, WBSGantt FS=파랑, Relates=회색 점선 등).
 
 ## 사이클·고아 처리
