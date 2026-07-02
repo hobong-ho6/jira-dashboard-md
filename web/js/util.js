@@ -87,6 +87,13 @@ export function debounce(fn, ms) {
   return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
 }
 
+// <input type="date"> 는 좁은 캘린더 아이콘을 정확히 눌러야만 달력이 열린다.
+// 필드 어디를 클릭해도 showPicker()로 달력을 띄운다.
+export function wireDatePicker(input) {
+  if (!input || typeof input.showPicker !== "function") return;
+  input.addEventListener("click", () => { try { input.showPicker(); } catch (_) {} });
+}
+
 export function statusCategoryClass(cat) {
   if (cat === "done") return "st-done";
   if (cat === "indeterminate") return "st-progress";

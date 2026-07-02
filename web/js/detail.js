@@ -2,7 +2,7 @@
 import { state, clearSelection, select } from "./state.js";
 import {
   escapeHtml, fmtDateTime, fmtDateFull, bucketOf, todayDate,
-  BUCKET_LABEL, statusCategoryClass, parentOf,
+  BUCKET_LABEL, statusCategoryClass, parentOf, wireDatePicker,
 } from "./util.js";
 import { actions, runAction, toast } from "./actions.js";
 import { mountLabelPicker } from "./label-picker.js";
@@ -144,6 +144,7 @@ export function renderDetail(root, byKey, weekStart) {
     if (!to) return;
     runAction(actions.transition(key, to), `${key} 상태 → ${to}`);
   });
+  wireDatePicker(root.querySelector("#d-due"));  // 필드 클릭 시 달력 열기
   root.querySelector("#d-due-apply").addEventListener("click", () => {
     const v = root.querySelector("#d-due").value || null;
     runAction(actions.setDuedate(key, v), `${key} 마감일 → ${v || "(제거)"}`);

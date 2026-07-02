@@ -2,7 +2,7 @@
 // 입력을 모아 create_issue 명령을 큐로 보낸다. 실제 생성은 Claude Code가 MCP로 수행.
 import { state } from "./state.js";
 import { actions, runAction, toast } from "./actions.js";
-import { labelColor, NO_LABEL } from "./util.js";
+import { labelColor, NO_LABEL, wireDatePicker } from "./util.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -87,6 +87,7 @@ function renderForm() {
   renderSubtasks();
   wireSubtaskPicker();
   wireParentAutoType();
+  wireDatePicker($("#cf-duedate"));  // 필드 클릭 시 달력 열기
 }
 
 // 상위 이슈(부모 키)를 입력하면 유형을 Sub-task로 자동 보정한다 (기존 티켓에 하위 작업 붙이기, docs/11).
