@@ -41,6 +41,14 @@ export function renderDetail(root, byKey, weekStart) {
         <a class="rel-chip parent-link" href="${escapeHtml(parentUrl)}" target="_blank" rel="noopener" title="Jira에서 열기">${escapeHtml(parent.key)}${parent.summary ? ` · ${escapeHtml(parent.summary)}` : ""} ↗</a></div>`
     : "";
 
+  // 하위 작업 추가: 이 티켓을 부모로 Sub-task 생성. Sub-task 자신은 하위를 가질 수 없어 숨긴다.
+  const subtaskAddHtml = (it.issuetype === "Sub-task") ? "" :
+    `<div class="d-field"><label>하위 작업 추가 (이 티켓의 Sub-task)</label>
+      <div class="row"><input type="text" id="d-subtask-summary" placeholder="하위 작업 제목 입력 후 Enter">
+      <button class="btn" id="d-subtask-add">추가</button></div>
+      <p class="hint">이 티켓(${escapeHtml(key)})을 부모로 하는 Sub-task를 만듭니다. process 후 반영됩니다.</p>
+    </div>`;
+
   // 연결관계: 방향/관계문구별 그룹
   const relGroups = {};
   for (const l of (it.links || [])) (relGroups[l.relation] ||= []).push(l);
@@ -112,6 +120,7 @@ export function renderDetail(root, byKey, weekStart) {
 
     <div class="d-field"><label>연결관계</label><div class="rels">${relHtml}</div></div>
     ${linkAddHtml}
+    ${subtaskAddHtml}
 
     <div class="d-field"><label>코멘트</label><div class="cmts" id="d-cmts">${commentsHtml}</div></div>
     <div class="d-field"><label>코멘트 추가</label>
@@ -153,6 +162,23 @@ export function renderDetail(root, byKey, weekStart) {
     const body = root.querySelector("#d-desc-body").value;
     runAction(actions.setDescription(key, body), `${key} 설명 수정`);
   });
+  // 하위 작업 추가: 이 티켓을 부모로 Sub-task 생성 (create_issue, docs/11)
+  const stAdd = root.querySelector("#d-subtask-add");
+  if (stAdd) {
+    const submitSubtask = () => {
+      const inp = root.querySelector("#d-subtask-summary");
+      const summary = inp.value.trim();
+      if (!summary) return;
+      const project = key.split("-")[0];
+      runAction(actions.createIssue({ project, issueType: "Sub-task", parent: key, summary }),
+        `${key} 하위 작업 생성: ${summary}`);
+      inp.value = "";
+    };
+    stAdd.addEventListener("click", submitSubtask);
+    root.querySelector("#d-subtask-summary").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); submitSubtask(); }
+    });
+  }
   // 라벨 편집: 대시보드 라벨 선택 + 새 라벨 추가 → 전체 배열로 덮어쓰기(set_labels, docs/05·11)
   const labelPicker = mountLabelPicker(root.querySelector("#d-label-host"), {
     initial: it.labels || [],
