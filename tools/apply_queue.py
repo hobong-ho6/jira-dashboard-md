@@ -95,6 +95,8 @@ def main():
             it["bucket"] = _nz.bucket_of(fields["duedate"], today, week_start)
         if "descriptionText" in fields:  # 설명 변경 → 설명 링크 재파싱
             it["descriptionLinks"] = _nz.parse_description_links(fields["descriptionText"], rules)
+        if "labels" in fields:  # 라벨 변경 → labelGroups 재빌드
+            snap["labelGroups"] = _nz.build_label_groups(snap.get("issues", []), cfg.get("labelOrder", []))
 
     add = payload.get("addIssues", [])
     if add:  # create_issue 후: 새 이슈 normalize → 추가/교체 → labelGroups 재빌드
