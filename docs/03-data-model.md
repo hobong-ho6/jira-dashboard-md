@@ -110,7 +110,7 @@
 ```
 - `add_comment`: 필수 `issueKey`. **`body` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). `slackUrl`(Slack 스레드 링크)이 있으면 Claude Code가 스레드를 가져와 **요약해 코멘트 본문을 생성**해 게시한다(`11`). `body`도 함께 주면 요약 앞에 덧붙인다. 직접 입력 코멘트는 `slackUrl:null`로 둔다.
 - `set_description`: 필수 `issueKey`·`description`. **Jira wiki markup 원문**으로 저장된다(`11`).
-- `create_issue`: 필수 `project`·`issueType`. **`summary` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). 선택 `assignee`(기본값=`config.currentUser`, 비우면 프로젝트 기본값)·`description`·`priority`·`duedate`·`labels[]`·`parent`(Sub-task 등)·**`slackUrl`**(Slack 스레드 링크 — 있으면 Claude Code가 스레드를 가져와 요약해 `description`을, `summary` 미입력 시 제목까지 생성; `11`). 브라우저는 빈 선택 필드를 생략한다. 생성된 새 이슈는 처리 후 snapshot `issues[]`에 추가된다(`11`).
+- `create_issue`: 필수 `project`·`issueType`. **`summary` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). 선택 `assignee`(기본값=`config.currentUser`, 비우면 프로젝트 기본값)·`description`·`priority`·`duedate`·`labels[]`·`parent`(Sub-task 등)·`subtasks[]`(**문자열 배열** — 각 원소가 하위 작업 제목. 있으면 Claude Code가 부모 티켓을 먼저 만들고, 반환된 key를 부모로 각 원소를 `Sub-task` 유형으로 함께 생성; `11`)·**`slackUrl`**(Slack 스레드 링크 — 있으면 Claude Code가 스레드를 가져와 요약해 `description`을, `summary` 미입력 시 제목까지 생성; `11`). 브라우저는 빈 선택 필드를 생략한다. 생성된 새 이슈(부모 + 하위 작업)는 처리 후 모두 snapshot `issues[]`에 추가된다(`11`).
 
 `action` 종류와 처리 매핑은 `11-mutations.md`가 권위.
 `status`: 브라우저는 항상 `pending`으로 만든다. Claude Code가 `done`/`failed`/`blocked`로 바꿔 `data/.processed/`에 옮기거나 `ack` API로 표시.

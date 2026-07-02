@@ -15,6 +15,9 @@ const distinct = (arr) => [...new Set(arr.filter(Boolean))];
 // 이 모달 세션에서 선택된 라벨들(칩). openCreateModal 마다 초기화한다.
 let selectedLabels = [];
 
+// 이 모달 세션에서 새 티켓 아래로 함께 만들 하위 작업 제목들. openCreateModal 마다 초기화한다.
+let subtaskSummaries = [];
+
 // 현재 대시보드에 보이는 라벨들(이슈 라벨 ∪ 라벨 그룹명, NO_LABEL 제외) — 이름 오름차순.
 function existingLabels(snap) {
   const set = new Set();
@@ -63,18 +66,71 @@ function renderForm() {
     <div class="cf-row cf-row-2">
       <div class="d-field"><label>마감일</label>
         <input id="cf-duedate" type="date"></div>
-      <div class="d-field"><label>상위 이슈 (Sub-task)</label>
-        <input id="cf-parent" type="text" placeholder="예: UNIFY-7792"></div>
+      <div class="d-field"><label>상위 이슈 (입력 시 Sub-task로 자동 지정)</label>
+        <input id="cf-parent" type="text" placeholder="예: UNIFY-7792 — 이 티켓의 부모"></div>
     </div>
     <div class="d-field"><label>라벨</label>
       <div id="cf-label-chips" class="cf-label-chips"></div>
       <div class="cf-label-add">
         <select id="cf-label-select" title="대시보드 라벨에서 선택하거나 새 라벨 추가"></select>
         <input id="cf-label-new" type="text" placeholder="새 라벨 입력 후 Enter" style="display:none;">
+      </div></div>
+    <div class="d-field"><label>하위 작업 (이 티켓 아래로 Sub-task 함께 생성)</label>
+      <div id="cf-subtasks" class="cf-subtask-list"></div>
+      <div class="cf-subtask-add">
+        <input id="cf-subtask-new" type="text" placeholder="하위 작업 제목 입력 후 Enter">
+        <button type="button" id="cf-subtask-addbtn" class="btn ghost">추가</button>
       </div></div>`;
   renderLabelOptions();
   renderLabelChips();
   wireLabelPicker();
+  renderSubtasks();
+  wireSubtaskPicker();
+  wireParentAutoType();
+}
+
+// 상위 이슈(부모 키)를 입력하면 유형을 Sub-task로 자동 보정한다 (기존 티켓에 하위 작업 붙이기, docs/11).
+function wireParentAutoType() {
+  const parent = $("#cf-parent");
+  const type = $("#cf-type");
+  parent.addEventListener("input", () => {
+    if (parent.value.trim() && type.value !== "Sub-task") type.value = "Sub-task";
+  });
+}
+
+// ---- 하위 작업 리스트 (제목만 — 부모 생성 후 그 key로 Sub-task 생성, docs/11) ----
+
+function renderSubtasks() {
+  const host = $("#cf-subtasks");
+  if (!host) return;
+  host.innerHTML = subtaskSummaries.map((s, i) =>
+    `<div class="cf-subtask-row"><span class="cf-subtask-text">${escapeHtml(s)}</span>` +
+    `<button type="button" data-rm-st="${i}" aria-label="하위 작업 제거" title="제거">×</button></div>`
+  ).join("");
+}
+
+function addSubtask(raw) {
+  const t = String(raw || "").trim();
+  if (!t) return;
+  subtaskSummaries.push(t);
+  renderSubtasks();
+}
+
+function removeSubtask(i) {
+  if (i >= 0 && i < subtaskSummaries.length) { subtaskSummaries.splice(i, 1); renderSubtasks(); }
+}
+
+function wireSubtaskPicker() {
+  const inp = $("#cf-subtask-new");
+  const commit = () => { addSubtask(inp.value); inp.value = ""; inp.focus(); };
+  $("#cf-subtask-addbtn").addEventListener("click", commit);
+  inp.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); commit(); }
+  });
+  $("#cf-subtasks").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-rm-st]");
+    if (b) removeSubtask(Number(b.dataset.rmSt));
+  });
 }
 
 // ---- 라벨 피커 (드롭다운: 기존 라벨 선택 + "새 라벨" 직접 입력, 다중 선택 칩) ----
@@ -144,6 +200,7 @@ function wireLabelPicker() {
 export function openCreateModal() {
   if (!state.snapshot) { alert("스냅샷이 아직 로드되지 않았습니다."); return; }
   selectedLabels = [];
+  subtaskSummaries = [];
   renderForm();
   $("#create-modal").style.display = "flex";
   setTimeout(() => { const s = $("#cf-summary"); if (s) s.focus(); }, 0);
@@ -153,7 +210,7 @@ export function closeCreateModal() { $("#create-modal").style.display = "none"; 
 
 function submitCreate() {
   const project = $("#cf-project").value;
-  const issueType = $("#cf-type").value;
+  let issueType = $("#cf-type").value;
   const summary = ($("#cf-summary").value || "").trim();
   const slackUrl = ($("#cf-slack").value || "").trim();
   if (!project || !issueType) {
@@ -166,6 +223,23 @@ function submitCreate() {
   }
   if (slackUrl && !/\/archives\/[A-Z0-9]+\/p\d+/.test(slackUrl)) {
     toast("Slack 스레드 링크 형식이 아닙니다 (…/archives/C…/p…).", "warn");
+    return;
+  }
+  // 하위 작업 확정: 입력칸에 남은 미확정 텍스트도 반영
+  const pendingSt = $("#cf-subtask-new");
+  if (pendingSt && pendingSt.value.trim()) addSubtask(pendingSt.value);
+  // 상위 이슈 ↔ Sub-task 정합성 (자동 보정 + 검증)
+  const parent = ($("#cf-parent").value || "").trim();
+  if (parent && issueType !== "Sub-task") {   // 상위 이슈를 넣었으면 유형을 Sub-task로 보정
+    issueType = "Sub-task";
+    $("#cf-type").value = "Sub-task";
+  }
+  if (issueType === "Sub-task" && !parent) {
+    toast("Sub-task 유형은 상위 이슈(부모 티켓 번호)가 필요합니다.", "warn");
+    return;
+  }
+  if (issueType === "Sub-task" && subtaskSummaries.length) {
+    toast("Sub-task에는 하위 작업을 붙일 수 없습니다.", "warn");
     return;
   }
   const cmd = { project, issueType };
@@ -181,13 +255,14 @@ function submitCreate() {
   const pending = $("#cf-label-new");
   if (pending && pending.value.trim()) addLabels(pending.value);
   if (selectedLabels.length) cmd.labels = [...selectedLabels];
-  const parent = ($("#cf-parent").value || "").trim();
   if (parent) cmd.parent = parent;
   const assignee = ($("#cf-assignee").value || "").trim();
   if (assignee) cmd.assignee = assignee;
+  if (subtaskSummaries.length) cmd.subtasks = [...subtaskSummaries];
 
   const label = summary || (slackUrl ? "(Slack 스레드 요약)" : "");
-  runAction(actions.createIssue(cmd), `새 티켓 생성: [${project}/${issueType}] ${label}`);
+  const stNote = subtaskSummaries.length ? ` (+하위 작업 ${subtaskSummaries.length}개)` : "";
+  runAction(actions.createIssue(cmd), `새 티켓 생성: [${project}/${issueType}] ${label}${stNote}`);
   closeCreateModal();
 }
 

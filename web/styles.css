@@ -344,6 +344,20 @@ a.d-key:hover { text-decoration: underline; }
 .cf-label-add select, .cf-label-add input { flex: 1; min-width: 0; }
 #d-label-apply { margin-top: 8px; }
 
+/* 하위 작업 리스트 (제목 행 + 제거 버튼, 입력칸 + 추가 버튼) */
+.cf-subtask-list { display: flex; flex-direction: column; gap: 6px; }
+.cf-subtask-list:not(:empty) { margin-bottom: 8px; }
+.cf-subtask-row { display: flex; align-items: center; gap: 8px; font-size: 12px;
+  padding: 4px 6px 4px 10px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--surface2); }
+.cf-subtask-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cf-subtask-row button { background: transparent; border: 0; color: inherit; cursor: pointer;
+  font-size: 15px; line-height: 1; padding: 0 2px; opacity: .6; }
+.cf-subtask-row button:hover { opacity: 1; }
+.cf-subtask-add { display: flex; gap: 8px; }
+.cf-subtask-add input { flex: 1; min-width: 0; }
+.cf-subtask-add .btn { flex: 0 0 auto; }
+
 /* ---- 본문 영역 순서 조정 (▲▼) ---- */
 .sec-move { margin-left: auto; display: inline-flex; gap: 2px; }
 .sec-btn { background: var(--surface2); color: var(--muted); border: 1px solid var(--border);
