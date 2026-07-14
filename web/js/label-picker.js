@@ -65,7 +65,10 @@ export function mountLabelPicker(host, { initial = [], getSnapshot }) {
     else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); neu.value = ""; neu.style.display = "none"; sel.focus(); }
   });
   neu.addEventListener("blur", () => { if (neu.value.trim()) add(neu.value); neu.value = ""; neu.style.display = "none"; });
-  chips.addEventListener("click", (e) => { const b = e.target.closest("[data-rm]"); if (b) remove(b.dataset.rm); });
+  chips.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-rm]");
+    if (b) { e.stopPropagation(); remove(b.dataset.rm); }
+  });
 
   renderChips();
   renderOptions();
