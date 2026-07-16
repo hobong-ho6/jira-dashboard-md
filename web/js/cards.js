@@ -31,11 +31,67 @@ export function renderCards(root, groups, byKey, weekStart) {
         if (ra !== rb) return ra - rb;
         return String(a.duedate || "9999").localeCompare(String(b.duedate || "9999"));
       });
-      for (const it of sorted) grid.append(card(it, today, weekStart, byKey));
+      const clusterOf = linkClusters(g.keys, byKey);
+      const rendered = new Set();
+      for (const it of sorted) {
+        if (rendered.has(it.key)) continue;
+        const cluster = clusterOf.get(it.key);
+        if (cluster) {
+          const box = el("div", "ccluster");
+          box.innerHTML = `<div class="ccluster-head">🔗 연결된 티켓 <span class="ccluster-count">${cluster.size}</span></div>`;
+          const inner = el("div", "cgrid");
+          for (const m of sorted) {
+            if (!cluster.has(m.key)) continue;
+            inner.append(card(m, today, weekStart, byKey));
+            rendered.add(m.key);
+          }
+          box.append(inner);
+          grid.append(box);
+        } else {
+          grid.append(card(it, today, weekStart, byKey));
+          rendered.add(it.key);
+        }
+      }
       section.append(grid);
     }
     root.append(section);
   }
+}
+
+// 그룹 내부에서 links(+parent)로 서로 연결된 티켓들의 연결 컴포넌트를 계산.
+// 반환: key → Set(같은 클러스터의 key들). 2개 이상 묶인 클러스터만 포함.
+function linkClusters(keys, byKey) {
+  const inGroup = new Set(keys);
+  const adj = new Map();
+  const connect = (a, b) => {
+    if (!adj.has(a)) adj.set(a, new Set());
+    if (!adj.has(b)) adj.set(b, new Set());
+    adj.get(a).add(b);
+    adj.get(b).add(a);
+  };
+  for (const k of keys) {
+    const it = byKey.get(k);
+    if (!it) continue;
+    for (const ln of it.links || []) {
+      if (ln.key && inGroup.has(ln.key) && ln.key !== k) connect(k, ln.key);
+    }
+    const p = parentOf(it, byKey);
+    if (p && inGroup.has(p.key)) connect(k, p.key);
+  }
+  const clusterOf = new Map();
+  for (const k of adj.keys()) {
+    if (clusterOf.has(k)) continue;
+    const comp = new Set();
+    const stack = [k];
+    while (stack.length) {
+      const x = stack.pop();
+      if (comp.has(x)) continue;
+      comp.add(x);
+      for (const n of adj.get(x) || []) stack.push(n);
+    }
+    for (const m of comp) clusterOf.set(m, comp);
+  }
+  return clusterOf;
 }
 
 function card(it, today, weekStart, byKey) {

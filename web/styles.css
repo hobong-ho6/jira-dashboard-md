@@ -154,6 +154,11 @@ a { color: var(--accent); text-decoration: none; }
 .cgroup-hide:hover { border-color: var(--accent); color: var(--text); }
 .cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
 
+/* 그룹 내 연결된 티켓 클러스터 (docs/09) */
+.ccluster { grid-column: 1 / -1; border: 1px dashed var(--border); border-radius: 12px; padding: 8px 10px 10px; }
+.ccluster-head { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-bottom: 8px; user-select: none; }
+.ccluster-count { color: var(--text); font-weight: 700; }
+
 .card { background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--bk-later);
   border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: border-color .12s, transform .06s; }
 .card:hover { border-color: var(--accent); }
