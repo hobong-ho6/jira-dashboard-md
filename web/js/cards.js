@@ -38,7 +38,11 @@ export function renderCards(root, groups, byKey, weekStart) {
         const cluster = clusterOf.get(it.key);
         if (cluster) {
           const box = el("div", "ccluster");
-          box.innerHTML = `<div class="ccluster-head">🔗 연결된 티켓 <span class="ccluster-count">${cluster.size}</span></div>`;
+          const cp = clusterParent(cluster, byKey);
+          const parentInfo = cp
+            ? ` · ↳ 상위 <span class="cp-key">${escapeHtml(cp.key)}</span>${cp.summary ? ` <span class="ccluster-psum">${escapeHtml(cp.summary)}</span>` : ""}`
+            : "";
+          box.innerHTML = `<div class="ccluster-head">🔗 연결된 티켓 <span class="ccluster-count">${cluster.size}</span>${parentInfo}</div>`;
           const inner = el("div", "cgrid");
           for (const m of sorted) {
             if (!cluster.has(m.key)) continue;
@@ -92,6 +96,22 @@ function linkClusters(keys, byKey) {
     for (const m of comp) clusterOf.set(m, comp);
   }
   return clusterOf;
+}
+
+// 클러스터의 대표 상위 티켓: 멤버들이 parent 로 가장 많이 참조하는 티켓.
+// (Hierarchy 링크가 상호 참조로 사이클을 만들 수 있어 참조 수로 판별한다.)
+// 반환: {key, summary} 또는 상위 관계가 없으면 null.
+function clusterParent(cluster, byKey) {
+  const refs = new Map();
+  for (const k of cluster) {
+    const p = parentOf(byKey.get(k), byKey);
+    if (p) refs.set(p.key, { n: (refs.get(p.key) || { n: 0 }).n + 1, summary: p.summary });
+  }
+  let best = null;
+  for (const [key, v] of refs) {
+    if (!best || v.n > best.n) best = { key, n: v.n, summary: v.summary };
+  }
+  return best ? { key: best.key, summary: best.summary } : null;
 }
 
 function card(it, today, weekStart, byKey) {
