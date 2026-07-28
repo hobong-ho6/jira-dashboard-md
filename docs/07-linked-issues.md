@@ -8,6 +8,7 @@
 - `outwardIssue`가 있으면 `direction="outward"`, `relation=type.outward`, 상대 = `outwardIssue`
 - `inwardIssue`가 있으면 `direction="inward"`, `relation=type.inward`, 상대 = `inwardIssue`
 - `key/summary/status` = 상대 이슈의 `key`, `fields.summary`, `fields.status.name`
+- **Hierarchy 링크 → parent 해석**: `parent` 필드가 없는 이슈에 `Hierarchy link (WBSGantt)` 링크가 `direction="inward"`("is contained in")로 있으면 그 상대를 `parent`로 채운다 — Sub-task를 MCP로 못 만들 때의 폴백 표현(`11`)이 대시보드에서 ↳ 상위로 보이게 하기 위함.
 
 ## UI 표현 (3가지, 단계적)
 1. **카드 내 관계 칩** (필수): 카드/상세에 `relation 상대KEY` 칩. 클릭 → 해당 이슈 카드로 스크롤·하이라이트(스냅샷에 있으면). 스냅샷에 없는 이슈면 `jiraBaseUrl/browse/KEY`를 새 탭으로.
@@ -24,7 +25,7 @@
 
 ## 연결 생성(쓰기) — 구현됨
 - 상세 패널 "연결 추가": 방향 드롭다운(`snapshot.config.linkTypes` 재료, 타입별 outward/inward 문구를 자연문 옵션으로 제공; 대칭 타입인 Relates는 1개로 dedupe) + 상대 티켓 키 입력 + 미리보기 문장.
-- 방향 매핑(중요): 옵션이 **outward**(예: "blocks")면 "현재티켓 blocks 대상" → `outward_issue=현재`, `inward_issue=대상`. **inward**(예: "is blocked by")면 반대. → `create_link` 명령 `{inward, type, outward}`(이슈 키)로 큐잉(`03`/`11`) → `jira_create_issue_link(inward, link_type=type, outward)`.
+- 방향 매핑(중요): Jira 링크 레코드 `{inwardIssue: A, outwardIssue: B}`의 의미는 **"A {outward문구} B"** 다(예: A blocks B, A contains B — 2026-07-15 실측 검증: A의 GET에는 상대 B가 `outwardIssue`로 나타나 outward 문구가 붙는다). 따라서 옵션이 **outward**(예: "blocks")면 "현재티켓 blocks 대상" → `inward_issue=현재`, `outward_issue=대상`. **inward**(예: "is blocked by")면 반대. → `create_link` 명령 `{inward, type, outward}`(이슈 키)로 큐잉(`03`/`11`) → `jira_create_issue_link(inward, link_type=type, outward)`. ⚠️ 2026-07-15 이전 큐로 만든 방향성 링크는 반대로 걸렸을 수 있다(MCP에 링크 삭제 도구가 없어 잘못 건 링크는 Jira UI에서 수동 삭제).
 - 키 형식 검증(`^[A-Z][A-Z0-9]+-\d+$`)·자기연결 금지는 프런트에서 막는다.
 - `link_type`은 추측하지 않고 `jira_get_link_types` 실측값(`config.linkTypes`)에서 고른다(`02`).
 

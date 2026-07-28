@@ -57,6 +57,7 @@
 - 구현(`tools/`):
   - `watch_queue.py [poll]` — **pending 명령이 생길 때까지 블로킹 대기**하다가, 발견 즉시 `{"pending":[{id,action,issueKey,to,duedate,jql}]}` 한 줄을 출력하고 **종료**한다. Claude Code가 백그라운드로 실행하면, 종료 시 세션이 재호출되어 처리 루프가 돈다. 읽기 전용(load_comments/load_transitions/sync)과 **변경(transition/set_duedate/add_comment/set_labels/create_link) 모두** 감지한다(변경은 사용자의 명시적 버튼 클릭 = 의도, `11`). 일감 없으면 조용히 대기(재호출 없음).
   - 재호출된 Claude Code는 `11` 매핑대로 MCP 호출(조회 또는 변경 2단계 전이 등)한 뒤 `apply_queue.py <payload.json> [port]`로 `snapshot.json`에 병합하고 서버 `ack`로 큐를 비운다. payload는 `comments`/`transitions`(드롭다운)/`issuePatch`(변경 후 status·duedate·labels; duedate 변경 시 bucket 재계산)를 담는다. 그리고 watcher를 다시 띄운다.
+  - **⚠️ 재기동 누락 방지(2026-07-28).** "apply_queue.py 실행" → "watcher 재기동"이 별개의 두 단계라, Claude Code가 처리 후 재기동을 깜빡해 워쳐가 죽은 채로 남는 사고가 반복됐다. 이를 막기 위해 `tools/apply_and_rewatch.sh <payload.json> [port] [poll_seconds]`를 만들어 두 단계를 한 프로세스 체인으로 묶었다(`apply_queue.py` 실행 후 `exec`로 `watch_queue.py`를 이어 실행). **처리 후에는 `apply_queue.py`를 단독으로 부르지 말고, 항상 이 스크립트를 `run_in_background:true`로 호출한다.** 이러면 "재기동"이 기억해야 할 별도 단계가 아니라 호출 자체에 포함된다.
   - `process_queue.py` — pending 읽기전용 유무만 1회 검사(블로킹 없는 빠른 상태 확인용, exit 0/1).
   - 위 스크립트들은 **Jira를 호출하지 않는다**(큐 파일 읽기 + 로컬 snapshot 쓰기 + localhost ack 만). MCP 호출은 항상 Claude Code가 한다.
 - 과거의 서버 측 자동 처리(`/api/auto-process`·신호파일)는 루프를 닫지 못해 제거됐다. `watch_queue.py`는 종료→세션 재호출로 **실제로 루프를 닫는다**는 점이 다르다.

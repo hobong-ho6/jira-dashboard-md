@@ -252,6 +252,15 @@ def normalize_issue(issue, cfg, today):
     else:
         parent = None
 
+    links = normalize_links(f.get("issuelinks"))
+    # Sub-task 폴백(docs/11): MCP로 진짜 Sub-task를 못 만들 때 WBSGantt Hierarchy 링크로
+    # 부모-자식을 표현한다. 이 이슈가 "is contained in"(inward) 쪽이면 상대가 부모다.
+    if parent is None:
+        for ln in links:
+            if ln.get("type") == "Hierarchy link (WBSGantt)" and ln.get("direction") == "inward":
+                parent = {"key": ln.get("key"), "summary": ln.get("summary") or None}
+                break
+
     return {
         "key": key,
         "url": "%s/browse/%s" % (base, key) if base else key,
@@ -277,7 +286,7 @@ def normalize_issue(issue, cfg, today):
         "descriptionText": desc,
         "descriptionLinks": parse_description_links(desc, rules),
         "commentLinks": [],   # 코멘트 로드 시 apply_queue.py 가 채움 (지연)
-        "links": normalize_links(f.get("issuelinks")),
+        "links": links,
         "comments": [],
         "commentsLoaded": False,
     }

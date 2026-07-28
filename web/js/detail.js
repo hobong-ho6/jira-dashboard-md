@@ -103,7 +103,9 @@ export function renderDetail(root, byKey, weekStart) {
         <button class="btn" id="d-status-apply">적용</button></div></div>
       <div class="d-field"><label>마감일(Due date)</label>
         <div class="row"><input type="date" id="d-due" value="${escapeHtml(fmtDateFull(it.duedate))}">
-        <button class="btn" id="d-due-apply">적용</button></div></div>
+        <button class="btn" id="d-due-apply">적용</button>
+        <button class="btn sm" id="d-due-p3" title="설정된 마감일에서 3일 뒤로 변경">+3일</button>
+        <button class="btn sm" id="d-due-p5" title="설정된 마감일에서 5일 뒤로 변경">+5일</button></div></div>
     </div>
 
     <div class="d-field"><label>담당자</label><div>${it.assignee ? escapeHtml(it.assignee.displayName || it.assignee.name) : `<span class="muted">미배정</span>`}</div></div>
@@ -158,6 +160,18 @@ export function renderDetail(root, byKey, weekStart) {
     const v = root.querySelector("#d-due").value || null;
     runAction(actions.setDuedate(key, v), `${key} 마감일 → ${v || "(제거)"}`);
   });
+  // +3일/+5일: 설정된 마감일(입력값 → 저장값 → 오늘 순) 기준 N일 뒤로 즉시 변경 큐잉
+  const dueInput = root.querySelector("#d-due");
+  const shiftDue = (days) => {
+    const cur = dueInput.value || fmtDateFull(it.duedate);
+    const d = cur ? new Date(cur + "T00:00:00") : todayDate();
+    d.setDate(d.getDate() + days);
+    const v = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    dueInput.value = v;
+    runAction(actions.setDuedate(key, v), `${key} 마감일 → ${v} (+${days}일)`);
+  };
+  root.querySelector("#d-due-p3").addEventListener("click", () => shiftDue(3));
+  root.querySelector("#d-due-p5").addEventListener("click", () => shiftDue(5));
   root.querySelector("#d-desc-apply").addEventListener("click", () => {
     const body = root.querySelector("#d-desc-body").value;
     runAction(actions.setDescription(key, body), `${key} 설명 수정`);
@@ -229,9 +243,10 @@ export function renderDetail(root, byKey, weekStart) {
       if (!/^[A-Z][A-Z0-9]+-\d+$/.test(target)) { toast("상대 티켓 키 형식이 아닙니다 (예: UNIFY-1234).", "warn"); return; }
       if (target === key) { toast("자기 자신과는 연결할 수 없습니다.", "warn"); return; }
       const [name, dir] = relSel.value.split("::");
-      // "현재 {outward} 대상": 현재=outward 이슈, 대상=inward 이슈. "현재 {inward} 대상"은 반대.
-      const inward = dir === "out" ? target : key;
-      const outward = dir === "out" ? key : target;
+      // Jira 링크 의미: {inwardIssue: A, outwardIssue: B} = "A {outward문구} B" (실측 검증, docs/07).
+      // "현재 {outward} 대상"(예: 현재 blocks 대상) → inward=현재, outward=대상. inward 문구 선택 시 반대.
+      const inward = dir === "out" ? key : target;
+      const outward = dir === "out" ? target : key;
       runAction(actions.createLink(inward, name, outward), `연결 추가: ${key} ${phraseOf()} ${target}`);
       relTarget.value = "";
       updatePreview();

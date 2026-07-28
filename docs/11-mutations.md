@@ -13,7 +13,7 @@
 ```
 - **idempotent**: 이미 `done`/`processed`인 `id`는 재실행 금지. `id` 기준 중복 제거.
 - 실행 전 echo 예: `PROJ-123 상태 → Done, Due → 2026-06-30 적용합니다.`
-- **자동 처리(watch 루프):** Claude Code 세션이 `tools/watch_queue.py`(`13`)를 백그라운드로 띄워 두면, 큐에 pending 이 생기는 순간 세션이 재호출되어 위 절차를 자동 수행한다. 읽기 전용뿐 아니라 변경도 대상이다(버튼 클릭 = 의도). 세션/워처가 떠 있는 동안만 동작한다. `transition` 변경 후엔 해당 이슈 status 를, `set_duedate` 후엔 duedate(+bucket)를 `snapshot` 에 반영한다(`apply_queue.py`).
+- **자동 처리(watch 루프):** Claude Code 세션이 `tools/watch_queue.py`(`13`)를 백그라운드로 띄워 두면, 큐에 pending 이 생기는 순간 세션이 재호출되어 위 절차를 자동 수행한다. 읽기 전용뿐 아니라 변경도 대상이다(버튼 클릭 = 의도). 세션/워처가 떠 있는 동안만 동작한다. `transition` 변경 후엔 해당 이슈 status 를, `set_duedate` 후엔 duedate(+bucket)를 `snapshot` 에 반영한다(`apply_queue.py`). **처리·ack 후 워쳐 재기동은 `apply_queue.py`를 단독 호출하지 말고 `tools/apply_and_rewatch.sh <payload.json>`을 `run_in_background:true`로 호출한다** — 재기동 누락 방지, 상세 `13`.
 
 ## action → MCP 매핑
 | action | 처리 |
