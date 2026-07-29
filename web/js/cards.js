@@ -5,6 +5,12 @@ import {
   BUCKET_LABEL, BUCKET_RANK, statusCategoryClass, parentOf,
 } from "./util.js";
 
+// 같은 라벨 그룹 내 클러스터가 여러 개일 때 서로 다른 outline 색으로 구분 (docs/09)
+const CLUSTER_COLORS = [
+  "var(--accent)", "var(--cat-design)", "var(--cat-code)",
+  "var(--cat-chat)", "var(--bk-overdue)", "var(--dep)",
+];
+
 export function renderCards(root, groups, byKey, weekStart) {
   root.innerHTML = "";
   const today = todayDate();
@@ -32,12 +38,20 @@ export function renderCards(root, groups, byKey, weekStart) {
         return String(a.duedate || "9999").localeCompare(String(b.duedate || "9999"));
       });
       const clusterOf = linkClusters(g.keys, byKey);
+      const clusterColor = new Map(); // 클러스터(Set) → 배정된 색 (그룹 내 여러 클러스터 구분용)
+      for (const it of sorted) {
+        const cluster = clusterOf.get(it.key);
+        if (cluster && !clusterColor.has(cluster)) {
+          clusterColor.set(cluster, CLUSTER_COLORS[clusterColor.size % CLUSTER_COLORS.length]);
+        }
+      }
       const rendered = new Set();
       for (const it of sorted) {
         if (rendered.has(it.key)) continue;
         const cluster = clusterOf.get(it.key);
         if (cluster) {
           const box = el("div", "ccluster");
+          box.style.setProperty("--ccluster-color", clusterColor.get(cluster));
           const cp = clusterParent(cluster, byKey);
           const parentInfo = cp
             ? ` · ↳ 상위 <span class="cp-key">${escapeHtml(cp.key)}</span>${cp.summary ? ` <span class="ccluster-psum">${escapeHtml(cp.summary)}</span>` : ""}`
