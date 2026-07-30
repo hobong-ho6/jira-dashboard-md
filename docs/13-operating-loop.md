@@ -37,7 +37,22 @@
 - **워쳐(대기) = 메인 세션 소유, 처리(MCP) = `queue-worker` 서브 에이전트.** 워쳐는 *큐 발견 → 프로세스 종료 → harness가 세션 재호출 → 처리 → 재감시* 로 루프를 닫는다. 재호출을 받을 **살아있는 세션**이 필요하므로 메인 세션이 `run_in_background`로 띄운다. `nohup` 분리 기동은 처리 주체(MCP=Claude)가 없어 공회전하므로 금지. 따라서 자동 처리는 **세션이 살아있는 동안만** 동작한다.
   - **⚠️ 워쳐를 서브 에이전트에 맡기지 않는다(2026-07-30 실측 실패).** `watch_queue.py`는 큐가 생길 때까지 **무한 블로킹**하는데 Bash 포그라운드 상한은 10분이다. 서브 에이전트에 감시를 맡기면 타임아웃마다 재실행해야 하고, 실제로 워커가 이를 "폴링 낭비"로 판단해 `run_in_background`로 띄운 뒤 종료했다 → 백그라운드 완료 알림은 **이미 종료된 자신**에게 가므로 루프가 끊기고 고아 워쳐만 남았다(큐는 ack되지 않아 유실은 없지만 무기한 미처리). 무한 대기를 받아줄 수 있는 주체는 메인 세션뿐이다.
   - **역할 분리 이유.** 비용이 드는 쪽은 대기가 아니라 처리다 — 대기는 블록된 프로세스라 토큰 0, 반면 Jira MCP 응답 JSON과 도구 스키마는 배치당 수천 토큰씩 메인 컨텍스트에 쌓였다. 그래서 **대기만 메인, MCP 처리는 서브 에이전트**로 나눈다(2026-07-30 사용자 확정).
-- **한 배치 처리 흐름.** ① 메인 세션이 워쳐 알림으로 `{"pending":[...]}`를 받는다 → ② `Agent(queue-worker)`에 그 JSON을 넘긴다(메인은 `docs/11`을 읽지도, MCP를 호출하지도 않는다) → ③ 워커가 MCP 실행 후 `data/.payload_worker_<큐id>.json`을 쓰고 **경로와 요약만 반환** → ④ 메인이 `bash tools/apply_and_rewatch.sh <경로>`를 `run_in_background`로 실행(apply+ack+재감시가 한 체인 = 재기동 누락 방지) → ①로. 메인이 배치당 쓰는 것은 알림 1건 + Agent 호출 1회 + Bash 1회뿐이다.
+- **한 배치 처리 흐름.** ① 메인 세션이 워쳐 알림으로 `{"pending":[...]}`를 받는다 → ② 아래 **위임 판단**에 따라 직접 처리하거나 `Agent(queue-worker)`에 그 JSON을 넘긴다 → ③ (위임 시) 워커가 MCP 실행 후 `data/.payload_worker_<큐id>.json`을 쓰고 **경로와 요약만 반환** → ④ 메인이 `bash tools/apply_and_rewatch.sh <경로>`를 `run_in_background`로 실행(apply+ack+재감시가 한 체인 = 재기동 누락 방지) → ①로. ④는 직접 처리했을 때도 동일하다.
+
+### 위임 판단 — 무거운 배치만 워커에게 (2026-07-30 실측 후 사용자 확정)
+**항상 위임하지 않는다.** 서브 에이전트는 배치마다 고정비(`docs/11` 재독 + MCP 스키마 재로드 + 지침 파싱)로 **~40~50k 토큰**을 낸다. 실측: 마감일 1건 제거에 51,483 토큰·25초(메인 직접이면 한계비용 2~4k·5초). 이 프로젝트의 배치는 평균 **1.6개 명령**(2026-07-30 세션 13배치 기준)이라 대개 고정비가 실작업을 압도한다. 반면 무거운 배치는 응답 원문이 메인 컨텍스트를 크게 오염시켜 위임이 이긴다.
+
+| 배치 성격 | 처리 주체 | 이유 |
+|---|---|---|
+| `load_comments`·`load_transitions` (읽기 전용) | **메인 직접** | 응답이 작고 이미 컨텍스트에 있는 지식으로 처리 → 한계비용 ≈ 0 |
+| 단순 `transition`·`set_duedate`·`set_labels`·`set_description` **1~2건** | **메인 직접** | 같음. 고정비 40k를 낼 이유가 없다 |
+| `slackUrl` 붙은 `add_comment`·`create_issue` | **워커 위임** | 스레드 전문 + 사용자 프로필을 끌어와 요약 → 메인 오염 최대 |
+| `create_issue` + `subtasks` | **워커 위임** | 다단계(생성→필드→전이→링크)×N, 응답 거대 |
+| `sync` 전체 재조회 | **워커 위임** | `fields="*all"` 수십 건 |
+| 명령 **3건 이상** 배치 | **워커 위임** | 고정비를 실작업량이 상회 |
+| 메인이 개발·개선 작업 중 | **워커 위임** | 토큰이 아니라 **흐름 끊김**이 비용(사용자가 지적한 원래 문제) |
+
+판단이 애매하면 **직접 처리**가 기본값이다. 위임은 신뢰성 비용도 있다 — 워커가 역할을 오해할 여지가 있고, 실제로 첫 시도에서 58,990 토큰·10분을 쓰고 성과 없이 고아 워쳐만 남긴 사고가 있었다.
 - **SessionStart 훅 자동복구.** `.claude/settings.local.json`의 `SessionStart` 훅이 매 세션 시작/재개 때 `tools/ensure_services.sh`를 돌려 (a) 서버 데몬을 보장하고 (b) 워쳐 상태를 stdout으로 보고한다. 워쳐가 `DOWN`이면 보고에 `ACTION:` 줄이 떠서 Claude가 `python3 tools/watch_queue.py`를 `run_in_background`로 (재)기동한다. → 사용자는 수동 재기동 없이 세션 재개만으로 서버·워쳐가 자동 복구된다.
   - 훅 설정은 `.claude/settings.local.json`에 있고 이 파일은 **gitignore(토큰 포함 가능 정책, docs/02)** 라 커밋되지 않는다. 새 클론에서 자동복구를 쓰려면 같은 `SessionStart` 훅을 로컬에 추가해야 한다(스크립트 `tools/ensure_services.sh`는 커밋됨). 훅 미설정 시에는 "서버 켜"/"워쳐 실행"으로 수동 기동.
 
@@ -60,7 +75,7 @@
 - 코멘트/전이 조회는 물론 상태·마감일 변경 등 **모든 처리는 MCP가 필요**하므로 서버가 못 한다(서버는 Jira 호출 금지 — `01` 신뢰 경계). 따라서 자동화하려면 **Claude Code 세션이 큐를 감시**해야 하며, 세션(+워처)이 떠 있는 동안만 동작한다.
 - 구현(`tools/`):
   - `watch_queue.py [poll]` — **pending 명령이 생길 때까지 블로킹 대기**하다가, 발견 즉시 `{"pending":[{id,action,issueKey,to,duedate,jql}]}` 한 줄을 출력하고 **종료**한다. Claude Code가 백그라운드로 실행하면, 종료 시 세션이 재호출되어 처리 루프가 돈다. 읽기 전용(load_comments/load_transitions/sync)과 **변경(transition/set_duedate/add_comment/set_labels/create_link) 모두** 감지한다(변경은 사용자의 명시적 버튼 클릭 = 의도, `11`). 일감 없으면 조용히 대기(재호출 없음).
-  - 재호출된 Claude Code는 **MCP 호출을 직접 하지 않고 `queue-worker` 서브 에이전트에 pending JSON을 넘긴다**(위 "한 배치 처리 흐름"). 워커가 `11` 매핑대로 MCP 호출(조회 또는 변경 2단계 전이 등)한 뒤 payload를 파일로 쓰고 경로를 반환하면, 메인이 `apply_and_rewatch.sh <payload.json>`으로 `snapshot.json` 병합·서버 `ack`·워쳐 재기동을 한 번에 실행한다. payload는 `comments`/`transitions`(드롭다운)/`issuePatch`(변경 후 status·duedate·labels; duedate 변경 시 bucket 재계산)를 담는다.
+  - 재호출된 Claude Code는 위 **위임 판단**대로 직접 처리하거나 `queue-worker`에 넘긴다. 어느 쪽이든 `11` 매핑대로 MCP 호출(조회 또는 변경 2단계 전이 등) 후 payload를 파일로 쓰고, 메인이 `apply_and_rewatch.sh <payload.json>`으로 `snapshot.json` 병합·서버 `ack`·워쳐 재기동을 한 번에 실행한다. payload는 `comments`/`transitions`(드롭다운)/`issuePatch`(변경 후 status·duedate·labels; duedate 변경 시 bucket 재계산)를 담는다.
   - **⚠️ 재기동 누락 방지(2026-07-28).** "apply_queue.py 실행" → "watcher 재기동"이 별개의 두 단계라, Claude Code가 처리 후 재기동을 깜빡해 워쳐가 죽은 채로 남는 사고가 반복됐다. 이를 막기 위해 `tools/apply_and_rewatch.sh <payload.json> [port] [poll_seconds]`를 만들어 두 단계를 한 프로세스 체인으로 묶었다(`apply_queue.py` 실행 후 `exec`로 `watch_queue.py`를 이어 실행). **처리 후에는 `apply_queue.py`를 단독으로 부르지 말고, 항상 이 스크립트를 `run_in_background:true`로 호출한다.** 이러면 "재기동"이 기억해야 할 별도 단계가 아니라 호출 자체에 포함된다.
   - `process_queue.py` — pending 읽기전용 유무만 1회 검사(블로킹 없는 빠른 상태 확인용, exit 0/1).
   - 위 스크립트들은 **Jira를 호출하지 않는다**(큐 파일 읽기 + 로컬 snapshot 쓰기 + localhost ack 만). MCP 호출은 항상 Claude Code가 한다.
