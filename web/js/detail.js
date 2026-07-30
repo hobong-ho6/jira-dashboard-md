@@ -105,7 +105,8 @@ export function renderDetail(root, byKey, weekStart) {
         <div class="row"><input type="date" id="d-due" value="${escapeHtml(fmtDateFull(it.duedate))}">
         <button class="btn" id="d-due-apply">적용</button>
         <button class="btn sm" id="d-due-p3" title="설정된 마감일에서 3일 뒤로 변경">+3일</button>
-        <button class="btn sm" id="d-due-p5" title="설정된 마감일에서 5일 뒤로 변경">+5일</button></div></div>
+        <button class="btn sm" id="d-due-p5" title="설정된 마감일에서 5일 뒤로 변경">+5일</button>
+        ${it.duedate ? `<button class="btn sm ghost" id="d-due-clear" title="마감일을 비웁니다">제거</button>` : ""}</div></div>
     </div>
 
     <div class="d-field"><label>담당자</label><div>${it.assignee ? escapeHtml(it.assignee.displayName || it.assignee.name) : `<span class="muted">미배정</span>`}</div></div>
@@ -172,6 +173,14 @@ export function renderDetail(root, byKey, weekStart) {
   };
   root.querySelector("#d-due-p3").addEventListener("click", () => shiftDue(3));
   root.querySelector("#d-due-p5").addEventListener("click", () => shiftDue(5));
+  // 마감일 제거: Jira duedate 를 null 로 비운다 (docs/11 set_duedate)
+  const dueClear = root.querySelector("#d-due-clear");
+  if (dueClear) {
+    dueClear.addEventListener("click", () => {
+      dueInput.value = "";
+      runAction(actions.setDuedate(key, null), `${key} 마감일 제거`);
+    });
+  }
   root.querySelector("#d-desc-apply").addEventListener("click", () => {
     const body = root.querySelector("#d-desc-body").value;
     runAction(actions.setDescription(key, body), `${key} 설명 수정`);
