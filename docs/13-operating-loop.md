@@ -22,8 +22,8 @@
 | "초기 세팅" | `config.json` 확인/생성(`04`), `web/`·`server/` 산출물 생성, README 안내 |
 | **"이 쿼리로 시작/조회: \<JQL\>"** | **시작점.** `config.json.jql`에 저장 → `04` sync 실행 → `snapshot.json` 생성 |
 | (대시보드 JQL 입력창 제출) | 큐에 `{"action":"sync","jql":...}` 적재 → "큐 처리" 시 위와 동일 흐름 |
-| "서버 켜" / serve | 서버 데몬 보장(`tools/ensure_services.sh`) **+ `queue-worker` 서브 에이전트 기동(항상 함께)**, URL 안내(`http://localhost:5173`) |
-| "워쳐 실행" / watch | `queue-worker` 서브 에이전트 기동. 서버가 꺼져 있으면 **서버도 함께 켠다**(아래 규칙) |
+| "서버 켜" / serve | 서버 데몬 보장(`tools/ensure_services.sh`) **+ `tools/watch_queue.py` 워쳐 `run_in_background` 기동(항상 함께)**, URL 안내(`http://localhost:5173`) |
+| "워쳐 실행" / watch | 워쳐 기동. 서버가 꺼져 있으면 **서버도 함께 켠다**(아래 규칙) |
 | "동기화" / sync | 현재 `config.json.jql`로 `04` 절차 실행 |
 | "큐 처리" / process | `11` 절차로 `commands.jsonl` 드레인(`sync` 명령 포함) → MCP 실행 → ack → 영향 이슈 증분 재동기화 |
 | "전체 새로고침" | 현재 쿼리로 sync 전체 재실행 |
@@ -34,8 +34,11 @@
 ## 프로세스 수명 — 서버 데몬 · 워쳐 세션 묶임 (세션 정리 생존)
 (2026-06-30 사용자 durable 지시) 세션 정리/teardown 때 harness 관리 백그라운드 작업은 종료된다. 대응:
 - **서버 = 상시 데몬.** `nohup`(또는 `tools/ensure_services.sh`)으로 분리 기동해 세션과 무관하게 생존. 대시보드 보기는 세션이 죽어도 계속 뜬다.
-- **워쳐 = queue-worker 서브 에이전트 소유(2026-07-30 사용자 지시).** 워쳐는 *큐 발견 → 프로세스 종료 → 처리 → 재감시* 루프가 필요한데, 이걸 메인 세션에서 돌리면 큐가 생길 때마다 개발·개선 작업이 중단된다. 그래서 **전담 서브 에이전트 `queue-worker`(`.claude/agents/queue-worker.md`)를 `run_in_background`로 띄우고, 그 안에서 워쳐 실행(포그라운드)과 큐 드레인(MCP)·apply·ack를 모두 처리**한다. 메인 세션은 `watch_queue.py`를 직접 띄우지 않는다(둘 다 띄우면 이중 처리 위험). 서브 에이전트도 세션에 묶이므로 자동 처리는 여전히 **세션이 살아있는 동안만** 동작하고, `nohup` 분리 기동 금지는 그대로다(처리 주체 MCP=Claude 필요). queue-worker는 배치 ~15회 후 요약을 반환하며 종료하고, 메인 세션이 완료 알림을 받으면 **새 queue-worker를 재기동**한다.
-- **SessionStart 훅 자동복구.** `.claude/settings.local.json`의 `SessionStart` 훅이 매 세션 시작/재개 때 `tools/ensure_services.sh`를 돌려 (a) 서버 데몬을 보장하고 (b) 워쳐 상태를 stdout으로 보고한다. 워쳐가 `DOWN`이면 보고에 `ACTION:` 줄이 떠서 Claude가 `queue-worker` 서브 에이전트를 (재)기동한다. → 사용자는 수동 재기동 없이 세션 재개만으로 서버·워쳐가 자동 복구된다.
+- **워쳐(대기) = 메인 세션 소유, 처리(MCP) = `queue-worker` 서브 에이전트.** 워쳐는 *큐 발견 → 프로세스 종료 → harness가 세션 재호출 → 처리 → 재감시* 로 루프를 닫는다. 재호출을 받을 **살아있는 세션**이 필요하므로 메인 세션이 `run_in_background`로 띄운다. `nohup` 분리 기동은 처리 주체(MCP=Claude)가 없어 공회전하므로 금지. 따라서 자동 처리는 **세션이 살아있는 동안만** 동작한다.
+  - **⚠️ 워쳐를 서브 에이전트에 맡기지 않는다(2026-07-30 실측 실패).** `watch_queue.py`는 큐가 생길 때까지 **무한 블로킹**하는데 Bash 포그라운드 상한은 10분이다. 서브 에이전트에 감시를 맡기면 타임아웃마다 재실행해야 하고, 실제로 워커가 이를 "폴링 낭비"로 판단해 `run_in_background`로 띄운 뒤 종료했다 → 백그라운드 완료 알림은 **이미 종료된 자신**에게 가므로 루프가 끊기고 고아 워쳐만 남았다(큐는 ack되지 않아 유실은 없지만 무기한 미처리). 무한 대기를 받아줄 수 있는 주체는 메인 세션뿐이다.
+  - **역할 분리 이유.** 비용이 드는 쪽은 대기가 아니라 처리다 — 대기는 블록된 프로세스라 토큰 0, 반면 Jira MCP 응답 JSON과 도구 스키마는 배치당 수천 토큰씩 메인 컨텍스트에 쌓였다. 그래서 **대기만 메인, MCP 처리는 서브 에이전트**로 나눈다(2026-07-30 사용자 확정).
+- **한 배치 처리 흐름.** ① 메인 세션이 워쳐 알림으로 `{"pending":[...]}`를 받는다 → ② `Agent(queue-worker)`에 그 JSON을 넘긴다(메인은 `docs/11`을 읽지도, MCP를 호출하지도 않는다) → ③ 워커가 MCP 실행 후 `data/.payload_worker_<큐id>.json`을 쓰고 **경로와 요약만 반환** → ④ 메인이 `bash tools/apply_and_rewatch.sh <경로>`를 `run_in_background`로 실행(apply+ack+재감시가 한 체인 = 재기동 누락 방지) → ①로. 메인이 배치당 쓰는 것은 알림 1건 + Agent 호출 1회 + Bash 1회뿐이다.
+- **SessionStart 훅 자동복구.** `.claude/settings.local.json`의 `SessionStart` 훅이 매 세션 시작/재개 때 `tools/ensure_services.sh`를 돌려 (a) 서버 데몬을 보장하고 (b) 워쳐 상태를 stdout으로 보고한다. 워쳐가 `DOWN`이면 보고에 `ACTION:` 줄이 떠서 Claude가 `python3 tools/watch_queue.py`를 `run_in_background`로 (재)기동한다. → 사용자는 수동 재기동 없이 세션 재개만으로 서버·워쳐가 자동 복구된다.
   - 훅 설정은 `.claude/settings.local.json`에 있고 이 파일은 **gitignore(토큰 포함 가능 정책, docs/02)** 라 커밋되지 않는다. 새 클론에서 자동복구를 쓰려면 같은 `SessionStart` 훅을 로컬에 추가해야 한다(스크립트 `tools/ensure_services.sh`는 커밋됨). 훅 미설정 시에는 "서버 켜"/"워쳐 실행"으로 수동 기동.
 
 ### 정기 전체 재조회 (`hourly-resync` 스킬 + `/loop`)
@@ -57,7 +60,7 @@
 - 코멘트/전이 조회는 물론 상태·마감일 변경 등 **모든 처리는 MCP가 필요**하므로 서버가 못 한다(서버는 Jira 호출 금지 — `01` 신뢰 경계). 따라서 자동화하려면 **Claude Code 세션이 큐를 감시**해야 하며, 세션(+워처)이 떠 있는 동안만 동작한다.
 - 구현(`tools/`):
   - `watch_queue.py [poll]` — **pending 명령이 생길 때까지 블로킹 대기**하다가, 발견 즉시 `{"pending":[{id,action,issueKey,to,duedate,jql}]}` 한 줄을 출력하고 **종료**한다. Claude Code가 백그라운드로 실행하면, 종료 시 세션이 재호출되어 처리 루프가 돈다. 읽기 전용(load_comments/load_transitions/sync)과 **변경(transition/set_duedate/add_comment/set_labels/create_link) 모두** 감지한다(변경은 사용자의 명시적 버튼 클릭 = 의도, `11`). 일감 없으면 조용히 대기(재호출 없음).
-  - 재호출된 Claude Code는 `11` 매핑대로 MCP 호출(조회 또는 변경 2단계 전이 등)한 뒤 `apply_queue.py <payload.json> [port]`로 `snapshot.json`에 병합하고 서버 `ack`로 큐를 비운다. payload는 `comments`/`transitions`(드롭다운)/`issuePatch`(변경 후 status·duedate·labels; duedate 변경 시 bucket 재계산)를 담는다. 그리고 watcher를 다시 띄운다.
+  - 재호출된 Claude Code는 **MCP 호출을 직접 하지 않고 `queue-worker` 서브 에이전트에 pending JSON을 넘긴다**(위 "한 배치 처리 흐름"). 워커가 `11` 매핑대로 MCP 호출(조회 또는 변경 2단계 전이 등)한 뒤 payload를 파일로 쓰고 경로를 반환하면, 메인이 `apply_and_rewatch.sh <payload.json>`으로 `snapshot.json` 병합·서버 `ack`·워쳐 재기동을 한 번에 실행한다. payload는 `comments`/`transitions`(드롭다운)/`issuePatch`(변경 후 status·duedate·labels; duedate 변경 시 bucket 재계산)를 담는다.
   - **⚠️ 재기동 누락 방지(2026-07-28).** "apply_queue.py 실행" → "watcher 재기동"이 별개의 두 단계라, Claude Code가 처리 후 재기동을 깜빡해 워쳐가 죽은 채로 남는 사고가 반복됐다. 이를 막기 위해 `tools/apply_and_rewatch.sh <payload.json> [port] [poll_seconds]`를 만들어 두 단계를 한 프로세스 체인으로 묶었다(`apply_queue.py` 실행 후 `exec`로 `watch_queue.py`를 이어 실행). **처리 후에는 `apply_queue.py`를 단독으로 부르지 말고, 항상 이 스크립트를 `run_in_background:true`로 호출한다.** 이러면 "재기동"이 기억해야 할 별도 단계가 아니라 호출 자체에 포함된다.
   - `process_queue.py` — pending 읽기전용 유무만 1회 검사(블로킹 없는 빠른 상태 확인용, exit 0/1).
   - 위 스크립트들은 **Jira를 호출하지 않는다**(큐 파일 읽기 + 로컬 snapshot 쓰기 + localhost ack 만). MCP 호출은 항상 Claude Code가 한다.
