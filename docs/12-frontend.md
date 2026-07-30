@@ -41,7 +41,7 @@
 status-pill: new=neutral, indeterminate=blue, done=green
 라벨 색: 라벨문자열 해시 → 미리 정의된 10색 팔레트(결정적)
 ```
-- 다크/라이트 토글(선택). 대비(AA) 확보.
+- 다크/라이트 테마(2026-07-30 구현): `:root` 기본 = 다크, `:root[data-theme="light"]`에서 전체 토큰 오버라이드. `data-theme`은 `index.html` 부트 스크립트(스타일시트보다 먼저, FOUC 방지)가 스탬프 — **수동 선택(`localStorage.theme`) 우선, 없으면 OS `prefers-color-scheme` 추종**(OS 변경 실시간 반영). 토글 버튼 `#f-theme`(app.js)이 자동→라이트→다크 순환. 테마 의존 색은 하드코딩하지 말고 반드시 토큰(`--strong`, `--text-soft`, `--border-soft`, `--weekend-bg` 포함)으로. `<meta name="color-scheme">`·`theme-color` 2종이 `index.html`에 있고, OG 이미지·파비콘은 `web/assets/`(`og.png`, `favicon.svg`). 대비(AA) 확보.
 - 디자인 디테일이 필요하면 `/mnt/skills/public/frontend-design/SKILL.md`를 참고해 토큰·타이포를 잡는다.
 
 ## 접근성·견고성

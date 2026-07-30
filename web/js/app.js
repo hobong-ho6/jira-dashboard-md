@@ -150,6 +150,22 @@ function buildFilterBar() {
   $("#f-hidedone").addEventListener("change", (e) => setFilter({ hideDone: e.target.checked }));
   $("#f-deps").addEventListener("change", (e) => setFilter({ showDeps: e.target.checked }));
   $("#f-refresh").addEventListener("click", () => loadSnapshot({ force: true }));
+  // 테마 토글: 자동(OS) → 라이트 → 다크 순환. 적용은 index.html 부트 스크립트(__applyTheme).
+  const themeBtn = $("#f-theme");
+  const THEME_LABEL = { auto: "🖥️", light: "☀️", dark: "🌙" };
+  const themeMode = () => localStorage.getItem("theme") || "auto";
+  const renderThemeBtn = () => {
+    themeBtn.textContent = THEME_LABEL[themeMode()];
+    themeBtn.title = `테마: ${{ auto: "자동(OS)", light: "라이트", dark: "다크" }[themeMode()]} — 클릭해 전환`;
+  };
+  renderThemeBtn();
+  themeBtn.addEventListener("click", () => {
+    const next = { auto: "light", light: "dark", dark: "auto" }[themeMode()];
+    if (next === "auto") localStorage.removeItem("theme");
+    else localStorage.setItem("theme", next);
+    window.__applyTheme();
+    renderThemeBtn();
+  });
   $("#f-expand").addEventListener("click", () => {
     const names = (state.snapshot.labelGroups || []).map((g) => g.name);
     collapseAll(names, false);
