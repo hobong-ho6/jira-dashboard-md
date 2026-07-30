@@ -36,5 +36,5 @@ fi
 
 echo "[ensure_services] server=$SERVER (:$PORT), watcher=$WATCHER"
 if [ "$WATCHER" = "DOWN" ]; then
-  echo "[ensure_services] ACTION: 큐 워쳐가 꺼져 있습니다 — 'python3 tools/watch_queue.py' 를 run_in_background 로 (재)기동해 큐 자동 처리를 재개하세요."
+  echo "[ensure_services] ACTION: 큐 워쳐가 꺼져 있습니다 — queue-worker 서브 에이전트(.claude/agents/queue-worker.md)를 Agent 도구(run_in_background)로 (재)기동해 큐 자동 처리를 재개하세요. 메인 세션에서 watch_queue.py 를 직접 띄우지 않습니다(docs/13)."
 fi

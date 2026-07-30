@@ -19,8 +19,7 @@ description: 저장된 JQL로 전체 티켓을 다시 조회해 snapshot을 갱�
 3. **서비스 헬스체크** (`docs/13` "프로세스 수명"):
    - `curl -s -o /dev/null -w "%{http_code}" http://localhost:5173/api/snapshot` 로 서버 확인.
      200이 아니면 `nohup python3 server/serve.py >data/serve.log 2>&1 &`를 **`dangerouslyDisableSandbox=true`**로 재기동(샌드박스에서 띄우면 `web/` 정적 파일이 500 read failed — `docs/13` 트러블슈팅).
-   - `pgrep -f tools/watch_queue.py`로 워쳐 확인. 없으면 `python3 tools/watch_queue.py`를 `run_in_background`로 재기동.
-   - 워쳐가 즉시 종료되며 pending 큐를 반환하면 `docs/11` 절차로 드레인한 뒤 다시 워쳐를 띄운다(무한 방치 금지).
+   - `pgrep -f tools/watch_queue.py`로 워쳐 확인. 없으면 **queue-worker 서브 에이전트**(`.claude/agents/queue-worker.md`)를 재기동한다 — 워쳐·큐 드레인은 queue-worker 소유(`docs/13`), 메인 세션에서 `watch_queue.py`를 직접 띄우지 않는다. 이 스킬이 서브 에이전트 안에서 실행 중이라 Agent 도구가 없으면, 최종 보고에 "워쳐 DOWN — queue-worker 재기동 필요"를 명시해 메인 세션이 띄우게 한다.
 4. 결과를 한 줄로 보고: 조회 건수, snapshot 갱신 여부, 서버/워쳐 상태.
 
 ## 주의

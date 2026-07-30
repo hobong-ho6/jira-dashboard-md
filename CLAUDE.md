@@ -67,9 +67,9 @@ Jira(서버: `https://jira.workers-hub.com`, REST API v2 = **Jira Server/DC**)�
 - "이 쿼리로 시작/조회: \<JQL\>" → `config.json.jql`에 저장 후 `docs/04` sync 실행 (대시보드의 출발점)
 - 대시보드 JQL 입력창 제출 → 큐에 `{"action":"sync","jql":"..."}` 적재 → "큐 처리" 시 같은 흐름으로 실행
 - "동기화" / "sync" → 현재 `config.json.jql`로 `docs/04` 절차 실행, `data/snapshot.json` 갱신
-- "서버 켜" / "serve" / "워쳐 실행" → `docs/13`의 `server/serve.py`와 `tools/watch_queue.py`를 **항상 함께** 기동(서버·워쳐는 분리 기동하지 않음, 이미 떠 있으면 유지). 서버는 `nohup`/`tools/ensure_services.sh`로 **상시 데몬**(세션 정리 생존), 워쳐는 큐 발견 시 세션 재호출이 필요해 `run_in_background`로 띄운다(세션 살아있을 때만 자동 처리). `SessionStart` 훅이 세션 재개 때 둘을 자동 복구한다 — 상세 `docs/13` "프로세스 수명"
+- "서버 켜" / "serve" / "워쳐 실행" → 서버 데몬 보장(`tools/ensure_services.sh`, 상시 데몬·세션 정리 생존) **+ `queue-worker` 서브 에이전트(`.claude/agents/queue-worker.md`)를 `run_in_background`로 기동**(항상 함께, 이미 떠 있으면 유지). 워쳐 실행·큐 드레인(MCP)·apply·ack는 모두 queue-worker 안에서 돌고, 메인 세션은 `watch_queue.py`를 직접 띄우지 않는다(이중 처리 위험). queue-worker가 요약을 반환하며 종료하면 메인 세션이 재기동한다. 세션 살아있을 때만 자동 처리 — 상세 `docs/13` "프로세스 수명"
 - "큐 처리" / "process" → `docs/11` 절차로 `data/commands.jsonl` 드레인(여기에 `sync` 명령 포함) 후 영향 이슈 재동기화
-- "1시간마다 전체 조회" / "hourly resync" → `.claude/skills/hourly-resync/SKILL.md`(전체 재조회 + 서버·워쳐 헬스체크)를 `/loop 1h`로 예약. 워쳐와 동일하게 **이 세션이 살아있는 동안만** 유지된다 — 상세 `docs/13` "정기 전체 재조회"
+- "1시간마다 전체 조회" / "hourly resync" → `.claude/skills/hourly-resync/SKILL.md`(전체 재조회 + 서버·워쳐 헬스체크)를 `/loop 1h`로 예약. 웨이크업 때 실행은 **서브 에이전트(general-purpose)에 위임**해 메인 컨텍스트를 아낀다(워쳐 재기동만 메인 몫). 워쳐와 동일하게 **이 세션이 살아있는 동안만** 유지된다 — 상세 `docs/13` "정기 전체 재조회"
 - "대시보드 다시 만들어" → `docs/12` 절차로 `web/` 산출물 재생성
 
 > 세부는 항상 모듈 파일이 최종 권위(source of truth)다. 이 파일과 모듈이 충돌하면 모듈을 따르고, 이 인덱스를 고친다.

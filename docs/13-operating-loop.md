@@ -22,8 +22,8 @@
 | "초기 세팅" | `config.json` 확인/생성(`04`), `web/`·`server/` 산출물 생성, README 안내 |
 | **"이 쿼리로 시작/조회: \<JQL\>"** | **시작점.** `config.json.jql`에 저장 → `04` sync 실행 → `snapshot.json` 생성 |
 | (대시보드 JQL 입력창 제출) | 큐에 `{"action":"sync","jql":...}` 적재 → "큐 처리" 시 위와 동일 흐름 |
-| "서버 켜" / serve | `python3 server/serve.py` 기동 **+ `tools/watch_queue.py` 워처 백그라운드 기동(항상 함께)**, URL 안내(`http://localhost:5173`) |
-| "워쳐 실행" / watch | 워처 기동. 서버가 꺼져 있으면 **서버도 함께 켠다**(아래 규칙) |
+| "서버 켜" / serve | 서버 데몬 보장(`tools/ensure_services.sh`) **+ `queue-worker` 서브 에이전트 기동(항상 함께)**, URL 안내(`http://localhost:5173`) |
+| "워쳐 실행" / watch | `queue-worker` 서브 에이전트 기동. 서버가 꺼져 있으면 **서버도 함께 켠다**(아래 규칙) |
 | "동기화" / sync | 현재 `config.json.jql`로 `04` 절차 실행 |
 | "큐 처리" / process | `11` 절차로 `commands.jsonl` 드레인(`sync` 명령 포함) → MCP 실행 → ack → 영향 이슈 증분 재동기화 |
 | "전체 새로고침" | 현재 쿼리로 sync 전체 재실행 |
@@ -34,13 +34,14 @@
 ## 프로세스 수명 — 서버 데몬 · 워쳐 세션 묶임 (세션 정리 생존)
 (2026-06-30 사용자 durable 지시) 세션 정리/teardown 때 harness 관리 백그라운드 작업은 종료된다. 대응:
 - **서버 = 상시 데몬.** `nohup`(또는 `tools/ensure_services.sh`)으로 분리 기동해 세션과 무관하게 생존. 대시보드 보기는 세션이 죽어도 계속 뜬다.
-- **워쳐 = 세션 묶임(불가피).** 워쳐는 *큐 발견 → 프로세스 종료 → harness가 Claude 세션 재호출 → MCP 처리* 로 루프를 닫는다. 재호출을 받을 살아있는 세션이 필요하므로 **Claude가 `run_in_background`로 띄워야** 한다. `nohup`으로 분리하면 처리 주체(MCP=Claude)가 없어 공회전하므로 분리 기동 금지. 따라서 워쳐 자동 처리는 **세션이 살아있는 동안만** 동작한다.
-- **SessionStart 훅 자동복구.** `.claude/settings.local.json`의 `SessionStart` 훅이 매 세션 시작/재개 때 `tools/ensure_services.sh`를 돌려 (a) 서버 데몬을 보장하고 (b) 워쳐 상태를 stdout으로 보고한다. 워쳐가 `DOWN`이면 보고에 `ACTION:` 줄이 떠서 Claude가 `python3 tools/watch_queue.py`를 `run_in_background`로 (재)기동한다. → 사용자는 수동 재기동 없이 세션 재개만으로 서버·워쳐가 자동 복구된다.
+- **워쳐 = queue-worker 서브 에이전트 소유(2026-07-30 사용자 지시).** 워쳐는 *큐 발견 → 프로세스 종료 → 처리 → 재감시* 루프가 필요한데, 이걸 메인 세션에서 돌리면 큐가 생길 때마다 개발·개선 작업이 중단된다. 그래서 **전담 서브 에이전트 `queue-worker`(`.claude/agents/queue-worker.md`)를 `run_in_background`로 띄우고, 그 안에서 워쳐 실행(포그라운드)과 큐 드레인(MCP)·apply·ack를 모두 처리**한다. 메인 세션은 `watch_queue.py`를 직접 띄우지 않는다(둘 다 띄우면 이중 처리 위험). 서브 에이전트도 세션에 묶이므로 자동 처리는 여전히 **세션이 살아있는 동안만** 동작하고, `nohup` 분리 기동 금지는 그대로다(처리 주체 MCP=Claude 필요). queue-worker는 배치 ~15회 후 요약을 반환하며 종료하고, 메인 세션이 완료 알림을 받으면 **새 queue-worker를 재기동**한다.
+- **SessionStart 훅 자동복구.** `.claude/settings.local.json`의 `SessionStart` 훅이 매 세션 시작/재개 때 `tools/ensure_services.sh`를 돌려 (a) 서버 데몬을 보장하고 (b) 워쳐 상태를 stdout으로 보고한다. 워쳐가 `DOWN`이면 보고에 `ACTION:` 줄이 떠서 Claude가 `queue-worker` 서브 에이전트를 (재)기동한다. → 사용자는 수동 재기동 없이 세션 재개만으로 서버·워쳐가 자동 복구된다.
   - 훅 설정은 `.claude/settings.local.json`에 있고 이 파일은 **gitignore(토큰 포함 가능 정책, docs/02)** 라 커밋되지 않는다. 새 클론에서 자동복구를 쓰려면 같은 `SessionStart` 훅을 로컬에 추가해야 한다(스크립트 `tools/ensure_services.sh`는 커밋됨). 훅 미설정 시에는 "서버 켜"/"워쳐 실행"으로 수동 기동.
 
 ### 정기 전체 재조회 (`hourly-resync` 스킬 + `/loop`)
 - 증분 sync(mutation 후 영향 이슈만 재조회)와 별개로, **전체 재조회**를 주기적으로 돌리고 싶을 때는 `.claude/skills/hourly-resync/SKILL.md` 절차(전체 sync + 서버·워쳐 헬스체크)를 따른다.
 - 자동 반복은 `/loop 1h`로 이 스킬을 예약한다: `Skill(loop, "1h hourly-resync 스킬(.claude/skills/hourly-resync/SKILL.md) 절차대로 전체 재조회 + 서버/워쳐 헬스체크 수행")`.
+- **실행은 서브 에이전트로 위임한다(2026-07-30 사용자 지시).** `/loop` 웨이크업을 받은 메인 세션은 스킬 절차를 직접 수행하지 않고, `Agent`(general-purpose, `run_in_background`)에 SKILL.md 절차를 넘긴다 — 개선 작업 중인 메인 컨텍스트를 재조회 데이터로 오염시키지 않기 위함. 단, 워쳐 재기동만은 예외로 메인 세션 몫이다(queue-worker 기동은 Agent 도구가 필요해 서브 에이전트가 할 수 없음): 재조회 에이전트는 워쳐 DOWN이면 보고만 하고, 메인 세션이 queue-worker를 재기동한다.
 - **워쳐와 동일한 제약**: `/loop`는 `ScheduleWakeup`으로 **이 세션을 다시 깨우는 방식**이라, 세션이 완전히 끊기면 예약도 함께 끊긴다. 세션 재개 후 다시 자동으로 이어지지 않으므로, 필요하면 사용자가 `/loop 1h`를 재요청해야 한다(SessionStart 훅은 서버·워쳐만 자동복구하고 `/loop` 예약까지는 복구하지 않는다).
 
 ## 권장 운영 사이클
