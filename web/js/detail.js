@@ -110,6 +110,10 @@ export function renderDetail(root, byKey, weekStart) {
     </div>
 
     <div class="d-field"><label>담당자</label><div>${it.assignee ? escapeHtml(it.assignee.displayName || it.assignee.name) : `<span class="muted">미배정</span>`}</div></div>
+    <div class="d-field"><label>Epic</label>
+      <div class="row"><input type="text" id="d-epic" value="${escapeHtml(it.epicLink || "")}" placeholder="예: UNIFY-5987">
+      <button class="btn" id="d-epic-apply">적용</button>
+      ${it.epicLink ? `<button class="btn sm ghost" id="d-epic-clear" title="Epic 연결을 제거합니다">제거</button>` : ""}</div></div>
     <div class="d-field"><label>라벨</label>
       <div id="d-label-host"></div>
       <button class="btn sm" id="d-label-apply">라벨 저장</button></div>
@@ -185,6 +189,19 @@ export function renderDetail(root, byKey, weekStart) {
     const body = root.querySelector("#d-desc-body").value;
     runAction(actions.setDescription(key, body), `${key} 설명 수정`);
   });
+  // Epic 연결 편집: Epic Link 커스텀필드를 설정/제거 (set_epic, docs/11)
+  root.querySelector("#d-epic-apply").addEventListener("click", () => {
+    const v = (root.querySelector("#d-epic").value || "").trim().toUpperCase() || null;
+    if (v && !/^[A-Z][A-Z0-9]+-\d+$/.test(v)) { toast("Epic 키 형식이 아닙니다 (예: UNIFY-1234).", "warn"); return; }
+    runAction(actions.setEpic(key, v), `${key} Epic → ${v || "(제거)"}`);
+  });
+  const epicClear = root.querySelector("#d-epic-clear");
+  if (epicClear) {
+    epicClear.addEventListener("click", () => {
+      root.querySelector("#d-epic").value = "";
+      runAction(actions.setEpic(key, null), `${key} Epic 제거`);
+    });
+  }
   // 하위 작업 추가: 이 티켓을 부모로 Sub-task 생성 (create_issue, docs/11)
   const stAdd = root.querySelector("#d-subtask-add");
   if (stAdd) {

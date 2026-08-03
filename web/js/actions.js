@@ -32,6 +32,7 @@ export const actions = {
   loadComments: (issueKey) => enqueue({ action: "load_comments", issueKey }),
   loadTransitions: (issueKey) => enqueue({ action: "load_transitions", issueKey }),
   setLabels: (issueKey, labels) => enqueue({ action: "set_labels", issueKey, labels }),
+  setEpic: (issueKey, epicLink) => enqueue({ action: "set_epic", issueKey, epicLink }),
   createLink: (inward, type, outward) => enqueue({ action: "create_link", inward, type, outward }),
   createIssue: (fields) => enqueue({ action: "create_issue", ...fields }),
 };

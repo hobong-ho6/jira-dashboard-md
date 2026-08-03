@@ -69,6 +69,8 @@ function renderForm() {
       <div class="d-field"><label>상위 이슈 (입력 시 Sub-task로 자동 지정)</label>
         <input id="cf-parent" type="text" placeholder="예: UNIFY-7792 — 이 티켓의 부모"></div>
     </div>
+    <div class="d-field"><label>Epic (선택)</label>
+      <input id="cf-epic" type="text" placeholder="예: UNIFY-5987 — 이 티켓이 속할 에픽"></div>
     <div class="d-field"><label>라벨</label>
       <div id="cf-label-chips" class="cf-label-chips"></div>
       <div class="cf-label-add">
@@ -257,6 +259,8 @@ function submitCreate() {
   if (pending && pending.value.trim()) addLabels(pending.value);
   if (selectedLabels.length) cmd.labels = [...selectedLabels];
   if (parent) cmd.parent = parent;
+  const epicLink = ($("#cf-epic").value || "").trim();
+  if (epicLink) cmd.epicLink = epicLink;
   const assignee = ($("#cf-assignee").value || "").trim();
   if (assignee) cmd.assignee = assignee;
   if (subtaskSummaries.length) cmd.subtasks = [...subtaskSummaries];

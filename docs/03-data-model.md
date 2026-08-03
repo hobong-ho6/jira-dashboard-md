@@ -55,6 +55,7 @@
       "created": "2026-06-18T10:00:00+09:00",
       "updated": "2026-06-22T18:00:00+09:00",
       "parent": { "key": "PROJ-100", "summary": "결제 모듈 리뉴얼(에픽)" },
+      "epicLink": "PROJ-100",
       "bucket": "thisWeek",
       "descriptionText": "표시용 정리 텍스트(선택)",
       "descriptionLinks": [
@@ -84,7 +85,8 @@
 - `query`: 이 스냅샷을 만든 JQL(=`config.jql`). 대시보드 JQL 입력창은 이 값으로 채워진다.
 - `bucket` ∈ `overdue|today|thisWeek|later|none` — sync가 `generatedAt`과 `weekStart` 기준으로 계산(`06`).
 - `startDate`: `config.startDateField` 값 → 없으면 `created`의 날짜 → 그래도 없으면 `duedate`와 동일(0일 막대). (`06`)
-- `parent`: 상위(부모/에픽) 티켓. sub-task 등에만 있고 없으면 `null`. `{key, summary}` 객체 — summary는 검색 응답의 `parent.fields.summary`에서 가져오므로 **부모가 JQL 결과 밖(예: Closed)이라 `issues[]`에 없어도** 제목을 표시할 수 있다. summary가 없으면 `null`. UI는 sub-task 카드/상세/간트에서 이 값을 "↳ 상위" 로 표시한다. **카드/간트**의 상위는 클릭 시 부모가 snapshot 내면 상세로, 밖이면 Jira로 연다(`09`,`06`). **상세 패널**의 상위 필드는 클릭 시 **항상 실제 Jira 이슈를 새 탭으로 연다**(`10`). ⚠️ 이 `parent`(snapshot 이슈 필드)는 `create_issue` **명령**의 `parent`(문자열 key)와 별개다.
+- `parent`: 상위(부모/에픽) 티켓. sub-task 등에만 있고 없으면 `null`. `{key, summary}` 객체 — summary는 검색 응답의 `parent.fields.summary`에서 가져오므로 **부모가 JQL 결과 밖(예: Closed)이라 `issues[]`에 없어도** 제목을 표시할 수 있다. summary가 없으면 `null`. UI는 sub-task 카드/상세/간트에서 이 값을 "↳ 상위" 로 표시한다. **카드/간트**의 상위는 클릭 시 부모가 snapshot 내면 상세로, 밖이면 Jira로 연다(`09`,`06`). **상세 패널**의 상위 필드는 클릭 시 **항상 실제 Jira 이슈를 새 탭으로 연다**(`10`). ⚠️ 이 `parent`(snapshot 이슈 필드)는 `create_issue` **명령**의 `parent`(문자열 key)와 별개다. 네이티브 `parent`도 Hierarchy 링크(`07`)도 없으면 `epicLink`를 폴백으로 채운다(summary는 `null`).
+- `epicLink`: 클래식 Jira "Epic Link" 커스텀필드(`config.epicLinkField`) 값 — 이 티켓이 속한 Epic의 키(문자열) 또는 `null`. `parent`와 달리 항상 이 필드 하나만 가리키며, 상세 패널의 Epic 편집(`set_epic`, `11`)이 읽고 쓰는 값이다.
 - `links[].direction` ∈ `inward|outward`, `relation`은 표시 문구(`type.inward`/`outward`).
 - `descriptionLinks`: description 원문에서 추출(sync, `08`). `commentLinks`: 코멘트 본문에서 **같은 규칙**으로 추출하되 코멘트 로드 시에만 채워짐(지연, description url과 중복 제거). UI는 둘을 함께 표시(`08`).
 - `comments`/`commentsLoaded`: 상세 진입 시 지연 로드로 채움(`10`).
@@ -106,11 +108,13 @@
 {"id":"c_1719_gh78","ts":"...","status":"pending","action":"load_comments","issueKey":"PROJ-123"}
 {"id":"c_1719_ij90","ts":"...","status":"pending","action":"set_labels","issueKey":"PROJ-123","labels":["frontend","i18n","done-check"]}
 {"id":"c_1719_kl12","ts":"...","status":"pending","action":"create_link","inward":"PROJ-1","type":"Blocks","outward":"PROJ-2"}
-{"id":"c_1719_mn34","ts":"...","status":"pending","action":"create_issue","project":"UNIFY","issueType":"Task","summary":"새 작업","assignee":"hogeun.kim","slackUrl":null,"description":null,"priority":"High","duedate":"2026-07-01","labels":["frontend"],"parent":null}
+{"id":"c_1719_op56","ts":"...","status":"pending","action":"set_epic","issueKey":"PROJ-123","epicLink":"PROJ-100"}
+{"id":"c_1719_mn34","ts":"...","status":"pending","action":"create_issue","project":"UNIFY","issueType":"Task","summary":"새 작업","assignee":"hogeun.kim","slackUrl":null,"description":null,"priority":"High","duedate":"2026-07-01","labels":["frontend"],"parent":null,"epicLink":null}
 ```
 - `add_comment`: 필수 `issueKey`. **`body` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). `slackUrl`(Slack 스레드 링크)이 있으면 Claude Code가 스레드를 가져와 **요약해 코멘트 본문을 생성**해 게시한다(`11`). `body`도 함께 주면 요약 앞에 덧붙인다. 직접 입력 코멘트는 `slackUrl:null`로 둔다.
 - `set_description`: 필수 `issueKey`·`description`. **Jira wiki markup 원문**으로 저장된다(`11`).
-- `create_issue`: 필수 `project`·`issueType`. **`summary` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). 선택 `assignee`(기본값=`config.currentUser`, 비우면 프로젝트 기본값)·`description`·`priority`·`duedate`·`labels[]`·`parent`(Sub-task 등)·`subtasks[]`(**문자열 배열** — 각 원소가 하위 작업 제목. 있으면 Claude Code가 부모 티켓을 먼저 만들고, 각 원소를 부모의 라벨·담당자·마감일·우선순위를 상속한 하위 작업으로 함께 생성 — 현재는 MCP 제약으로 일반 Task + Hierarchy 링크 폴백; `11`)·**`slackUrl`**(Slack 스레드 링크 — 있으면 Claude Code가 스레드를 가져와 요약해 `description`을, `summary` 미입력 시 제목까지 생성; `11`). 브라우저는 빈 선택 필드를 생략한다. 생성된 새 이슈(부모 + 하위 작업)는 처리 후 모두 snapshot `issues[]`에 추가된다(`11`).
+- `set_epic`: 필수 `issueKey`. `epicLink`에 Epic 티켓 키(제거는 `null`). `config.epicLinkField` 커스텀필드를 갱신한다(`11`).
+- `create_issue`: 필수 `project`·`issueType`. **`summary` 또는 `slackUrl` 중 하나는 필요**(둘 다 가능). 선택 `assignee`(기본값=`config.currentUser`, 비우면 프로젝트 기본값)·`description`·`priority`·`duedate`·`labels[]`·`parent`(Sub-task 등)·`epicLink`(속할 Epic 티켓 키 — `parent`와 별개, `set_epic`과 동일한 커스텀필드에 반영)·`subtasks[]`(**문자열 배열** — 각 원소가 하위 작업 제목. 있으면 Claude Code가 부모 티켓을 먼저 만들고, 각 원소를 부모의 라벨·담당자·마감일·우선순위를 상속한 하위 작업으로 함께 생성 — 현재는 MCP 제약으로 일반 Task + Hierarchy 링크 폴백; `11`)·**`slackUrl`**(Slack 스레드 링크 — 있으면 Claude Code가 스레드를 가져와 요약해 `description`을, `summary` 미입력 시 제목까지 생성; `11`). 브라우저는 빈 선택 필드를 생략한다. 생성된 새 이슈(부모 + 하위 작업)는 처리 후 모두 snapshot `issues[]`에 추가된다(`11`).
 
 `action` 종류와 처리 매핑은 `11-mutations.md`가 권위.
 `status`: 브라우저는 항상 `pending`으로 만든다. Claude Code가 `done`/`failed`/`blocked`로 바꿔 `data/.processed/`에 옮기거나 `ack` API로 표시.

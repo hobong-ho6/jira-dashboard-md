@@ -252,6 +252,15 @@ def normalize_issue(issue, cfg, today):
     else:
         parent = None
 
+    # epicLink: 클래식 Jira "Epic Link" 커스텀필드(config.epicLinkField, 예: customfield_10108).
+    # 이 MCP는 커스텀필드를 {"value": <키 또는 null>} 로 평면화해 응답한다.
+    epic_field = cfg.get("epicLinkField")
+    epic_raw = f.get(epic_field) if epic_field else None
+    if isinstance(epic_raw, dict):
+        epic_link = epic_raw.get("value") or None
+    else:
+        epic_link = epic_raw or None
+
     links = normalize_links(f.get("issuelinks"))
     # Sub-task 폴백(docs/11): MCP로 진짜 Sub-task를 못 만들 때 WBSGantt Hierarchy 링크로
     # 부모-자식을 표현한다. 이 이슈가 "is contained in"(inward) 쪽이면 상대가 부모다.
@@ -260,6 +269,9 @@ def normalize_issue(issue, cfg, today):
             if ln.get("type") == "Hierarchy link (WBSGantt)" and ln.get("direction") == "inward":
                 parent = {"key": ln.get("key"), "summary": ln.get("summary") or None}
                 break
+    # Epic Link 커스텀필드도 상위 표시 폴백으로 쓴다(다른 parent 소스가 없을 때만).
+    if parent is None and epic_link:
+        parent = {"key": epic_link, "summary": None}
 
     return {
         "key": key,
@@ -282,6 +294,7 @@ def normalize_issue(issue, cfg, today):
         "created": created,
         "updated": f.get("updated"),
         "parent": parent,
+        "epicLink": epic_link,
         "bucket": bucket_of(duedate, today, week_start),
         "descriptionText": desc,
         "descriptionLinks": parse_description_links(desc, rules),

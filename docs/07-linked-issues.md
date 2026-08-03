@@ -9,6 +9,7 @@
 - `inwardIssue`가 있으면 `direction="inward"`, `relation=type.inward`, 상대 = `inwardIssue`
 - `key/summary/status` = 상대 이슈의 `key`, `fields.summary`, `fields.status.name`
 - **Hierarchy 링크 → parent 해석**: `parent` 필드가 없는 이슈에 `Hierarchy link (WBSGantt)` 링크가 `direction="inward"`("is contained in")로 있으면 그 상대를 `parent`로 채운다 — Sub-task를 MCP로 못 만들 때의 폴백 표현(`11`)이 대시보드에서 ↳ 상위로 보이게 하기 위함.
+- **Epic Link → parent 해석**: 네이티브 `parent`도 위 Hierarchy 링크도 없으면 `config.epicLinkField` 커스텀필드 값(`epicLink`)을 마지막 폴백으로 `parent`에 채운다(summary는 `null`). Epic 자체는 `set_epic`(`11`)으로 상세에서 편집 가능하며, `epicLink`는 이 폴백 여부와 무관하게 항상 별도로 snapshot에 보존된다(`03`).
 
 ## UI 표현 (3가지, 단계적)
 1. **카드 내 관계 칩** (필수): 카드/상세에 `relation 상대KEY` 칩. 클릭 → 해당 이슈 카드로 스크롤·하이라이트(스냅샷에 있으면). 스냅샷에 없는 이슈면 `jiraBaseUrl/browse/KEY`를 새 탭으로.

@@ -97,6 +97,15 @@ def main():
             it["descriptionLinks"] = _nz.parse_description_links(fields["descriptionText"], rules)
         if "labels" in fields:  # 라벨 변경 → labelGroups 재빌드
             snap["labelGroups"] = _nz.build_label_groups(snap.get("issues", []), cfg.get("labelOrder", []))
+        if "epicLink" in fields:  # Epic 변경 → parent 표시 폴백 즉시 갱신(다른 근거의 parent는 건드리지 않음)
+            new_epic = fields["epicLink"]
+            cur_parent = it.get("parent")
+            if new_epic:
+                if not cur_parent:
+                    it["parent"] = {"key": new_epic, "summary": None}
+            elif cur_parent and isinstance(cur_parent, dict) and cur_parent.get("summary") is None:
+                # summary 없는 parent 는 (직전) epicLink 폴백으로 생겼을 가능성이 커 함께 지운다.
+                it["parent"] = None
 
     add = payload.get("addIssues", [])
     if add:  # create_issue 후: 새 이슈 normalize → 추가/교체 → labelGroups 재빌드
