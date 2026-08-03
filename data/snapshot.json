@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T14:22:26+09:00",
+  "generatedAt": "2026-08-03T15:41:10+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -81,74 +81,6 @@
   },
   "issues": [
     {
-      "key": "UNIFY-5269",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-5269",
-      "summary": "Google Login Kaia wallet -> Unifi로 변경",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Medium",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "UnifiMobile"
-      ],
-      "duedate": null,
-      "startDate": "2026-04-27",
-      "created": "2026-04-27T09:38:24.000+0900",
-      "updated": "2026-07-30T09:28:13.000+0900",
-      "parent": null,
-      "bucket": "none",
-      "descriptionText": "Unifi에서 Google Login 시, Kaia Wallet이라 노출되고 있어 Branding 변경 필요\r\n\r\nBranding 변경 심사에서 홈페이지 소유권 확인을 할 수없다는 이유로 거절됨.\r\n이에 대한 해결책을 제미나이에서 확인한 내용은 아래와 같음\r\n\r\nGoogle OAuth 심사에서 **\"Your home page website is not registered to you.\"**라는 사유로 거절된 것은, Google Cloud OAuth 동의 화면(Consent Screen)에 입력하신 '홈페이지 URL'이나 '개인정보처리방침 URL'의 도메인이 현재 심사를 요청한 Google 계정의 소유로 증명되지 않았기 때문입니다.\r\n\r\n사용자님께서 찾으신 링크는 Google Search Console(구 웹마스터 도구)을 통해 해당 웹사이트가 내 것임을 Google에 증명하는 방법을 안내하는 문서입니다.\r\n\r\n이 문제를 해결하고 다시 심사를 통과하기 위해 차근차근 진행해야 할 단계는 다음과 같습니다.\r\n\r\n* 1단계: OAuth 동의 화면에 입력한 도메인 확인하기\r\nGoogle Cloud Console에 접속합니다.\r\n\r\n왼쪽 메뉴에서 API 및 서비스(APIs & Services) > **OAuth 동의 화면(OAuth consent screen)**으로 이동합니다.\r\n\r\n설정된 내용 중 앱 도메인(App domain) 섹션의 홈페이지(Application home page)와 개인정보처리방침(Privacy policy link) 등에 입력된 URL이 무엇인지 확인합니다. (예: https://www.example.com)\r\n\r\n승인된 도메인(Authorized domains) 목록에도 해당 도메인(example.com)이 있는지 확인합니다.\r\n\r\n* 2단계: Google Search Console에서 소유권 확인하기 (가장 중요)\r\n이 단계는 반드시 Google Cloud Console을 사용 중인 동일한 Google 계정으로 진행하셔야 합니다.\r\n\r\nGoogle Search Console에 접속하여 로그인합니다.\r\n\r\n왼쪽 상단의 속성 목록을 클릭하고 **[+ 속성 추가(Add property)]**를 누릅니다.\r\n\r\n두 가지 유형 중 하나를 선택하여 도메인을 입력합니다.\r\n\r\n도메인(Domain) 유형 (추천): example.com 처럼 도메인만 입력합니다. (가장 확실한 방법입니다.)\r\n\r\nURL 접두어(URL prefix) 유형: https://www.example.com 처럼 정확한 주소를 입력합니다.\r\n\r\n소유권 인증 진행: 선택한 유형에 따라 Google이 지시하는 방식대로 인증을 진행해야 합니다.\r\n\r\nDNS TXT 레코드 (도메인 유형 선택 시 필수): 가비아, 후이즈, AWS Route53 등 도메인을 구입하신 호스팅 업체의 관리 페이지로 이동하여, Google이 제공하는 TXT 레코드 값을 DNS 설정에 추가합니다. (설정 후 반영까지 몇 분~몇 시간 정도 걸릴 수 있습니다.)\r\n\r\nHTML 파일 업로드 또는 HTML 태그 추가 (URL 접두어 선택 시 가능): 웹사이트의 루트 폴더에 Google이 주는 파일을 업로드하거나, 웹사이트의 <head> 태그 사이에 <meta> 태그를 복사해 붙여넣습니다.\r\n\r\n설정이 완료되면 Search Console에서 [확인] 버튼을 누릅니다. \"소유권이 확인됨\"이라는 메시지가 뜨면 성공입니다.\r\n\r\n* 3단계: Google Search Console과 Google Cloud 연동 확인\r\n다시 Google Cloud Console로 돌아옵니다.\r\n\r\n검색창에 Search Console을 검색하거나, API 및 서비스 > 도메인 확인(Domain verification) 메뉴로 이동합니다.\r\n\r\n[도메인 추가(ADD DOMAIN)] 버튼을 누르고, 방금 소유권을 확인받은 도메인(example.com)을 입력하여 등록합니다.\r\n(만약 Search Console에서 동일한 계정으로 소유권 인증을 정상적으로 마쳤다면 문제없이 등록됩니다.)\r\n\r\n* 4단계: OAuth 심사 재요청\r\nAPI 및 서비스 > OAuth 동의 화면으로 다시 이동합니다.\r\n\r\n**[앱 수정(Edit App)]**을 누른 후, 앱 도메인과 승인된 도메인에 방금 소유권 인증을 마친 도메인이 잘 들어가 있는지 다시 한번 확인합니다.\r\n\r\n저장 후 계속을 눌러 마지막 단계까지 간 뒤, **[심사 제출(Submit for verification)]**을 다시 누릅니다.\r\n\r\n심사 요청 시 제공해야 하는 추가 정보 란에 **\"Search Console을 통해 도메인 소유권 확인을 완료했습니다(I have verified domain ownership via Google Search Console).\"**라고 적어주시면 더 좋습니다.\r\n\r\n요약하자면: Google Cloud에 입력한 웹사이트가 진짜 당신의 것인지 알 수 없으니, Google Search Console이라는 도구에 가서 당신의 도메인(웹사이트) 소유권을 먼저 증명하고 오라는 뜻입니다. 위 순서대로 진행해 보시고 막히는 부분이 있다면(예: DNS 설정 방법 등) 언제든 다시 질문해 주세요!",
-      "descriptionLinks": [
-        {
-          "url": "https://www.example.com",
-          "text": "https://www.example.com",
-          "category": "link",
-          "label": "Link"
-        }
-      ],
-      "commentLinks": [
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C068NE7EHML/p1777250756106999",
-          "text": "https://group-all-workers-hub.slack.com/archives/C068NE7EHML/p1777250756106999",
-          "category": "chat",
-          "label": "Slack"
-        }
-      ],
-      "links": [],
-      "comments": [
-        {
-          "body": "Devops Help thread: https://group-all-workers-hub.slack.com/archives/C068NE7EHML/p1777250756106999",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com",
-            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-          },
-          "created": "2026-04-27T09:46:11.214+0900",
-          "updated": "2026-04-27T09:46:11.214+0900"
-        },
-        {
-          "body": "7월 22일 \n앱이 브랜드 가이드라인 요구사항을 충족하지 않습니다. 다음 문제를 해결하세요.\nOAuth 동의 화면에 표시된 앱 이름이 홈페이지의 앱 이름과 일치하지 않습니다.\n정확한 최신 애플리케이션 이름으로 앱을 구성하세요.자세히 알아보기 \n\n로고 Unifi로 업데이트 후 심사제출",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com",
-            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-          },
-          "created": "2026-07-30T09:28:13.124+0900",
-          "updated": "2026-07-30T09:28:13.124+0900"
-        }
-      ],
-      "commentsLoaded": true
-    },
-    {
       "key": "UNIFY-3303",
       "url": "https://jira.workers-hub.com/browse/UNIFY-3303",
       "summary": "IAB로 Unifi 접근 시, LIFF로 이동 (구. [IAB] Google 로그인 실패 (외부 브라우저에서는 정상))",
@@ -171,6 +103,7 @@
       "created": "2026-02-13T11:26:07.000+0900",
       "updated": "2026-07-29T10:35:28.000+0900",
       "parent": null,
+      "epicLink": null,
       "bucket": "none",
       "descriptionText": "h2. 현상\r\n* LINE IAB(인앱 브라우저)에서 Google 로그인 시 오류 발생\r\n* Chrome 등 외부 브라우저에서는 정상 동작\r\n\r\nh2. 추정 원인\r\n* Google 정책상 WebView/IAB 환경에서 Google 로그인 불가 이슈로 추정\r\n\r\nh2. 개선/대응 방향(논의 필요)\r\n# LINE IAB에서 열릴 경우 LIFF로 유도/전환 검토\r\n# 기타 앱 IAB에서는 외부 브라우저로 열도록 유도 또는 최소 알림 팝업 제공\r\n\r\nh2. 참고\r\n* 과거 우선순위로 백로그화된 적 있음\r\n* Slack: https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1770943241737049\r\n\r\nh2. 기획위키\r\n* https://wiki.workers-hub.com/pages/viewpage.action?pageId=3751027285\r\n\r\nh2. 피그마\r\n* 로그인화면: https://www.figma.com/design/5kWwTegPa0KIB7JCb34DaI/01.-Login?node-id=2778-1898&m=dev\r\n* IAB 전환화면: https://www.figma.com/design/21AEaQsVGzydIgEwgckqYd/13.-ETC?node-id=0-1&p=f&m=dev\r\n\r\nh2. 마케팅에서 정리한 채널별 IAB 동작\r\n* https://wiki.workers-hub.com/pages/viewpage.action?pageId=3824301731\r\n",
       "descriptionLinks": [
@@ -245,9 +178,271 @@
       "commentsLoaded": true
     },
     {
-      "key": "UNIFY-9446",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9446",
-      "summary": "1회성 미션, 데일리 미션, 게임미션을 구분해 디자인 업데이트 및 FE 개발",
+      "key": "UNIFY-9129",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9129",
+      "summary": "각 팀(디자인,운영) 상품 등록 리드타임 확인",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "GuideKim"
+      ],
+      "duedate": "2026-08-06",
+      "startDate": "2026-07-23",
+      "created": "2026-07-23T15:19:36.000+0900",
+      "updated": "2026-08-03T13:49:14.000+0900",
+      "parent": {
+        "key": "UNIFY-8608",
+        "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템"
+      },
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "inward",
+          "relation": "is contained in",
+          "key": "UNIFY-8608",
+          "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
+          "status": "In Progress"
+        }
+      ],
+      "comments": [],
+      "commentsLoaded": true
+    },
+    {
+      "key": "UNIFY-9128",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9128",
+      "summary": "AI로 컨텐츠 생성 시, AI에 LY 가이드라인 적용하는 방법 논의",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "GuideKim"
+      ],
+      "duedate": "2026-08-08",
+      "startDate": "2026-07-23",
+      "created": "2026-07-23T15:19:34.000+0900",
+      "updated": "2026-08-03T13:49:13.000+0900",
+      "parent": {
+        "key": "UNIFY-8608",
+        "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템"
+      },
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "inward",
+          "relation": "is contained in",
+          "key": "UNIFY-8608",
+          "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
+          "status": "In Progress"
+        }
+      ],
+      "comments": [],
+      "commentsLoaded": true
+    },
+    {
+      "key": "UNIFY-8608",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-8608",
+      "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "GuideKim"
+      ],
+      "duedate": "2026-08-06",
+      "startDate": "2026-07-10",
+      "created": "2026-07-10T10:36:54.000+0900",
+      "updated": "2026-08-03T13:49:12.000+0900",
+      "parent": null,
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "h3. 배경\nGuide Kim 상품 운영 관련 논의 스레드 (김호근).\n회의록: https://docs.google.com/document/d/1PdkaP9tb8LcWY4H504VwC_A3zMLJWNTl2BmoV2tzATc/edit?tab=t.km33fxuwd5c2#heading=h.mwt0r954ikya\n\n*Action Item (최초)*\n* 김호근 - API 개발완료 일정 확인\n* 김명선 - 디자인팀 역할 확인\n* 오정희 - 상품 추가/삭제를 위한 상품 운영 분석/규칙 사업팀 내부 검토\n\nh3. 논의\n*디자인 컨트롤 범위 (김명선)*\n* 컨트롤 영역: 메인 큐레이션 콘텐츠\n* 병원 의사 썸네일: 병원 추가 시 디자인팀 제작·전달, 그 외는 제작 가이드 제공\n\n*섹션별 운영 방안*\n* 가장 저렴하게 준비하는 한국 여행 — 바우처 썸네일 제작 가이드 제공\n* 정품 인증 한국 인기 베스트 시술 — 병원 추가 시 의사 썸네일 보정, 병원 차별화 문구 작성 가이드 제공\n* 덕질의 성지, BTS가 머물렀던 그 곳 — 이후 콘텐츠 변경 시 필요 여부 검토\n\n*정리 (김호근)*\n* 병원/바우처 업데이트 시 디자인팀 검수\n* K-pop 테마는 현재 상품 실적 저조 시 함께 검토\n\n*용어 확인 (이주성 문의 → 김호근 답변)*\n* \"정형외과\" 표현은 가이드킴에 등록된 일본 업체명(일본어 검수 완료) 그대로 사용 — 확인 완료\n\nh3. 결론\n* 김호근 → 김세건: GuideKim에서 추가로 받아야 하는 API 유무 확인 및 우리 쪽 적용 일정 확인 요청 (최신 팔로업)\n\n원본 Slack: https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1783575864195659",
+      "descriptionLinks": [
+        {
+          "url": "https://docs.google.com/document/d/1PdkaP9tb8LcWY4H504VwC_A3zMLJWNTl2BmoV2tzATc/edit?tab=t.km33fxuwd5c2#heading=h.mwt0r954ikya",
+          "text": "https://docs.google.com/document/d/1PdkaP9tb8LcWY4H504VwC_A3zMLJWNTl2BmoV2tzATc/edit?tab=t.km33fxuwd5c2#heading=h.mwt0r954ikya",
+          "category": "docs",
+          "label": "Drive"
+        },
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1783575864195659",
+          "text": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1783575864195659",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
+      "commentLinks": [],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "outward",
+          "relation": "contains",
+          "key": "UNIFY-9127",
+          "summary": "베타에 설정한 상품 prod에 적용하는 방안 확인",
+          "status": "In Progress"
+        },
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "outward",
+          "relation": "contains",
+          "key": "UNIFY-9128",
+          "summary": "AI로 컨텐츠 생성 시, AI에 LY 가이드라인 적용하는 방법 논의",
+          "status": "In Progress"
+        },
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "outward",
+          "relation": "contains",
+          "key": "UNIFY-9129",
+          "summary": "각 팀(디자인,운영) 상품 등록 리드타임 확인",
+          "status": "In Progress"
+        },
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "outward",
+          "relation": "contains",
+          "key": "UNIFY-9126",
+          "summary": "사업팀 상품운영 방침 확인",
+          "status": "Closed"
+        }
+      ],
+      "comments": [
+        {
+          "body": "B/E에서 설계 및 구현 중이며, 구현 간 부족한 부분은 GuideKim에 추가 요청 필요",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com"
+          },
+          "created": "2026-07-15T15:30:51.210+0900",
+          "updated": "2026-07-15T15:30:51.210+0900"
+        },
+        {
+          "body": "운영팀에 어드민 기능안내\n사업팀에 상품운영 방침 마련 요청",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com"
+          },
+          "created": "2026-07-23T15:16:29.326+0900",
+          "updated": "2026-07-23T15:16:29.326+0900"
+        },
+        {
+          "body": "디자인팀에 상품 등록 가이드 받아 운영팀 전달 필요",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com"
+          },
+          "created": "2026-07-29T10:35:20.799+0900",
+          "updated": "2026-07-29T10:35:20.799+0900"
+        }
+      ],
+      "commentsLoaded": true
+    },
+    {
+      "key": "UNIFY-9127",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9127",
+      "summary": "베타에 설정한 상품 prod에 적용하는 방안 확인",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "GuideKim"
+      ],
+      "duedate": "2026-08-08",
+      "startDate": "2026-07-23",
+      "created": "2026-07-23T15:19:33.000+0900",
+      "updated": "2026-08-03T13:49:12.000+0900",
+      "parent": {
+        "key": "UNIFY-8608",
+        "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템"
+      },
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "inward",
+          "relation": "is contained in",
+          "key": "UNIFY-8608",
+          "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
+          "status": "In Progress"
+        }
+      ],
+      "comments": [
+        {
+          "body": "beta->prod json으로 통채로 옮길 때 이미지는 자동으로 prod obs로 재 호스팅 후 주소 변경해서 업로드되도록 해놨고, 혹시 id가 다르더라도 externalId가 같으면 그 데이터를 업데이트 하도록 수정됨\npreview도 prod obs를 사용하고 있어서 beta꺼를 preview에 먼저 이동시켜 놓고 prod로 이동시키는 방식으로 Beta 데이터를 Prod로 전이",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com"
+          },
+          "created": "2026-07-29T10:35:17.974+0900",
+          "updated": "2026-07-29T10:35:17.974+0900"
+        },
+        {
+          "body": "운영팀에 방법 설명 필요",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com"
+          },
+          "created": "2026-07-29T10:35:27.982+0900",
+          "updated": "2026-07-29T10:35:27.982+0900"
+        }
+      ],
+      "commentsLoaded": true
+    },
+    {
+      "key": "UNIFY-8895",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-8895",
+      "summary": "개발일정 확인",
       "issuetype": "",
       "status": {
         "name": "In Progress",
@@ -263,46 +458,102 @@
         "Mission&Reward"
       ],
       "duedate": "2026-08-07",
-      "startDate": "2026-07-30",
-      "created": "2026-07-30T13:16:41.000+0900",
-      "updated": "2026-07-30T13:46:29.000+0900",
+      "startDate": "2026-07-16",
+      "created": "2026-07-16T15:29:27.000+0900",
+      "updated": "2026-08-03T13:47:39.000+0900",
       "parent": {
-        "key": "UNIFY-8838",
-        "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책"
+        "key": "UNIFY-8759",
+        "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토"
       },
-      "bucket": "later",
-      "descriptionText": "",
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "넥스트베이 릴리즈 일정 8월 20일",
       "descriptionLinks": [],
-      "commentLinks": [],
+      "commentLinks": [
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785208241198329?thread_ts=1784181144.702419&cid=C08HYMJ7Z8V",
+          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785208241198329?thread_ts=1784181144.702419&cid=C08HYMJ7Z8V",
+          "category": "chat",
+          "label": "Slack"
+        },
+        {
+          "url": "https://group-workers-hub.slack.com/archives/C06S33UGGP9/p1785126480535279",
+          "text": "https://group-workers-hub.slack.com/archives/C06S33UGGP9/p1785126480535279",
+          "category": "chat",
+          "label": "Slack"
+        },
+        {
+          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+          "text": "wiki 링크",
+          "category": "docs",
+          "label": "Wiki"
+        },
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785732220934289",
+          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785732220934289",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
       "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "outward",
+          "relation": "contains",
+          "key": "UNIFY-9378",
+          "summary": "QA 스펙리뷰",
+          "status": "Closed"
+        },
         {
           "type": "Hierarchy link (WBSGantt)",
           "direction": "inward",
           "relation": "is contained in",
-          "key": "UNIFY-8838",
-          "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책",
+          "key": "UNIFY-8759",
+          "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토",
           "status": "In Progress"
         }
       ],
       "comments": [
         {
-          "body": "대한님께 내용 전달 완료",
+          "body": "_[Slack 스레드 요약] Unifi v1.6.3 개발일정 확인_\n* 김동욱(Luis): JPYC 친구초대 프로모션으로 일정이 변경된 것 같아 개발일정 재검토 요청. 이어서 Unifi v1.6.3 Dev1 / LV 개발일정은 익일 오전 중 QA 준비가 가능할 것으로 안내.\n* 차시환: v1.6.3에 과제가 몇 개 추가된 것 같아 확인 후 별도 공유 예정. 우선 오늘 오전 버전 기준으로는 내일 QA 개시가 가능하다는 이해이나, TC 작성이 안 된 상태라 QA 개시 일정은 별도 확인 필요. 추가로 넥스트베이 미션&리워드 노출(UNIFY-8661) 건 일정이 넥스트베이 측 사정으로 8월 20일경으로 조정된다는 점을 언급하며, 현재 개발 상태를 고려해 8월 버전으로 분리 대응할지 이번 버전에 포함할지 문의(1.6.3에 추가된 두 과제가 있어 QA 범위를 줄일 수 있으면 줄이고 싶다는 의견).\n* 김동욱: 동일한 의견 — 넥스트베이 미션&리워드 노출은 v1.6.3과 별도 버전으로 일정에 맞춰 진행하는 것이 좋겠다는 의견. BE에서 먼저 구조를 잡아두고, FE 대응 후 버전을 맞춰 추후 일정에 맞게 QA 진행하는 방향 제안.\n\n_결론_: v1.6.3 개발일정은 내일 오전 QA 준비 가능(단, TC 미작성으로 QA 개시일은 별도 확인 필요). 넥스트베이 미션&리워드 노출(UNIFY-8661)은 v1.6.3과 분리해 별도 버전으로 진행하기로 함 — BE 선구조화 후 FE 대응, 추후 일정에 맞춰 QA.\n\n원본 Slack: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785208241198329?thread_ts=1784181144.702419&cid=C08HYMJ7Z8V",
           "author": {
             "display_name": "Kim HoGeun （ 김호근 ）",
             "name": "Kim HoGeun （ 김호근 ）",
             "email": "hogeun.kim@linecorp.com",
             "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
           },
-          "created": "2026-07-30T13:46:29.993+0900",
-          "updated": "2026-07-30T13:46:29.993+0900"
+          "created": "2026-07-29T09:51:07.841+0900",
+          "updated": "2026-07-29T09:51:07.841+0900"
+        },
+        {
+          "body": "_[Slack 스레드 요약] 넥스트베이 배포 일정 조정_\n* 김호근: 넥스트베이 일정 이미지 공유(단체 DM방에서 논의되어 별도 초대는 안 함).\n* 차시환: 미션 특성상 저희 쪽도 5일 배포는 하겠지만, Beta 배포일정 등을 미리 맞춰봐야 할 것 같다는 의견. 금주 수요일 배포까지 마무리 후 배포일정 수립 예정. 이후 상세 일정은 담당자(선교님)에게 확인하겠다고 안내.\n* 김호근: 일정 변경 안내 이미지 재공유.\n* 차시환: v1.6.3에 요건이 몇 개 추가되어 QA 공수를 줄이고 싶어, 넥스트베이 대응을 8월 20일경 배포에 맞춰 진행해도 될지 문의.\n* 김호근: 동의(👍 리액션).\n\n_결론_: 넥스트베이 대응은 8월 20일경 배포로 조정하기로 합의.\n\n원본 Slack: https://group-workers-hub.slack.com/archives/C06S33UGGP9/p1785126480535279",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com",
+            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+          },
+          "created": "2026-07-29T10:06:20.308+0900",
+          "updated": "2026-07-29T10:06:20.308+0900"
+        },
+        {
+          "body": "_[Slack 스레드 요약] 넥스트베이 미션&리워드 온보딩 기획 공유_\n* 김호근: Jimmy(김동욱_Luis), 이진솔(UI), 차시환(Sihwan) 대상으로 8월 20일 릴리즈를 목표로 하는 넥스트베이(Next Bay) 미션&리워드 온보딩 기획 문서를 공유([wiki 링크|https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893]).\n* 주요 내용:\n  * mini / LIFF / Web 버전에 Next Bay Mission and Reward 관련 배너 노출\n  * 배너 선택 시 넥스트베이 디테일 페이지로 이동\n  * 디테일 페이지에서 미션 수행 시 넥스트베이로 이동해 미션 완료, 리워드는 유니파이 페이지에서 수령\n  * 넥스트베이는 게임미션 영역에는 노출되지 않고 배너로만 노출\n* 공수 및 일정 산정 요청. 내용이 간단해 별도 스펙리뷰는 잡지 않았으나 필요 시 요청 가능하다고 안내.\n\n_결론_: 검토 및 공수/일정 산정 요청 대기 중(스레드 내 회신은 아직 없음, eyes 리액션만 있음).\n\n원본 Slack: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785732220934289",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com",
+            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+          },
+          "created": "2026-08-03T13:47:39.749+0900",
+          "updated": "2026-08-03T13:47:39.749+0900"
         }
       ],
       "commentsLoaded": true
     },
     {
-      "key": "UNIFY-9450",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9450",
-      "summary": "기획서 작성",
+      "key": "UNIFY-5998",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-5998",
+      "summary": "Unifi Mobile 설치 유도 기획",
       "issuetype": "",
       "status": {
         "name": "In Progress",
@@ -315,57 +566,42 @@
         "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
       },
       "labels": [
-        "Mission&Reward"
+        "UnifiMobile"
       ],
-      "duedate": "2026-08-20",
-      "startDate": "2026-07-30",
-      "created": "2026-07-30T13:43:21.000+0900",
-      "updated": "2026-07-30T13:43:32.000+0900",
+      "duedate": null,
+      "startDate": "2026-05-14",
+      "created": "2026-05-14T13:19:59.000+0900",
+      "updated": "2026-07-30T15:24:03.000+0900",
       "parent": {
-        "key": "UNIFY-8759",
-        "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토"
+        "key": "UNIFY-5987",
+        "summary": null
       },
-      "bucket": "later",
-      "descriptionText": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+      "epicLink": "UNIFY-5987",
+      "bucket": "none",
+      "descriptionText": "슬랙 스레드 : https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779263959266529\r\n\r\nfigma : https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=47534-5449&t=5cJ3M5ps7MzIefp3-1\r\n\r\n유니파이 제공 배너에 대한 마케팅 요건 수렴 스레드 : https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1779338598260149",
       "descriptionLinks": [
         {
-          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
-          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
-          "category": "docs",
-          "label": "Wiki"
-        }
-      ],
-      "commentLinks": [
+          "url": "https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779263959266529",
+          "text": "https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779263959266529",
+          "category": "chat",
+          "label": "Slack"
+        },
         {
-          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
-          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
-          "category": "docs",
-          "label": "Wiki"
-        }
-      ],
-      "links": [
+          "url": "https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=47534-5449&t=5cJ3M5ps7MzIefp3-1",
+          "text": "https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=47534-5449&t=5cJ3M5ps7MzIefp3-1",
+          "category": "design",
+          "label": "Design"
+        },
         {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8759",
-          "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토",
-          "status": "In Progress"
+          "url": "https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1779338598260149",
+          "text": "https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1779338598260149",
+          "category": "chat",
+          "label": "Slack"
         }
       ],
-      "comments": [
-        {
-          "body": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com",
-            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-          },
-          "created": "2026-07-30T14:15:27.445+0900",
-          "updated": "2026-07-30T14:15:27.445+0900"
-        }
-      ],
+      "commentLinks": [],
+      "links": [],
+      "comments": [],
       "commentsLoaded": true
     },
     {
@@ -386,12 +622,13 @@
       "labels": [
         "Mission&Reward"
       ],
-      "duedate": "2026-08-20",
+      "duedate": "2026-08-04",
       "startDate": "2026-07-14",
       "created": "2026-07-14T16:08:39.000+0900",
-      "updated": "2026-07-30T13:43:32.000+0900",
+      "updated": "2026-07-30T14:50:57.000+0900",
       "parent": null,
-      "bucket": "later",
+      "epicLink": null,
+      "bucket": "thisWeek",
       "descriptionText": "h3. 배경\nNext bay측에서 미션앤리워드에 Next bay 미션앤리워드 추가를 요청. 게임 미션과 달리 스페셜 미션 형태로 추가하는 방안을 요청받아 정준영 님이 문서 공유([wiki 문서|https://wiki.workers-hub.com/pages/viewpage.action?pageId=4427787788])하며 검토 요청.\n\nh3. 논의\n* 김유호: 김우석 님이 명규님과 별도 채널에서 '진행'으로 의사결정. 넥스트베이 집객을 위해 넥스트마켓을 활용해 그 쪽에 미션보드를 열고, 이를 유니파이에 미러링(실제로는 넥스트마켓의 미션을 유니파이에 노출하는 형태).\n** 스페셜 미션은 현재 JP에만 노출 중이나, 이번 건은 JP 외 국가 + Mini에서도 노출되는 형태.\n** 현재는 배너 또는 미션 숫자 정도만 노출하지만, 이번 제안은 조건을 포함해 지면이 넓어 별도 강조가 필요해 보이면 진행 가능.\n** 넥스트베이는 JP 오픈 시 주타겟 국가는 아님.\n** 김명선(디자인) 님께 병렬 검토 요청.\n* 정준영: 넥스트마켓에 넥스트베이의 미션앤리워드가 온보딩되고, 리워드는 넥스트마켓에서 지급하되 unifi 리워드 페이지에서는 미션과 리워드 정보만 노출하는 것으로 이해.\n\n원본: [Slack 스레드|https://group-all-workers-hub.slack.com/archives/C0B5WNBJPB5/p1783990460208039]",
       "descriptionLinks": [
         {
@@ -512,380 +749,9 @@
       "commentsLoaded": true
     },
     {
-      "key": "UNIFY-9449",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9449",
-      "summary": "[JPYC 친구초대 프로모션] 초대자 닉네임 LINE Display Name 표시 및 마스킹 정책",
-      "issuetype": "",
-      "status": {
-        "name": "Closed",
-        "category": "done"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "Promotion"
-      ],
-      "duedate": "2026-07-30",
-      "startDate": "2026-07-30",
-      "created": "2026-07-30T13:40:55.000+0900",
-      "updated": "2026-07-30T13:41:03.000+0900",
-      "parent": null,
-      "bucket": "today",
-      "descriptionText": "배경: JPYC 친구초대 프로모션에서 초대자 닉네임 표시를 Unifi 닉네임이 아닌 LINE 표시 이름(Display Name)으로 변경하기로 함(김동욱). `v1/draw-event-account/inviter` 응답의 maskedNickname 필드로 내려줄 예정이며, XLT 변경에 따라 FE 배포가 필요.\n\n논의:\n- 김호근: 마스킹 정책은 기존과 동일 (6자 이상: 앞 3자 노출+마스킹 최대4자, 4~5자: 앞2자 노출, 2~3자: 앞1자 노출, 1자: 해당1자+*****). LINE 닉네임이 제공된다는 내용을 유의사항(xlt key: mini_luckyball_terms_share_noti)에 추가함.\n- 정수영: LINE 프로필 정보를 가져올 수 없는 경우(미동의/미친구/차단 등) 처리 방법 문의.\n- 김동욱: LINE 프로필에서 못 가져오는 경우 Unifi 닉네임을 사용하기로 함.\n\n결론: 초대자 닉네임을 LINE Display Name으로 변경(BE maskedNickname 필드 응답), 마스킹 정책은 기존과 동일하게 유지, LINE 프로필 조회 실패 시 Unifi 닉네임으로 폴백. XLT 변경에 따른 FE 배포 필요.\n\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785385313360069",
-      "descriptionLinks": [
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785385313360069",
-          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785385313360069",
-          "category": "chat",
-          "label": "Slack"
-        }
-      ],
-      "commentLinks": [],
-      "links": [],
-      "comments": [],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-9448",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9448",
-      "summary": "럭키볼 친구초대 링크 URL 파라미터 간소화 (UTM 정리, partner_code/referral_code 중심)",
-      "issuetype": "",
-      "status": {
-        "name": "Closed",
-        "category": "done"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "Promotion"
-      ],
-      "duedate": "2026-07-30",
-      "startDate": "2026-07-30",
-      "created": "2026-07-30T13:39:35.000+0900",
-      "updated": "2026-07-30T13:39:43.000+0900",
-      "parent": null,
-      "bucket": "today",
-      "descriptionText": "배경: 럭키볼 친구초대 링크를 복사해 전달할 때 URL이 UTM 파라미터 포함으로 너무 길어 부담스럽다는 문의(정준영)에서 시작.\n\n논의:\n- 황웅규: partner_code, referral_code 값만 필수이고 나머지 파라미터는 필수 아님. 데이터 추출 시에도 partner_code/referral_code만 사용하므로 제거해도 무방하다고 확인.\n- 최희준: 다만 다른 리퍼럴 이벤트와 구분하기 위한 최소한의 캠페인 구분 파라미터(utm_campaign 등)는 하나 남기는 것을 제안. 원문 URL 형태를 최대한 유지하되 불필요한 파라미터만 축약하는 방향 검토.\n\n결론(논의 진행 중): partner_code + utm_campaign + referral_code 정도로 파라미터를 간소화하는 방향으로 논의됨. 최종 확정 여부는 후속 확인 필요.\n\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785385229221979?thread_ts=1783580597.124909&cid=C08HYMJ7Z8V",
-      "descriptionLinks": [
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785385229221979?thread_ts=1783580597.124909&cid=C08HYMJ7Z8V",
-          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785385229221979?thread_ts=1783580597.124909&cid=C08HYMJ7Z8V",
-          "category": "chat",
-          "label": "Slack"
-        }
-      ],
-      "commentLinks": [],
-      "links": [],
-      "comments": [],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-8838",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-8838",
-      "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "Mission&Reward"
-      ],
-      "duedate": "2026-07-31",
-      "startDate": "2026-07-15",
-      "created": "2026-07-15T15:34:32.000+0900",
-      "updated": "2026-07-30T13:16:51.000+0900",
-      "parent": {
-        "key": "UNIFY-8843",
-        "summary": "FAQ 작성"
-      },
-      "bucket": "thisWeek",
-      "descriptionText": "목표 버전 v1.6.3 릴리즈 예상 일정 7월 31일",
-      "descriptionLinks": [],
-      "commentLinks": [
-        {
-          "url": "https://jira.workers-hub.com/browse/UNIFY-9420",
-          "text": "https://jira.workers-hub.com/browse/UNIFY-9420",
-          "category": "jira",
-          "label": "Jira"
-        }
-      ],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-8843",
-          "summary": "FAQ 작성",
-          "status": "In Progress"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9446",
-          "summary": "1회성 미션, 데일리 미션, 게임미션을 구분해 디자인 업데이트 및 FE 개발",
-          "status": "In Progress"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-8840",
-          "summary": "스펙리뷰",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-8841",
-          "summary": "개발일정 확인",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-8842",
-          "summary": "FE 스펙리뷰",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-8844",
-          "summary": "릴리즈 버전 확정",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9069",
-          "summary": "OA MSG 생성",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9380",
-          "summary": "QA 스펙리뷰",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9398",
-          "summary": "Beta Test",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9399",
-          "summary": "QA 대응",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8843",
-          "summary": "FAQ 작성",
-          "status": "In Progress"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8840",
-          "summary": "스펙리뷰",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8841",
-          "summary": "개발일정 확인",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8842",
-          "summary": "FE 스펙리뷰",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8844",
-          "summary": "릴리즈 버전 확정",
-          "status": "Closed"
-        }
-      ],
-      "comments": [
-        {
-          "body": "FE3MD",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com",
-            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-          },
-          "created": "2026-07-20T17:10:14.635+0900",
-          "updated": "2026-07-20T17:10:14.635+0900"
-        },
-        {
-          "body": "https://jira.workers-hub.com/browse/UNIFY-9420",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com",
-            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-          },
-          "created": "2026-07-30T14:16:43.367+0900",
-          "updated": "2026-07-30T14:16:43.367+0900"
-        }
-      ],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-9444",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9444",
-      "summary": "친구초대 프로모션에서 사용자의 닉네임을 라인 닉네임으로 교체",
-      "issuetype": "",
-      "status": {
-        "name": "Closed",
-        "category": "done"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "Promotion"
-      ],
-      "duedate": "2026-07-30",
-      "startDate": "2026-07-30",
-      "created": "2026-07-30T11:49:21.000+0900",
-      "updated": "2026-07-30T11:51:23.000+0900",
-      "parent": null,
-      "bucket": "today",
-      "descriptionText": "https://jira.workers-hub.com/browse/LNS-1446",
-      "descriptionLinks": [
-        {
-          "url": "https://jira.workers-hub.com/browse/LNS-1446",
-          "text": "https://jira.workers-hub.com/browse/LNS-1446",
-          "category": "jira",
-          "label": "Jira"
-        }
-      ],
-      "commentLinks": [],
-      "links": [],
-      "comments": [],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-8843",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-8843",
-      "summary": "FAQ 작성",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "Mission&Reward"
-      ],
-      "duedate": "2026-07-31",
-      "startDate": "2026-07-15",
-      "created": "2026-07-15T15:38:35.000+0900",
-      "updated": "2026-07-29T19:46:10.000+0900",
-      "parent": {
-        "key": "UNIFY-8838",
-        "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책"
-      },
-      "bucket": "thisWeek",
-      "descriptionText": "",
-      "descriptionLinks": [],
-      "commentLinks": [],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-8838",
-          "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책",
-          "status": "In Progress"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8838",
-          "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책",
-          "status": "In Progress"
-        }
-      ],
-      "comments": [
-        {
-          "body": "미션앤리워드 페이지, UNIFI FAQ 모두 등록완료",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-29T19:45:58.489+0900",
-          "updated": "2026-07-29T19:45:58.489+0900"
-        },
-        {
-          "body": "릴리즈 후 게시로 변경",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-29T19:46:10.755+0900",
-          "updated": "2026-07-29T19:46:10.755+0900"
-        }
-      ],
-      "commentsLoaded": true
-    },
-    {
-      "key": "W3P-5594",
-      "url": "https://jira.workers-hub.com/browse/W3P-5594",
-      "summary": "Kaia Wallet > Unifi Moilbe 전환 유도",
+      "key": "W3P-5694",
+      "url": "https://jira.workers-hub.com/browse/W3P-5694",
+      "summary": "기획서 작성",
       "issuetype": "",
       "status": {
         "name": "In Progress",
@@ -900,11 +766,76 @@
       "labels": [
         "UnifiMobile"
       ],
-      "duedate": "2026-08-02",
+      "duedate": "2026-08-05",
+      "startDate": "2026-06-08",
+      "created": "2026-06-08T15:37:38.000+0900",
+      "updated": "2026-07-30T14:26:56.000+0900",
+      "parent": {
+        "key": "W3P-5594",
+        "summary": "Kaia Wallet > Unifi Mobile 전환 유도"
+      },
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "카이아 월렛에서 자산이동하는 유니크 사용자, 전체 보낸 양 메트릭 지표 추가 필요\n\nhttps://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
+      "descriptionLinks": [
+        {
+          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
+          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
+          "category": "docs",
+          "label": "Wiki"
+        }
+      ],
+      "commentLinks": [
+        {
+          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
+          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
+          "category": "docs",
+          "label": "Wiki"
+        }
+      ],
+      "links": [],
+      "comments": [
+        {
+          "body": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com",
+            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+          },
+          "created": "2026-07-30T14:14:47.055+0900",
+          "updated": "2026-07-30T14:14:47.055+0900"
+        }
+      ],
+      "commentsLoaded": true
+    },
+    {
+      "key": "W3P-5594",
+      "url": "https://jira.workers-hub.com/browse/W3P-5594",
+      "summary": "Kaia Wallet > Unifi Mobile 전환 유도",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "UnifiMobile"
+      ],
+      "duedate": "2026-08-05",
       "startDate": "2026-05-14",
       "created": "2026-05-14T13:21:19.000+0900",
-      "updated": "2026-07-29T11:23:12.000+0900",
-      "parent": null,
+      "updated": "2026-07-30T14:26:39.000+0900",
+      "parent": {
+        "key": "W3P-5593",
+        "summary": null
+      },
+      "epicLink": "W3P-5593",
       "bucket": "thisWeek",
       "descriptionText": "Figma: https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=44995-55&t=5CvocmqqwM6uTXPB-1\r\n\r\nslack: https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1778750287865969\r\n\r\nPIA Review: https://jira.workers-hub.com/browse/LNS-1127",
       "descriptionLinks": [
@@ -933,6 +864,132 @@
       "commentsLoaded": true
     },
     {
+      "key": "UNIFY-9450",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9450",
+      "summary": "기획서 작성",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "Mission&Reward"
+      ],
+      "duedate": "2026-08-20",
+      "startDate": "2026-07-30",
+      "created": "2026-07-30T13:43:21.000+0900",
+      "updated": "2026-07-30T14:15:27.000+0900",
+      "parent": {
+        "key": "UNIFY-8759",
+        "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토"
+      },
+      "epicLink": null,
+      "bucket": "later",
+      "descriptionText": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+      "descriptionLinks": [
+        {
+          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+          "category": "docs",
+          "label": "Wiki"
+        }
+      ],
+      "commentLinks": [
+        {
+          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+          "category": "docs",
+          "label": "Wiki"
+        }
+      ],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "inward",
+          "relation": "is contained in",
+          "key": "UNIFY-8759",
+          "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토",
+          "status": "In Progress"
+        }
+      ],
+      "comments": [
+        {
+          "body": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4394814893",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com",
+            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+          },
+          "created": "2026-07-30T14:15:27.445+0900",
+          "updated": "2026-07-30T14:15:27.445+0900"
+        }
+      ],
+      "commentsLoaded": true
+    },
+    {
+      "key": "UNIFY-9446",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9446",
+      "summary": "1회성 미션, 데일리 미션, 게임미션을 구분해 디자인 업데이트 및 FE 개발",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "Mission&Reward"
+      ],
+      "duedate": "2026-08-07",
+      "startDate": "2026-07-30",
+      "created": "2026-07-30T13:16:41.000+0900",
+      "updated": "2026-07-30T13:46:29.000+0900",
+      "parent": {
+        "key": "UNIFY-8838",
+        "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책"
+      },
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "inward",
+          "relation": "is contained in",
+          "key": "UNIFY-8838",
+          "summary": "Mission and Reward - 예산 관리 정책 및 1회성 미션 정책, DA Score 없는 사용자에 대한 정책, 럭키볼 팝업 정책",
+          "status": "Closed"
+        }
+      ],
+      "comments": [
+        {
+          "body": "대한님께 내용 전달 완료",
+          "author": {
+            "display_name": "Kim HoGeun （ 김호근 ）",
+            "name": "Kim HoGeun （ 김호근 ）",
+            "email": "hogeun.kim@linecorp.com",
+            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+          },
+          "created": "2026-07-30T13:46:29.993+0900",
+          "updated": "2026-07-30T13:46:29.993+0900"
+        }
+      ],
+      "commentsLoaded": true
+    },
+    {
       "key": "W3P-5317",
       "url": "https://jira.workers-hub.com/browse/W3P-5317",
       "summary": "IAB로 Unifi 접근 시, 알림 팝업 제공 (플랫폼 별)",
@@ -955,6 +1012,7 @@
       "created": "2026-03-11T10:24:02.000+0900",
       "updated": "2026-07-29T10:35:29.000+0900",
       "parent": null,
+      "epicLink": null,
       "bucket": "none",
       "descriptionText": "h1. 배경\r\n* IAB에서 Unifi 이용 시, Google Login 불가 이슈 있음\r\n* 플랫폼 별 IAB 동작 방식이 상이함\r\n* 마케팅 채널별 IAB 동작 확인한 내용에 다라 X와 LINE Open Chat의 경우 IAB에서 구글로그인이 불가하기 때문에 이 두 플랫폼에 대해서는 알림팝업을 띄우는 식으로 대응 필요\r\n\r\nh2. 관련 스레드 및 위키\r\n* 마케팅 공유 스레드 : https://group-all-workers-hub.slack.com/archives/C07AFL1TEBA/p1773045626181989?thread_ts=1772780192.306689&cid=C07AFL1TEBA\r\n* 마케팅 채널 별 정리 : https://wiki.workers-hub.com/pages/viewpage.action?pageId=3824301731\r\n* 논의 스레드 : https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1773049215958869?thread_ts=1770943241.737049&cid=C097X2T31FE\r\n\r\nh3. 3월 9일 논의사항\r\n* X와 LINE OpenChat의 경우 IAB에서 구글로그인이 불가하기 때문에 이 두 플랫폼에 대해서는 알림팝업을 띄우는 식으로 대응해볼 수 있을지 문의\r\n* 해당 IAB만 구분 가능한지는 테스트가 필요합니다. 조금더 일반화된 공통정책을 수립 후, 주요 앱마다 디테일하게 지원하면 어떨까요? \"user agent를 보고 80~90%정도의 정확도\" 에 대한 기능부터 정의하고 구현하는걸 제안\r\n* 관련해서 추가 논의 필요\r\n\r\nh3. Action Item\r\n* 대응 방안 수립 위한 논의 필요",
       "descriptionLinks": [
@@ -983,70 +1041,6 @@
       "commentsLoaded": true
     },
     {
-      "key": "UNIFY-9127",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9127",
-      "summary": "베타에 설정한 상품 prod에 적용하는 방안 확인",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "GuideKim"
-      ],
-      "duedate": "2026-08-03",
-      "startDate": "2026-07-23",
-      "created": "2026-07-23T15:19:33.000+0900",
-      "updated": "2026-07-29T10:35:27.000+0900",
-      "parent": {
-        "key": "UNIFY-8608",
-        "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템"
-      },
-      "bucket": "later",
-      "descriptionText": "",
-      "descriptionLinks": [],
-      "commentLinks": [],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8608",
-          "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
-          "status": "In Progress"
-        }
-      ],
-      "comments": [
-        {
-          "body": "beta->prod json으로 통채로 옮길 때 이미지는 자동으로 prod obs로 재 호스팅 후 주소 변경해서 업로드되도록 해놨고, 혹시 id가 다르더라도 externalId가 같으면 그 데이터를 업데이트 하도록 수정됨\npreview도 prod obs를 사용하고 있어서 beta꺼를 preview에 먼저 이동시켜 놓고 prod로 이동시키는 방식으로 Beta 데이터를 Prod로 전이",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-29T10:35:17.974+0900",
-          "updated": "2026-07-29T10:35:17.974+0900"
-        },
-        {
-          "body": "운영팀에 방법 설명 필요",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-29T10:35:27.982+0900",
-          "updated": "2026-07-29T10:35:27.982+0900"
-        }
-      ],
-      "commentsLoaded": true
-    },
-    {
       "key": "UNIFY-9252",
       "url": "https://jira.workers-hub.com/browse/UNIFY-9252",
       "summary": "mini 서비스 메시지(Service MSG) 활용 방안 논의",
@@ -1069,7 +1063,8 @@
       "created": "2026-07-27T11:40:54.000+0900",
       "updated": "2026-07-29T10:35:21.000+0900",
       "parent": null,
-      "bucket": "later",
+      "epicLink": null,
+      "bucket": "thisWeek",
       "descriptionText": "h3. 배경\nmini 릴리즈 시 검토했던 서비스 메시지 관련 문서 공유: https://wiki.workers-hub.com/display/UNIFI/Service+Message\n\n가이드킴에서 클리닉 등을 예약한 경우, Unifi에서도 서비스 메시지를 보낼 수 있을지 검토 필요(김호근).\n\nh3. 논의\n* 김동영: 현재 클리닉 예약 시 가이드킴에서 OA로 메시지를 보내는 것으로 알고 있는데, Unifi 쪽에서도 메시지를 보내거나 바우처 구매 시에도 메시지를 보내는 방향이 맞는지 질문.\n* 김호근: 말씀하신 방향으로 활용 가능해 보임. 가이드킴 메시지와 중복되거나 가이드킴 측에서 추가 메시지 발송을 반대할 수 있어, 활용 방향을 사업팀과 먼저 논의하고자 멘션.\n* 김동영: 이해했음. 어포메이션과 협의 후 확인해 공유 예정.\n\nh3. 결론\n* 아직 결론 없음. 김동영이 어포메이션과 협의 후 공유 예정(팔로업 필요).\n\n----\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1785116127105209",
       "descriptionLinks": [
         {
@@ -1087,157 +1082,6 @@
       ],
       "commentLinks": [],
       "links": [],
-      "comments": [],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-8608",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-8608",
-      "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "GuideKim"
-      ],
-      "duedate": "2026-08-03",
-      "startDate": "2026-07-10",
-      "created": "2026-07-10T10:36:54.000+0900",
-      "updated": "2026-07-29T10:35:20.000+0900",
-      "parent": null,
-      "bucket": "later",
-      "descriptionText": "h3. 배경\nGuide Kim 상품 운영 관련 논의 스레드 (김호근).\n회의록: https://docs.google.com/document/d/1PdkaP9tb8LcWY4H504VwC_A3zMLJWNTl2BmoV2tzATc/edit?tab=t.km33fxuwd5c2#heading=h.mwt0r954ikya\n\n*Action Item (최초)*\n* 김호근 - API 개발완료 일정 확인\n* 김명선 - 디자인팀 역할 확인\n* 오정희 - 상품 추가/삭제를 위한 상품 운영 분석/규칙 사업팀 내부 검토\n\nh3. 논의\n*디자인 컨트롤 범위 (김명선)*\n* 컨트롤 영역: 메인 큐레이션 콘텐츠\n* 병원 의사 썸네일: 병원 추가 시 디자인팀 제작·전달, 그 외는 제작 가이드 제공\n\n*섹션별 운영 방안*\n* 가장 저렴하게 준비하는 한국 여행 — 바우처 썸네일 제작 가이드 제공\n* 정품 인증 한국 인기 베스트 시술 — 병원 추가 시 의사 썸네일 보정, 병원 차별화 문구 작성 가이드 제공\n* 덕질의 성지, BTS가 머물렀던 그 곳 — 이후 콘텐츠 변경 시 필요 여부 검토\n\n*정리 (김호근)*\n* 병원/바우처 업데이트 시 디자인팀 검수\n* K-pop 테마는 현재 상품 실적 저조 시 함께 검토\n\n*용어 확인 (이주성 문의 → 김호근 답변)*\n* \"정형외과\" 표현은 가이드킴에 등록된 일본 업체명(일본어 검수 완료) 그대로 사용 — 확인 완료\n\nh3. 결론\n* 김호근 → 김세건: GuideKim에서 추가로 받아야 하는 API 유무 확인 및 우리 쪽 적용 일정 확인 요청 (최신 팔로업)\n\n원본 Slack: https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1783575864195659",
-      "descriptionLinks": [
-        {
-          "url": "https://docs.google.com/document/d/1PdkaP9tb8LcWY4H504VwC_A3zMLJWNTl2BmoV2tzATc/edit?tab=t.km33fxuwd5c2#heading=h.mwt0r954ikya",
-          "text": "https://docs.google.com/document/d/1PdkaP9tb8LcWY4H504VwC_A3zMLJWNTl2BmoV2tzATc/edit?tab=t.km33fxuwd5c2#heading=h.mwt0r954ikya",
-          "category": "docs",
-          "label": "Drive"
-        },
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1783575864195659",
-          "text": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1783575864195659",
-          "category": "chat",
-          "label": "Slack"
-        }
-      ],
-      "commentLinks": [],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9126",
-          "summary": "사업팀 상품운영 방침 확인",
-          "status": "In Progress"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9127",
-          "summary": "베타에 설정한 상품 prod에 적용하는 방안 확인",
-          "status": "In Progress"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9128",
-          "summary": "AI로 컨텐츠 생성 시, AI에 LY 가이드라인 적용하는 방법 논의",
-          "status": "In Progress"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9129",
-          "summary": "각 팀(디자인,운영) 상품 등록 리드타임 확인",
-          "status": "In Progress"
-        }
-      ],
-      "comments": [
-        {
-          "body": "B/E에서 설계 및 구현 중이며, 구현 간 부족한 부분은 GuideKim에 추가 요청 필요",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-15T15:30:51.210+0900",
-          "updated": "2026-07-15T15:30:51.210+0900"
-        },
-        {
-          "body": "운영팀에 어드민 기능안내\n사업팀에 상품운영 방침 마련 요청",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-23T15:16:29.326+0900",
-          "updated": "2026-07-23T15:16:29.326+0900"
-        },
-        {
-          "body": "디자인팀에 상품 등록 가이드 받아 운영팀 전달 필요",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-29T10:35:20.799+0900",
-          "updated": "2026-07-29T10:35:20.799+0900"
-        }
-      ],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-9128",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9128",
-      "summary": "AI로 컨텐츠 생성 시, AI에 LY 가이드라인 적용하는 방법 논의",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "GuideKim"
-      ],
-      "duedate": "2026-08-03",
-      "startDate": "2026-07-23",
-      "created": "2026-07-23T15:19:34.000+0900",
-      "updated": "2026-07-29T10:34:18.000+0900",
-      "parent": {
-        "key": "UNIFY-8608",
-        "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템"
-      },
-      "bucket": "later",
-      "descriptionText": "",
-      "descriptionLinks": [],
-      "commentLinks": [],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8608",
-          "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
-          "status": "In Progress"
-        }
-      ],
       "comments": [],
       "commentsLoaded": true
     },
@@ -1264,8 +1108,9 @@
       "created": "2026-05-21T16:51:58.000+0900",
       "updated": "2026-07-29T10:24:24.000+0900",
       "parent": null,
+      "epicLink": null,
       "bucket": "none",
-      "descriptionText": "슬랙 스레드 : https://group-all-workers-hub.slack.com/archives/C0APPFKC3MY/p1779335865877979\r\nWF: https://wfpf.workers-hub.com/detail/20260521154332386841\r\n [^WFPF문의 - GA와 Firebase 통합을 위한 권한 문의 (1).eml] ",
+      "descriptionText": "슬랙 스레드 : https://group-all-workers-hub.slack.com/archives/C0APPFKC3MY/p1779335865877979\r\nWF: https://wfpf.workers-hub.com/detail/20260521154332386841\r\n [^WFPF문의 - GA와 Firebase 통합을 위한 권한 문의 (1).eml] ",
       "descriptionLinks": [
         {
           "url": "https://group-all-workers-hub.slack.com/archives/C0APPFKC3MY/p1779335865877979",
@@ -1293,92 +1138,6 @@
       "commentsLoaded": true
     },
     {
-      "key": "UNIFY-9129",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9129",
-      "summary": "각 팀(디자인,운영) 상품 등록 리드타임 확인",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "GuideKim"
-      ],
-      "duedate": "2026-08-03",
-      "startDate": "2026-07-23",
-      "created": "2026-07-23T15:19:36.000+0900",
-      "updated": "2026-07-29T10:22:28.000+0900",
-      "parent": {
-        "key": "UNIFY-8608",
-        "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템"
-      },
-      "bucket": "later",
-      "descriptionText": "",
-      "descriptionLinks": [],
-      "commentLinks": [],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8608",
-          "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
-          "status": "In Progress"
-        }
-      ],
-      "comments": [],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-9126",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9126",
-      "summary": "사업팀 상품운영 방침 확인",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "GuideKim"
-      ],
-      "duedate": "2026-08-03",
-      "startDate": "2026-07-23",
-      "created": "2026-07-23T15:16:30.000+0900",
-      "updated": "2026-07-29T10:22:27.000+0900",
-      "parent": {
-        "key": "UNIFY-8608",
-        "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템"
-      },
-      "bucket": "later",
-      "descriptionText": "",
-      "descriptionLinks": [],
-      "commentLinks": [],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8608",
-          "summary": "Guide Kim 상품 운영 논의 - 디자인 컨트롤 범위 및 액션아이템",
-          "status": "In Progress"
-        }
-      ],
-      "comments": [],
-      "commentsLoaded": true
-    },
-    {
       "key": "UNIFY-6392",
       "url": "https://jira.workers-hub.com/browse/UNIFY-6392",
       "summary": "FDS - DA Score가 없는 사용자에 대한 처리 확인",
@@ -1401,6 +1160,7 @@
       "created": "2026-05-26T09:42:07.000+0900",
       "updated": "2026-07-29T10:21:57.000+0900",
       "parent": null,
+      "epicLink": null,
       "bucket": "none",
       "descriptionText": "DA Score가 없는 경우 리워드를 지급하고 있지 않음.\r\nLINE 가입한지 24시간이 지나지 않아 DA Score가 없는 사용자 기준으로 리워드를 지급하는 방안을 동욱님과 확인후 표성만님께도 공유필요\r\n\r\n개발팀 문의 스레드: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1779757036636419",
       "descriptionLinks": [
@@ -1440,75 +1200,6 @@
       "commentsLoaded": true
     },
     {
-      "key": "UNIFY-8895",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-8895",
-      "summary": "개발일정 확인",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "Mission&Reward"
-      ],
-      "duedate": "2026-08-14",
-      "startDate": "2026-07-16",
-      "created": "2026-07-16T15:29:27.000+0900",
-      "updated": "2026-07-29T10:06:20.000+0900",
-      "parent": {
-        "key": "UNIFY-8759",
-        "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토"
-      },
-      "bucket": "later",
-      "descriptionText": "넥스트베이 릴리즈 일정 8월 20일",
-      "descriptionLinks": [],
-      "commentLinks": [
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785208241198329?thread_ts=1784181144.702419&cid=C08HYMJ7Z8V",
-          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785208241198329?thread_ts=1784181144.702419&cid=C08HYMJ7Z8V",
-          "category": "chat",
-          "label": "Slack"
-        }
-      ],
-      "links": [
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "outward",
-          "relation": "contains",
-          "key": "UNIFY-9378",
-          "summary": "QA 스펙리뷰",
-          "status": "Closed"
-        },
-        {
-          "type": "Hierarchy link (WBSGantt)",
-          "direction": "inward",
-          "relation": "is contained in",
-          "key": "UNIFY-8759",
-          "summary": "Next bay 미션앤리워드 유니파이 미러링 추가 검토",
-          "status": "In Progress"
-        }
-      ],
-      "comments": [
-        {
-          "body": "[Slack 스레드 요약] Unifi v1.6.3 개발일정 확인\n* 김동욱(Luis): JPYC 친구초대 프로모션으로 일정이 변경된 것 같아 개발일정 재검토 요청. 이어서 Unifi v1.6.3 Dev1 / LV 개발일정은 익일 오전 중 QA 준비가 가능할 것으로 안내.\n* 차시환: v1.6.3에 과제가 몇 개 추가된 것 같아 확인 후 별도 공유 예정. 우선 오늘 오전 버전 기준으로는 내일 QA 개시가 가능하다는 이해이나, TC 작성이 안 된 상태라 QA 개시 일정은 별도 확인 필요. 추가로 넥스트베이 미션&리워드 노출(UNIFY-8661) 건 일정이 넥스트베이 측 사정으로 8월 20일경으로 조정된다는 점을 언급하며, 현재 개발 상태를 고려해 8월 버전으로 분리 대응할지 이번 버전에 포함할지 문의.\n* 김동욱: 넥스트베이 미션&리워드 노출은 v1.6.3과 별도 버전으로 진행하는 것이 좋겠다는 의견. BE 선구조화 후 FE 대응, 추후 일정에 맞춰 QA 진행 제안.\n\n결론: v1.6.3 개발일정은 내일 오전 QA 준비 가능(TC 미작성으로 QA 개시일은 별도 확인 필요). 넥스트베이 미션&리워드 노출(UNIFY-8661)은 별도 버전으로 분리.\n\n원본 Slack: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785208241198329?thread_ts=1784181144.702419&cid=C08HYMJ7Z8V",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com"
-          },
-          "created": "2026-07-29T09:51:07.841+0900",
-          "updated": "2026-07-29T09:51:07.841+0900"
-        }
-      ],
-      "commentsLoaded": true
-    },
-    {
       "key": "UNIFY-5726",
       "url": "https://jira.workers-hub.com/browse/UNIFY-5726",
       "summary": "유니파이 모바일 앱 프랑스 출시 준비",
@@ -1531,6 +1222,7 @@
       "created": "2026-05-07T13:47:13.000+0900",
       "updated": "2026-07-28T10:17:15.000+0900",
       "parent": null,
+      "epicLink": null,
       "bucket": "none",
       "descriptionText": "블록체인 지갑 특성상 iOS OS 외부의 표준 암호 라이브러리를 사용하고 있어, 프랑스 App Store 배포 시 ANSSI(프랑스 사이버 보안청)에 암호화 신고서 제출이 필요합니다.\n관련 자료 정리 완료하여 공유 및 검토 요청드립니다.\nwiki: https://wiki.workers-hub.com/pages/viewpage.action?pageId=4082431337\n개발팀 초안은 모두 작성 완료한 상태로, 법무 번역 검수만 남은 상황입니다.\n(실제 배포되는 시점에 맞춰서 추가 수정이 필요할 수 있는 점 참고 부탁드립니다.)\n아래 사전 결정 사항 확인 부탁드립니다. :bow:\n프랑스 App Store 배포 시점/우선순위 (D-2개월부터 작성 시작 필요)\n신고 주체 법인 (LINE NEXT 본사 / 프랑스 법인 / 대리인)\n법무 검수/서명 담당자 (위임장 필요 여부 포함)",
       "descriptionLinks": [
@@ -1544,116 +1236,6 @@
       "commentLinks": [],
       "links": [],
       "comments": [],
-      "commentsLoaded": true
-    },
-    {
-      "key": "UNIFY-5998",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-5998",
-      "summary": "Unifi Mobile 설치 유도 기획",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "UnifiMobile"
-      ],
-      "duedate": "2026-08-02",
-      "startDate": "2026-05-14",
-      "created": "2026-05-14T13:19:59.000+0900",
-      "updated": "2026-07-28T10:16:36.000+0900",
-      "parent": null,
-      "bucket": "thisWeek",
-      "descriptionText": "슬랙 스레드 : https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779263959266529\r\n\r\nfigma : https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=47534-5449&t=5cJ3M5ps7MzIefp3-1\r\n\r\n유니파이 제공 배너에 대한 마케팅 요건 수렴 스레드 : https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1779338598260149",
-      "descriptionLinks": [
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779263959266529",
-          "text": "https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1779263959266529",
-          "category": "chat",
-          "label": "Slack"
-        },
-        {
-          "url": "https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=47534-5449&t=5cJ3M5ps7MzIefp3-1",
-          "text": "https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=47534-5449&t=5cJ3M5ps7MzIefp3-1",
-          "category": "design",
-          "label": "Design"
-        },
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1779338598260149",
-          "text": "https://group-all-workers-hub.slack.com/archives/C09V0KSJD8W/p1779338598260149",
-          "category": "chat",
-          "label": "Slack"
-        }
-      ],
-      "commentLinks": [],
-      "links": [],
-      "comments": [],
-      "commentsLoaded": true
-    },
-    {
-      "key": "W3P-5694",
-      "url": "https://jira.workers-hub.com/browse/W3P-5694",
-      "summary": "기획서 작성",
-      "issuetype": "",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "UnifiMobile"
-      ],
-      "duedate": "2026-08-02",
-      "startDate": "2026-06-08",
-      "created": "2026-06-08T15:37:38.000+0900",
-      "updated": "2026-07-28T10:16:35.000+0900",
-      "parent": {
-        "key": "W3P-5594",
-        "summary": "Kaia Wallet > Unifi Moilbe 전환 유도"
-      },
-      "bucket": "thisWeek",
-      "descriptionText": "카이아 월렛에서 자산이동하는 유니크 사용자, 전체 보낸 양 메트릭 지표 추가 필요\n\nhttps://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
-      "descriptionLinks": [
-        {
-          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
-          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
-          "category": "docs",
-          "label": "Wiki"
-        }
-      ],
-      "commentLinks": [
-        {
-          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
-          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
-          "category": "docs",
-          "label": "Wiki"
-        }
-      ],
-      "links": [],
-      "comments": [
-        {
-          "body": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
-          "author": {
-            "display_name": "Kim HoGeun （ 김호근 ）",
-            "name": "Kim HoGeun （ 김호근 ）",
-            "email": "hogeun.kim@linecorp.com",
-            "avatar_url": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-          },
-          "created": "2026-07-30T14:14:47.055+0900",
-          "updated": "2026-07-30T14:14:47.055+0900"
-        }
-      ],
       "commentsLoaded": true
     },
     {
@@ -1679,6 +1261,7 @@
       "created": "2026-05-14T11:33:36.000+0900",
       "updated": "2026-07-27T16:08:17.000+0900",
       "parent": null,
+      "epicLink": null,
       "bucket": "none",
       "descriptionText": "h2. 개요\n\nh2. 배경 및 목적\n\nh2. 요구사항\n\nh2. 완료 기준 (Definition of Done)\n\n----\n아래 내용은 과제관리자 (PMO)가 관리하는 부분입니다. 임의로 수정하지 말아주세요.\n\n[이슈]\n\n[상세]\n\n[Figma]\n\n[Prototype]\n\n[일정 정보]\n\n희망일정: \n※ 형식 예시: 5월초 / 5월중 / 5월말 / 5월15일",
       "descriptionLinks": [],
@@ -1689,7 +1272,7 @@
           "direction": "inward",
           "relation": "is cloned by",
           "key": "UNIFY-9273",
-          "summary": "Boost (구 KAIA Boost) 기능 제거",
+          "summary": "(미정) Boost (구 KAIA Boost) 기능 제거",
           "status": "Open"
         },
         {
@@ -1707,49 +1290,36 @@
   ],
   "labelGroups": [
     {
-      "name": "Mission&Reward",
-      "count": 7,
+      "name": "GuideKim",
+      "count": 5,
       "issueKeys": [
-        "UNIFY-9446",
-        "UNIFY-9450",
-        "UNIFY-8759",
-        "UNIFY-8838",
-        "UNIFY-8843",
-        "UNIFY-6392",
-        "UNIFY-8895"
+        "UNIFY-9129",
+        "UNIFY-9128",
+        "UNIFY-8608",
+        "UNIFY-9127",
+        "UNIFY-9252"
       ]
     },
     {
-      "name": "GuideKim",
-      "count": 6,
+      "name": "Mission&Reward",
+      "count": 5,
       "issueKeys": [
-        "UNIFY-9127",
-        "UNIFY-9252",
-        "UNIFY-8608",
-        "UNIFY-9128",
-        "UNIFY-9129",
-        "UNIFY-9126"
+        "UNIFY-8895",
+        "UNIFY-8759",
+        "UNIFY-9450",
+        "UNIFY-9446",
+        "UNIFY-6392"
       ]
     },
     {
       "name": "UnifiMobile",
-      "count": 6,
+      "count": 5,
       "issueKeys": [
-        "UNIFY-5269",
+        "UNIFY-5998",
+        "W3P-5694",
         "W3P-5594",
         "UNIFY-6311",
-        "UNIFY-5726",
-        "UNIFY-5998",
-        "W3P-5694"
-      ]
-    },
-    {
-      "name": "Promotion",
-      "count": 3,
-      "issueKeys": [
-        "UNIFY-9449",
-        "UNIFY-9448",
-        "UNIFY-9444"
+        "UNIFY-5726"
       ]
     },
     {
@@ -1941,24 +1511,6 @@
         "name": "Reopened"
       }
     ],
-    "UNIFY-5269": [
-      {
-        "id": "11",
-        "name": "In Progress"
-      },
-      {
-        "id": "21",
-        "name": "Resolved"
-      },
-      {
-        "id": "31",
-        "name": "Closed"
-      },
-      {
-        "id": "41",
-        "name": "Reopened"
-      }
-    ],
     "UNIFY-5998": [
       {
         "id": "11",
@@ -1995,65 +1547,7 @@
         "name": "Reopened"
       }
     ],
-    "UNIFY-8838": [
-      {
-        "id": 11,
-        "name": "In Progress"
-      },
-      {
-        "id": 21,
-        "name": "Resolved"
-      },
-      {
-        "id": 31,
-        "name": "Closed"
-      },
-      {
-        "id": 41,
-        "name": "Reopened"
-      }
-    ],
-    "UNIFY-8843": [
-      {
-        "id": 11,
-        "name": "In Progress"
-      },
-      {
-        "id": 21,
-        "name": "Resolved"
-      },
-      {
-        "id": 31,
-        "name": "Closed"
-      },
-      {
-        "id": 41,
-        "name": "Reopened"
-      }
-    ],
     "UNIFY-8895": [
-      {
-        "id": "11",
-        "name": "In Progress",
-        "to": "In Progress"
-      },
-      {
-        "id": "21",
-        "name": "Resolved",
-        "to": "Resolved"
-      },
-      {
-        "id": "31",
-        "name": "Closed",
-        "to": "Closed"
-      },
-      {
-        "id": "41",
-        "name": "Reopened",
-        "to": "Reopened"
-      }
-    ],
-    "UNIFY-9126": [
       {
         "id": "11",
         "name": "In Progress",
@@ -2163,28 +1657,6 @@
         "to": "Reopened"
       }
     ],
-    "UNIFY-9444": [
-      {
-        "id": "11",
-        "name": "In Progress",
-        "to": "In Progress"
-      },
-      {
-        "id": "21",
-        "name": "Resolved",
-        "to": "Resolved"
-      },
-      {
-        "id": "31",
-        "name": "Closed",
-        "to": "Closed"
-      },
-      {
-        "id": "41",
-        "name": "Reopened",
-        "to": "Reopened"
-      }
-    ],
     "UNIFY-9446": [
       {
         "id": "11",
@@ -2205,46 +1677,6 @@
         "id": "41",
         "name": "Reopened",
         "to": "Reopened"
-      }
-    ],
-    "UNIFY-9449": [
-      {
-        "id": "11",
-        "name": "In Progress",
-        "to": "In Progress"
-      },
-      {
-        "id": "21",
-        "name": "Resolved",
-        "to": "Resolved"
-      },
-      {
-        "id": "31",
-        "name": "Closed",
-        "to": "Closed"
-      },
-      {
-        "id": "41",
-        "name": "Reopened",
-        "to": "Reopened"
-      }
-    ],
-    "UNIFY-9448": [
-      {
-        "id": 11,
-        "name": "In Progress"
-      },
-      {
-        "id": 21,
-        "name": "Resolved"
-      },
-      {
-        "id": 31,
-        "name": "Closed"
-      },
-      {
-        "id": 41,
-        "name": "Reopened"
       }
     ],
     "UNIFY-9450": [

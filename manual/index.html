@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Jira MCP Dashboard — 사용 매뉴얼</title>
+  <title>Jira MCP Dashboard — 사용 매뉴얼 v1</title>
   <meta name="description" content="Jira MCP Dashboard 기능 소개와 사용법. 실제 사용 예시로 배우는 시각 가이드.">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="style.css">
@@ -11,7 +11,7 @@
 <body>
   <div class="topbar">
     <button id="menuBtn" aria-label="메뉴">☰</button>
-    <span>Jira MCP Dashboard 매뉴얼</span>
+    <span>Jira MCP Dashboard 매뉴얼 <span style="font-size:11px;color:var(--accent);font-weight:700">v1</span></span>
   </div>
 
   <div class="shell">
@@ -94,7 +94,7 @@ cd jira-dashboard-md</code></pre>
         </div>
         <div class="note">⚙️ 처음 <code class="inline">git</code>을 쓰면 "명령어 도구 설치" 팝업이 뜰 수 있습니다 — <b>설치</b>를 누르고, 끝나면 위 명령을 다시 붙여넣으면 됩니다.</div>
 
-        <h3>이미 받았다면 · 최신 버전으로 업데이트 (git pull) 🔄 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <h3>이미 받았다면 · 최신 버전으로 업데이트 (git pull) 🔄</h3>
         <p>대시보드는 계속 개선됩니다(요일 표시·라벨 편집/숨김·자동 운영 등). <b>이미 클론한 폴더</b>가 있다면 다시 클론하지 말고, 그 폴더에서 <code class="inline">git pull</code>로 최신 코드만 받으면 됩니다.</p>
         <div class="steps">
           <div class="step"><div class="n"></div><div class="b"><b>받아 둔 폴더에서 터미널 열기</b><p><b>Finder</b>에서 <code class="inline">jira-dashboard-md</code> 폴더 우클릭 → "<b>폴더에서 새로운 터미널 열기</b>". (또는 터미널에서 <code class="inline">cd jira-dashboard-md</code>)</p></div></div>
@@ -157,7 +157,7 @@ cd jira-dashboard-md</code></pre>
         <h2>② 화면 구성 — 4개 영역</h2>
         <p class="lead-muted">본문은 <b>오늘 할 일</b>, <b>타임라인</b>, <b>범위 밖 티켓</b>, <b>티켓(라벨 그룹)</b> 네 영역으로 구성됩니다. 각 영역은 머리글의 ▲▼로 순서를 바꿀 수 있습니다.</p>
 
-        <h3>📌 오늘 할 일 (Today) <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <h3>📌 오늘 할 일 (Today)</h3>
         <p>마감일이 <b>오늘</b>인 티켓만 라벨별로 모아 본문 맨 위에 <b>주황 테두리로 강조</b>해 보여줍니다 — "오늘 처리할 것"을 가장 먼저 보게 됩니다. 다른 영역처럼 ▲▼로 위치를 옮길 수 있고, 오늘 마감이 없으면 "오늘 마감인 티켓이 없습니다"로 표시됩니다.</p>
         <div class="app" style="border-color:var(--bk-today);box-shadow:0 0 0 1px var(--bk-today)">
           <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">오늘 할 일</span></div>
@@ -181,11 +181,11 @@ cd jira-dashboard-md</code></pre>
           <span class="chip" style="background:#f1f2f4;color:#777"><span class="swatch" style="background:var(--bk-none)"></span> 마감일 없음</span>
         </div>
 
-        <h3>상단 요약 클릭 = 마감일 필터 🔎 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <h3>상단 요약 클릭 = 마감일 필터 🔎</h3>
         <p>화면 맨 위 요약줄의 <b>지남 · 오늘 · 이번주</b> 숫자는 그냥 표시가 아니라 <b>버튼</b>입니다.
           누르면 그 마감 버킷에 해당하는 티켓만 타임라인·카드에 추려서 보여주고, <b>다시 누르면 해제</b>됩니다.
           "어떤 게 지남 티켓이지?" 싶을 때 한 번 누르면 바로 골라냅니다.
-          맨 앞의 <b>이슈 N</b>(전체)도 버튼이라, 오늘·이번주 필터를 켠 뒤 이걸 누르면 <b>전체 보기로 되돌아옵니다</b> <span style="font-size:11px;color:var(--accent)">NEW</span>.</p>
+          맨 앞의 <b>이슈 N</b>(전체)도 버튼이라, 오늘·이번주 필터를 켠 뒤 이걸 누르면 <b>전체 보기로 되돌아옵니다</b>.</p>
         <div class="app">
           <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">요약줄</span></div>
           <div class="body">
@@ -200,7 +200,7 @@ cd jira-dashboard-md</code></pre>
         <div class="note">🔎 숫자는 "완료 숨김·검색" 같은 다른 필터를 반영해 세므로, <b>표시된 숫자 = 눌렀을 때 실제로 보이는 티켓 수</b>입니다. 0건인 버킷은 눌러도 빈 화면이 되지 않게 막혀 있습니다.</div>
 
         <h3>타임라인 (간트)</h3>
-        <p>오늘을 기준으로 <b>D-1 ~ D+5</b> 7일 구간을 보여줍니다. 상단 날짜 눈금에는 <b>요일</b>도 함께 표시됩니다 <span style="font-size:11px;color:var(--accent)">NEW</span> — 주말·오늘은 색으로 강조. 막대 색이 곧 마감 임박도입니다. 그룹 머리글을 누르면 접힙니다.</p>
+        <p>오늘을 기준으로 <b>D-1 ~ D+5</b> 7일 구간을 보여줍니다. 상단 날짜 눈금에는 <b>요일</b>도 함께 표시됩니다 — 주말·오늘은 색으로 강조. 막대 색이 곧 마감 임박도입니다. 그룹 머리글을 누르면 접힙니다.</p>
         <div class="app">
           <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">타임라인 (D-1 ~ D+5)</span></div>
           <div class="body">
@@ -213,9 +213,11 @@ cd jira-dashboard-md</code></pre>
           </div>
         </div>
         <div class="note">📌 마감일이 이 7일 구간을 벗어나거나 없는 티켓은 <b>"범위 밖 티켓"</b> 영역에 따로 모입니다.</div>
+        <div class="note">🔗 티켓 사이의 <b>의존 관계는 화살표</b>로 그려집니다 — 선·후행(Blocks·WBS 선행/후행)은 <b style="color:#ff8a5c">주황 실선</b>, 단순 연관(Relates)은 <b style="color:#8b8f98">회색 점선</b> <span style="font-size:12px;color:var(--accent)">NEW</span>. "의존성" 체크박스로 켜고 끕니다.</div>
 
         <h3>티켓 (라벨 그룹) 카드</h3>
-        <p>같은 라벨끼리 묶인 카드. 키·유형·상태·우선순위·마감일·담당자·링크 칩을 한눈에.</p>
+        <p>같은 라벨끼리 묶인 카드. 키·유형·상태·우선순위·마감일·담당자·링크 칩을 한눈에.
+          하위 작업(Sub-task) 카드에는 <b>"↳ 상위 KEY 제목"</b> 줄이 표시되고 <span style="font-size:12px;color:var(--accent)">NEW</span>, 클릭하면 부모 카드로 이동합니다(부모가 조회 결과 밖이면 Jira 새 탭).</p>
         <div class="app">
           <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">티켓 (라벨 그룹)</span></div>
           <div class="body">
@@ -228,6 +230,26 @@ cd jira-dashboard-md</code></pre>
             </div>
           </div>
         </div>
+
+        <h3>연결된 티켓 클러스터 — 묶음 박스 🔗 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>같은 라벨 그룹 안에서 <b>서로 연결된 티켓들(상위-하위·링크)</b>은 <b>색 점선 박스 하나로 묶여</b> 나란히 표시됩니다.
+          박스 머리글에는 <b>"🔗 연결된 티켓 N · ↳ 상위 KEY 제목"</b>이 굵게 떠서 어떤 작업 묶음인지 바로 알 수 있고,
+          한 그룹에 묶음이 여러 개면 <b>박스마다 다른 색</b>(파랑·보라·초록…)으로 구분됩니다.</p>
+        <div class="app">
+          <div class="bar"><span class="lights"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></span><span class="t">라벨 그룹 · 연결 클러스터</span></div>
+          <div class="body">
+            <div style="border:1.5px dashed #6c8cff;border-radius:10px;padding:8px;margin-bottom:8px;background:rgba(108,140,255,.06)">
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px">🔗 연결된 티켓 <b style="color:#6c8cff">3</b> · ↳ 상위 <b style="color:#6c8cff">UNIFY-8838</b> Mission and Reward — 예산 관리 정책…</div>
+              <div class="tk" style="margin-bottom:6px"><div class="h"><span class="k">UNIFY-8843</span><span class="pill">Task</span><span class="pill" style="color:#7aa2ff">In Progress</span></div><div class="s">FAQ 작성</div></div>
+              <div class="tk"><div class="h"><span class="k">UNIFY-9380</span><span class="pill">Task</span><span class="pill" style="color:#7aa2ff">In Progress</span></div><div class="s">QA 스펙리뷰</div></div>
+            </div>
+            <div style="border:1.5px dashed #d570ff;border-radius:10px;padding:8px;background:rgba(213,112,255,.06)">
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px">🔗 연결된 티켓 <b style="color:#d570ff">2</b> · ↳ 상위 <b style="color:#d570ff">UNIFY-8759</b> Next bay 미션앤리워드 미러링 검토</div>
+              <div class="tk"><div class="h"><span class="k">UNIFY-8895</span><span class="pill">Task</span><span class="pill" style="color:#7aa2ff">In Progress</span></div><div class="s">개발일정 확인</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="note">💡 묶음 기준은 카드 사이의 실제 연결(상하위 Hierarchy·Blocks·Relates 등)입니다 — 연결이 없는 카드는 그대로 낱개로 표시됩니다.</div>
       </section>
 
       <!-- 4. DETAIL & CUSTOMIZE merged later; detail first -->
@@ -240,6 +262,15 @@ cd jira-dashboard-md</code></pre>
           <div class="card"><div class="ic">🔗</div><h4>설명/코멘트 링크</h4><p>Figma=Design, GitHub=Code, Confluence/Wiki=Wiki, Slack=Slack 처럼 도메인별로 분류된 칩으로 표시됩니다.</p></div>
         </div>
         <div class="real"><span class="tag">실제 예시</span> <code class="inline">W3P-5600</code> 상세를 열면 코멘트 2건("정보보안 불필요"·"wallet connect로 대체")이 로드됐고, <code class="inline">UNIFY-8035</code>에는 구글시트·Slack 링크가 <b>Drive·Slack 칩</b>으로 표시됐습니다.</div>
+
+        <h3>상세에서 바로 하는 작업들 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <div class="grid cols-3">
+          <div class="card"><div class="ic">↳</div><h4>상위 티켓 필드</h4><p>하위 작업이면 상위 티켓(<code class="inline">KEY · 제목 ↗</code>)이 필드로 표시됩니다. 클릭하면 실제 Jira 이슈가 새 탭으로 열립니다.</p></div>
+          <div class="card"><div class="ic">🔗</div><h4>연결 추가</h4><p>"이 티켓이 A를 blocks" 같은 자연문 방향 드롭다운 + 상대 티켓 키 입력으로 <b>티켓 간 연결(링크)</b>을 만듭니다. 미리보기 문장으로 방향을 확인하고 생성.</p></div>
+          <div class="card"><div class="ic">🧩</div><h4>하위 작업 추가</h4><p>부모 티켓 상세에서 <b>제목만 입력해 하위 작업(Sub-task)을 바로 생성</b>합니다. 라벨·마감일·우선순위는 부모 것을 그대로 물려받습니다.</p></div>
+        </div>
+        <div class="note">📅 마감일 칸 옆의 <b>+3일 / +5일</b> 버튼으로 설정된 마감일 기준 N일 뒤로 바로 미룰 수 있습니다 <span style="font-size:12px;color:var(--accent)">NEW</span>.</div>
+        <div class="note">✕ 패널은 <b>✕ 버튼, ESC 키, 패널 밖 빈 곳 클릭</b> 어느 것으로든 닫힙니다. 다른 카드를 클릭하면 닫히는 게 아니라 그 티켓으로 <b>전환</b>됩니다.</div>
       </section>
 
       <!-- LINKS -->
@@ -314,7 +345,7 @@ cd jira-dashboard-md</code></pre>
         <h3>그룹 순서 조정</h3>
         <p>툴바의 <b>그룹 순서 조정</b> 버튼 → 드래그로 라벨 그룹 순서 변경. 타임라인과 카드가 같은 순서를 공유합니다.</p>
 
-        <h3>특정 라벨 숨기기 🙈 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <h3>특정 라벨 숨기기 🙈</h3>
         <p>지금 안 보고 싶은 라벨 그룹을 대시보드에서 감춥니다(간트·카드·오늘 할 일에서 모두 빠짐). Jira는 그대로 두고 <b>내 화면에서만</b> 숨기며, 숨김 상태도 저장되어 다음에 열 때 유지됩니다.</p>
         <div class="steps">
           <div class="step"><div class="n"></div><div class="b"><b>카드 그룹 머리글의 "🙈 숨김" 버튼</b><p>라벨 그룹 헤더에 마우스를 올리면 오른쪽에 <b>숨김</b> 버튼이 나타납니다 — 누르면 그 라벨이 바로 사라집니다.</p></div></div>
@@ -339,10 +370,10 @@ cd jira-dashboard-md</code></pre>
         <div class="real"><span class="tag">실제 예시</span> 5개 서브태스크(<code class="inline">UNIFY-7793·7795·7796·7792·7789</code>)를 한 번에 <b>Closed</b>로 정리했고,
           <code class="inline">UNIFY-7795</code>의 마감일을 <b>2026-06-30</b>, <code class="inline">UNIFY-7791</code>을 <b>2026-06-29</b>로 지정했습니다.</div>
 
-        <h3>라벨 변경 🏷️ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <h3>라벨 변경 🏷️</h3>
         <p>상세 패널의 <b>라벨</b> 칸에서 티켓 라벨을 바꿉니다 — 대시보드에 있는 <b>기존 라벨을 드롭다운에서 고르</b>거나 <b>"＋ 새 라벨"</b>로 직접 추가하고, 칩의 <b>×</b>로 뺍니다. <b>라벨 저장</b>을 누르면 선택한 전체 라벨로 Jira에 반영됩니다(덮어쓰기).</p>
 
-        <h3>Slack 스레드 → 요약 코멘트 ★ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <h3>Slack 스레드 → 요약 코멘트 ★</h3>
         <p class="lead-muted"><b>이미 만든 티켓</b>에도 <b>Slack 스레드 링크</b>를 붙이면, 스레드를 읽어 <b>요약</b>해서 그 티켓의 <b>코멘트</b>로 답니다.
           길게 오간 논의를 티켓에 정리해 남길 때 유용합니다. (⑦의 "Slack→티켓"이 <i>새 티켓</i>을 만든다면, 이건 <i>기존 티켓에 코멘트</i>를 답니다.)</p>
         <div class="flow">
@@ -368,14 +399,21 @@ cd jira-dashboard-md</code></pre>
         <p class="lead-muted">툴바의 <b>+ 새 티켓</b> 버튼으로 모달을 열어 이슈를 만듭니다. 담당자는 기본으로 <b>나</b>로 채워집니다.</p>
         <div class="grid cols-2">
           <div class="card"><h4>필수</h4><p>프로젝트 · 유형 · 제목</p></div>
-          <div class="card"><h4>선택</h4><p>담당자(기본=나) · 설명 · 우선순위 · 마감일 · <b>라벨(드롭다운)</b> · 상위 이슈(Sub-task)</p></div>
+          <div class="card"><h4>선택</h4><p>담당자(기본=나) · 설명 · 우선순위 · 마감일 · <b>라벨(드롭다운)</b> · 상위 이슈(Sub-task) · <b>하위 작업(여러 개)</b></p></div>
         </div>
         <div class="steps">
           <div class="step"><div class="n"></div><div class="b"><b>+ 새 티켓 클릭</b><p>모달이 열리고 프로젝트·유형·담당자가 기본값으로 채워집니다.</p></div></div>
           <div class="step"><div class="n"></div><div class="b"><b>제목·내용 입력 → 티켓 생성</b><p>생성 의도가 큐에 담기고, 실제 Jira 이슈가 만들어져 보드에 나타납니다.</p></div></div>
         </div>
+        <div class="note">🚀 새로 만든 티켓은 Open이 아니라 <b>In Progress 상태로 시작</b>합니다 <span style="font-size:12px;color:var(--accent)">NEW</span> — 만든 순간부터 진행 중인 일이라는 운영 규칙을 반영한 동작입니다.</div>
 
-        <h3>라벨 고르기 — 드롭다운 + 새 라벨 🏷️ <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <h3>하위 작업 함께 만들기 🧩 <span style="font-size:12px;color:var(--accent)">NEW</span></h3>
+        <p>생성 모달의 <b>"하위 작업"</b> 칸에 제목을 여러 줄 넣으면, 부모 티켓을 만든 뒤 <b>그 아래로 하위 작업들을 한 번에</b> 만들어 줍니다.
+          하위 작업은 부모의 <b>라벨·마감일·우선순위·담당자를 그대로 상속</b>합니다.
+          반대로 <b>"상위 이슈"</b> 칸에 부모 키를 넣으면 유형이 자동으로 Sub-task로 보정됩니다.</p>
+        <div class="real"><span class="tag">실제 예시</span> <code class="inline">UNIFY-8838</code>(예산 관리 정책) 아래로 "스펙리뷰·FE 스펙리뷰·개발일정 확인·FAQ 작성·릴리즈 버전 확정·QA 스펙리뷰"를 하위 작업으로 만들어 클러스터 묶음으로 관리 중입니다.</div>
+
+        <h3>라벨 고르기 — 드롭다운 + 새 라벨 🏷️</h3>
         <p>라벨 칸은 <b>드롭다운</b>입니다. <b>지금 대시보드에 보이는 라벨</b>들이 목록에 떠서 골라 넣을 수 있고,
           목록의 <b>"＋ 새 라벨 직접 입력…"</b>을 고르면 새 라벨을 타이핑해 추가할 수 있습니다(쉼표로 여러 개도 가능).
           고른 라벨은 칩으로 쌓이고 <b>×</b>로 빼면 됩니다 — 여러 개 선택 가능합니다.</p>
@@ -456,7 +494,7 @@ cd jira-dashboard-md</code></pre>
       <!-- 9. OPS -->
       <section id="ops">
         <div class="eyebrow">운영 · 자동화</div>
-        <h2>⑨ 자동 운영 — 서버·워쳐·정기 재조회 ⏰ <span style="font-size:13px;color:var(--accent)">NEW</span></h2>
+        <h2>⑨ 자동 운영 — 서버·워쳐·정기 재조회 ⏰</h2>
         <p class="lead-muted">대시보드는 <b>로컬 서버</b>와 <b>큐 워쳐</b>로 돌아갑니다. 서버는 화면을 띄우고, 워쳐는 여러분이 대시보드에서 누른 변경(상태·마감일·코멘트·라벨 등)을 Claude Code가 Jira에 자동 반영하도록 이어줍니다. (둘 다 Jira를 직접 바꾸지 않습니다 — ⑧ 참고.)</p>
 
         <div class="grid cols-2">
@@ -487,10 +525,11 @@ cd jira-dashboard-md</code></pre>
         <details><summary>Slack 비공개 채널 스레드도 되나요?</summary><p>연결된 Slack 계정이 그 채널에 들어가 있어야 읽을 수 있습니다. 미가입 비공개 채널은 접근이 막혀 처리되지 않습니다.</p></details>
         <details><summary>변경이 화면에 늦게 반영돼요.</summary><p>변경은 큐에 담겨 순차 처리된 뒤 폴링으로 반영됩니다. 잠시 후 자동 갱신되며, 새로고침으로 즉시 확인할 수도 있습니다.</p></details>
         <details><summary>접기·순서 설정이 사라지나요?</summary><p>아니요. 접힘 상태와 영역/그룹 순서는 저장되어 다음에 열 때 복원됩니다.</p></details>
+        <details><summary>상태 드롭다운에 "Open"이 없어요.</summary><p>버그가 아닙니다. 이 Jira 워크플로우에는 <b>Open으로 되돌아가는 전이가 없어서</b>(In Progress·Resolved·Closed 어디서도) 드롭다운에 뜨지 않습니다. 되돌리려면 <b>Reopened</b>를 사용하세요 — 사실상 같은 "다시 할 일" 상태입니다.</p></details>
       </section>
 
       <footer>
-        Jira MCP Dashboard 사용 매뉴얼 · 화면과 예시는 실제 사용 데이터 기반 ·
+        Jira MCP Dashboard 사용 매뉴얼 <b>v1</b> (2026-07-29) · 화면과 예시는 실제 사용 데이터 기반 ·
         <a href="#top">맨 위로 ↑</a>
       </footer>
     </main>
