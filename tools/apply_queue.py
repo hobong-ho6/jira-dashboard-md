@@ -90,6 +90,14 @@ def main():
         it = by_key.get(key)
         if it is None:
             continue
+        if "status" in fields and isinstance(fields["status"], dict):
+            # MCP(jira_transition_issue 등) 응답의 status.category는 Jira 원본 표기
+            # ("To Do"/"In Progress"/"Done", 대문자)를 그대로 돌려준다. snapshot/필터는
+            # normalize.py 와 동일하게 소문자(new/indeterminate/done)를 기대하므로
+            # (docs/11 실측 사고, 2026-08-04: 대문자 "Done"이 그대로 들어가 "완료 숨김"
+            # 필터에 안 걸린 채 남았다) 호출자가 무엇을 넣었든 여기서 강제 정규화한다.
+            cat = fields["status"].get("category", "")
+            fields["status"]["category"] = _nz.MCP_STATUS_CATEGORY.get(cat, cat.lower())
         it.update(fields)
         if "duedate" in fields:  # 마감일 변경 → bucket 재계산
             it["bucket"] = _nz.bucket_of(fields["duedate"], today, week_start)
