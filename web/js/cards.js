@@ -1,6 +1,5 @@
 // cards.js — 라벨 그룹별 티켓 카드 (docs/09)
 import { state, isCollapsed, toggleGroup, select, toggleLabelHidden } from "./state.js";
-import { copyKey } from "./actions.js";
 import {
   bucketOf, fmtDate, fmtDateFull, escapeHtml, labelColor, todayDate,
   BUCKET_LABEL, BUCKET_RANK, statusCategoryClass, parentOf,
@@ -166,7 +165,6 @@ function card(it, today, weekStart, byKey) {
   c.innerHTML = `
     <div class="card-top">
       <span class="card-key">${escapeHtml(it.key)}</span>
-      <button class="key-copy" data-copy="${escapeHtml(it.key)}" title="티켓 번호 복사" aria-label="티켓 번호 복사">⧉</button>
       ${it.issuetype ? `<span class="itype">${escapeHtml(it.issuetype)}</span>` : ""}
       <span class="pill ${statusCategoryClass(it.status && it.status.category)}">${escapeHtml(it.status ? it.status.name : "")}</span>
       <span class="prio prio-${escapeHtml((it.priority || "").toLowerCase())}">${escapeHtml(it.priority || "")}</span>
@@ -180,11 +178,10 @@ function card(it, today, weekStart, byKey) {
   `;
 
   c.addEventListener("click", (e) => {
-    const chip = e.target.closest("[data-url],[data-label],[data-parent],[data-copy]");
+    const chip = e.target.closest("[data-url],[data-label],[data-parent]");
     if (chip) {
       e.stopPropagation();
-      if (chip.dataset.copy) copyKey(chip.dataset.copy);
-      else if (chip.dataset.url) window.open(chip.dataset.url, "_blank", "noopener");
+      if (chip.dataset.url) window.open(chip.dataset.url, "_blank", "noopener");
       else if (chip.dataset.label) document.dispatchEvent(new CustomEvent("labelfilter", { detail: chip.dataset.label }));
       else if (chip.dataset.parent) {
         const pk = chip.dataset.parent;
