@@ -70,6 +70,7 @@ Jira(서버: `https://jira.workers-hub.com`, REST API v2 = **Jira Server/DC**)�
 8. **이 환경 사실.** 서버는 Jira **Server/DC**, REST **v2**. Description/comment 입력은 기본 **Jira wiki markup**이다. Markdown으로 넣으려면 MCP의 `is_description_markdown=True`(또는 코멘트는 markdown 입력)를 명시. (`docs/02`)
 9. **쿼리에서 시작한다.** 이 대시보드의 시작점은 **사용자가 입력한 필터링 쿼리(JQL)** 다. 쿼리가 없으면 sync 하지 않는다. 쿼리는 (a) 사용자가 Claude Code에게 직접 주거나, (b) 대시보드 JQL 입력창 → `sync` 명령으로 전달된다. 받은 쿼리를 `config.json`의 `jql`에 저장하고 sync를 실행한다. (`docs/04`, `docs/13`)
 10. **자격증명(Jira 토큰) 보호.** Jira 인증은 **MCP(`noahs-mcp-jira`)** 가 자신의 자격증명으로 수행한다. MCP 인증이 없거나 실패(401/403 · "client not configured")하면 Claude Code가 사용자에게 토큰을 **1회 요청**하고, 받은 값은 **저장소 밖**(MCP 서버 설정의 환경변수, 또는 gitignore된 `.env`/`data/secrets.json`)에만 둔다. **`config.json`·`snapshot`·`commands`·로그·커밋에 토큰을 절대 넣지 않는다.** 채팅 등으로 평문 토큰을 받으면 **노출된 것으로 간주**하고 사용자에게 폐기·재발급을 권고한다. (`docs/02`, `docs/01` 신뢰 경계)
+11. **워쳐 재기동은 항상 메인 세션 몫 — 위임 프롬프트에 절대 넣지 않는다.** `queue-worker`에게 큐 배치를 위임할 때, 그 위임 프롬프트에는 어떤 형태로도 `apply_and_rewatch.sh`/`apply_queue.py`/`watch_queue.py` 실행 지시를 넣지 않는다. 워커는 payload JSON만 쓰고 멈추며, `bash tools/apply_and_rewatch.sh <payload>`는 **메인 세션이 직접** `run_in_background`로 실행한다. (2026-08-04 사고: 메인 세션이 위임 프롬프트에 재기동을 지시해 워쳐가 워커 프로세스 소속으로 뜬 뒤, 워커 종료와 함께 고아 상태로 멈추고 큐가 감지되지 않고 쌓였다.) 상세 `docs/13` "워쳐(대기) = 메인 세션 소유" 절.
 
 ## 3. 작업 시작 절차 (Claude Code가 매 세션 처음에)
 
