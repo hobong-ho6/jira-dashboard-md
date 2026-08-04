@@ -122,6 +122,17 @@ a { color: var(--accent); text-decoration: none; }
 .glabel-issue:hover { background: var(--surface2); }
 .gi-key { font-family: var(--mono); font-size: 11px; color: var(--accent); white-space: nowrap; }
 .gi-sum { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 12px; }
+/* 타임라인 라벨 행의 복사 버튼: hover 시에만 노출해 행을 어지럽히지 않는다.
+   visibility 대신 opacity 를 쓴다 — visibility:hidden 은 클릭 대상이 되지 못해
+   클릭이 행으로 새고(상세만 열림) 복사가 안 된다. */
+.glabel-issue .gi-copy { margin-left: auto; opacity: 0; }
+.glabel-issue:hover .gi-copy,
+.glabel-issue .gi-copy:focus-visible { opacity: 1; }
+
+/* 티켓 번호 복사 버튼 (상세 패널·타임라인 공용) */
+.key-copy { flex: none; background: none; border: 0; padding: 0 4px; cursor: pointer;
+  color: var(--muted); font-size: 13px; line-height: 1; border-radius: 4px; }
+.key-copy:hover { color: var(--accent); background: var(--surface3); }
 
 .gantt-tscroll { flex: 1; overflow: auto; position: relative; }
 .gantt-tinner { position: relative; }

@@ -1,5 +1,6 @@
 // gantt.js — Due date 간트 타임라인 (docs/06, docs/07)
 import { state, isCollapsed, toggleGroup, select } from "./state.js";
+import { copyKey } from "./actions.js";
 import {
   parseDate, todayDate, daysBetween, weekRange, bucketOf, fmtDate,
   escapeHtml, BUCKET_LABEL, parentOf,
@@ -252,8 +253,13 @@ export function renderGantt(root, groups, byKey, weekStart) {
       c.dataset.key = row.key;
       if (gp) c.title = `↳ 상위 ${gp.key}${gp.summary ? " · " + gp.summary : ""}`;
       c.innerHTML = `${gp ? `<span class="gi-sub" title="Sub-task · 상위 ${escapeHtml(gp.key)}">↳</span>` : ""}<span class="gi-key">${escapeHtml(row.key)}</span>
-        <span class="gi-sum">${escapeHtml(it ? it.summary : "")}</span>`;
-      c.addEventListener("click", () => select(row.key));
+        <span class="gi-sum">${escapeHtml(it ? it.summary : "")}</span>
+        <button class="key-copy gi-copy" title="티켓 번호 복사" aria-label="티켓 번호 복사">⧉</button>`;
+      c.addEventListener("click", (e) => {
+        // 복사 버튼은 상세 열기와 겹치지 않게 한다.
+        if (e.target.closest(".gi-copy")) { e.stopPropagation(); copyKey(row.key); return; }
+        select(row.key);
+      });
       lbody.append(c);
     }
   }

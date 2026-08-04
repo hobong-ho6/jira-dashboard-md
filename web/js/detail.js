@@ -4,7 +4,7 @@ import {
   escapeHtml, fmtDateTime, fmtDateFull, bucketOf, todayDate,
   BUCKET_LABEL, statusCategoryClass, parentOf, wireDatePicker,
 } from "./util.js";
-import { actions, runAction, toast } from "./actions.js";
+import { actions, runAction, toast, copyKey } from "./actions.js";
 import { mountLabelPicker } from "./label-picker.js";
 
 let requestedComments = new Set();
@@ -89,6 +89,7 @@ export function renderDetail(root, byKey, weekStart) {
     <div class="d-head">
       <div class="d-title">
         <a class="d-key" href="${escapeHtml(it.url || (state.snapshot.jiraBaseUrl + "/browse/" + it.key))}" target="_blank" rel="noopener" title="Jira에서 열기">${escapeHtml(it.key)}</a>
+        <button class="key-copy" id="d-key-copy" title="티켓 번호 복사" aria-label="티켓 번호 복사">⧉</button>
         ${it.issuetype ? `<span class="itype">${escapeHtml(it.issuetype)}</span>` : ""}
         <span class="pill ${statusCategoryClass(it.status && it.status.category)}">${escapeHtml(it.status ? it.status.name : "")}</span>
       </div>
@@ -155,6 +156,7 @@ export function renderDetail(root, byKey, weekStart) {
   }
 
   root.querySelector("#d-close").addEventListener("click", clearSelection);
+  root.querySelector("#d-key-copy").addEventListener("click", () => copyKey(key));
   root.querySelector("#d-status-apply").addEventListener("click", () => {
     const to = root.querySelector("#d-status").value;
     if (!to) return;

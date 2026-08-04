@@ -52,6 +52,17 @@ export function toast(msg, kind = "info") {
   toastEl._t = setTimeout(() => toastEl.classList.remove("show"), 3200);
 }
 
+// 티켓 번호를 클립보드에 복사 (연결 추가·상위 이슈 입력 등에 붙여넣기 위함).
+// 큐를 거치지 않는 순수 로컬 동작이다.
+export async function copyKey(key) {
+  try {
+    await navigator.clipboard.writeText(key);
+    toast(`${key} 복사됨`, "ok");
+  } catch (_) {
+    toast("클립보드 복사 실패 — 브라우저 권한을 확인하세요.", "err");
+  }
+}
+
 // 읽기 전용 액션 목록 (Jira 변경하지 않음)
 const READ_ONLY_ACTIONS = new Set(['load_comments', 'load_transitions', 'sync']);
 
