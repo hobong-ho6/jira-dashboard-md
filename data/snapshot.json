@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T10:30:17+09:00",
+  "generatedAt": "2026-08-04T18:09:49+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -101,7 +101,7 @@
       "duedate": "2026-08-05",
       "startDate": "2026-08-04",
       "created": "2026-08-04T09:48:02.000+0900",
-      "updated": "2026-08-04T09:57:07.000+0900",
+      "updated": "2026-08-04T18:08:10.000+0900",
       "parent": null,
       "epicLink": null,
       "bucket": "thisWeek",
@@ -120,9 +120,25 @@
           "type": "Hierarchy link (WBSGantt)",
           "direction": "outward",
           "relation": "contains",
+          "key": "UNIFY-9622",
+          "summary": "JPYC 럭키볼 시즌3 - 친구초대 연계 및 IP 제한 해제 스펙리뷰/공수산정",
+          "status": "In Progress"
+        },
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "outward",
+          "relation": "contains",
+          "key": "UNIFY-9628",
+          "summary": "OA 생성",
+          "status": "In Progress"
+        },
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "outward",
+          "relation": "contains",
           "key": "UNIFY-9580",
           "summary": "디자인 확인",
-          "status": "In Progress"
+          "status": "Closed"
         },
         {
           "type": "Hierarchy link (WBSGantt)",
@@ -130,7 +146,7 @@
           "relation": "contains",
           "key": "UNIFY-9581",
           "summary": "기획서 작성",
-          "status": "In Progress"
+          "status": "Closed"
         },
         {
           "type": "Hierarchy link (WBSGantt)",
@@ -138,7 +154,7 @@
           "relation": "contains",
           "key": "UNIFY-9582",
           "summary": "스펙 리뷰",
-          "status": "In Progress"
+          "status": "Closed"
         },
         {
           "type": "Hierarchy link (WBSGantt)",
@@ -146,7 +162,7 @@
           "relation": "contains",
           "key": "UNIFY-9583",
           "summary": "일정 확인",
-          "status": "In Progress"
+          "status": "Closed"
         },
         {
           "type": "Relates",
@@ -166,8 +182,9 @@
       "summary": "일정 확인",
       "issuetype": "Task",
       "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
+        "name": "Closed",
+        "category": "Done",
+        "color": "success"
       },
       "priority": "Highest",
       "assignee": {
@@ -178,7 +195,7 @@
       "labels": [
         "Promotion"
       ],
-      "duedate": "2026-08-05",
+      "duedate": "2026-08-04",
       "startDate": "2026-08-04",
       "created": "2026-08-04T09:53:29.000+0900",
       "updated": "2026-08-04T09:53:45.000+0900",
@@ -187,7 +204,7 @@
         "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제"
       },
       "epicLink": null,
-      "bucket": "thisWeek",
+      "bucket": "today",
       "descriptionText": "",
       "descriptionLinks": [],
       "commentLinks": [],
@@ -210,8 +227,8 @@
       "summary": "스펙 리뷰",
       "issuetype": "Task",
       "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
+        "name": "Closed",
+        "category": "done"
       },
       "priority": "Highest",
       "assignee": {
@@ -222,7 +239,7 @@
       "labels": [
         "Promotion"
       ],
-      "duedate": "2026-08-05",
+      "duedate": "2026-08-04",
       "startDate": "2026-08-04",
       "created": "2026-08-04T09:53:28.000+0900",
       "updated": "2026-08-04T09:53:45.000+0900",
@@ -231,7 +248,7 @@
         "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제"
       },
       "epicLink": null,
-      "bucket": "thisWeek",
+      "bucket": "today",
       "descriptionText": "",
       "descriptionLinks": [],
       "commentLinks": [],
@@ -246,7 +263,7 @@
         }
       ],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-9581",
@@ -254,8 +271,9 @@
       "summary": "기획서 작성",
       "issuetype": "Task",
       "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
+        "name": "Closed",
+        "category": "Done",
+        "color": "success"
       },
       "priority": "Highest",
       "assignee": {
@@ -266,7 +284,7 @@
       "labels": [
         "Promotion"
       ],
-      "duedate": "2026-08-05",
+      "duedate": "2026-08-04",
       "startDate": "2026-08-04",
       "created": "2026-08-04T09:53:26.000+0900",
       "updated": "2026-08-04T09:53:44.000+0900",
@@ -275,7 +293,7 @@
         "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제"
       },
       "epicLink": null,
-      "bucket": "thisWeek",
+      "bucket": "today",
       "descriptionText": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4541588845",
       "descriptionLinks": [
         {
@@ -305,8 +323,9 @@
       "summary": "디자인 확인",
       "issuetype": "Task",
       "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
+        "name": "Closed",
+        "category": "Done",
+        "color": "success"
       },
       "priority": "Highest",
       "assignee": {
@@ -317,7 +336,7 @@
       "labels": [
         "Promotion"
       ],
-      "duedate": "2026-08-05",
+      "duedate": "2026-08-04",
       "startDate": "2026-08-04",
       "created": "2026-08-04T09:53:25.000+0900",
       "updated": "2026-08-04T09:53:43.000+0900",
@@ -326,10 +345,17 @@
         "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제"
       },
       "epicLink": null,
-      "bucket": "thisWeek",
+      "bucket": "today",
       "descriptionText": "",
       "descriptionLinks": [],
-      "commentLinks": [],
+      "commentLinks": [
+        {
+          "url": "https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=62607-4058&t=rFlm2M9qxEV5NVQM-4",
+          "text": "https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=62607-4058&t=rFlm2M9qxEV5NVQM-4",
+          "category": "design",
+          "label": "Design"
+        }
+      ],
       "links": [
         {
           "type": "Hierarchy link (WBSGantt)",
@@ -340,7 +366,14 @@
           "status": "In Progress"
         }
       ],
-      "comments": [],
+      "comments": [
+        {
+          "id": "10438529",
+          "body": "https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=62607-4058&t=rFlm2M9qxEV5NVQM-4",
+          "created": "2026-08-04 17:38:42.513000+09:00",
+          "author": "Kim HoGeun （ 김호근 ）"
+        }
+      ],
       "commentsLoaded": true
     },
     {
@@ -510,8 +543,8 @@
       "summary": "친구초대 럭키볼 보상 풀 변경 논의",
       "issuetype": "Task",
       "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
+        "name": "Closed",
+        "category": "done"
       },
       "priority": "Low",
       "assignee": {
@@ -1715,12 +1748,107 @@
       ],
       "comments": [],
       "commentsLoaded": false
+    },
+    {
+      "key": "UNIFY-9622",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9622",
+      "summary": "JPYC 럭키볼 시즌3 - 친구초대 연계 및 IP 제한 해제 스펙리뷰/공수산정",
+      "issuetype": "Task",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Highest",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "Promotion"
+      ],
+      "duedate": "2026-08-05",
+      "startDate": "2026-08-04",
+      "created": "2026-08-04T17:40:08.210+0900",
+      "updated": "2026-08-04T17:40:22.173+0900",
+      "parent": {
+        "key": "UNIFY-9579",
+        "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제"
+      },
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "[Slack 스레드 요약]\n배경: JPYC 럭키볼 시즌3 진행에 맞춰 친구초대 프로모션과 연계 동선(럭키볼 베이스미션 완료 → 친구초대 프로모션)을 구성하고, 초대자 페이지의 일본 IP 제한 해제 여부를 검토(요청: 김호근).\n\n논의:\n- 초대자 페이지는 일본 IP 제한 해제, 피초대자(리워드 수령)는 일본 IP 유지로 정리(김호근-김민정).\n- FDS 검토는 담당자 복귀 후 진행, 그 사이 한결(U05T1U0UJCU)이 백업.\n- 최종 랜딩/프로모션 링크(LINE miniapp draw-promotion, eventId 019fc71c-cefd-7912-8f6f-fb02b6d90068) 및 위키 문서 확정, Prod에도 동일 프로모션 ID 사용 예정(정수영).\n- 스펙리뷰 진행: UIT FE 1MD(진달래), QA 약 2.5D(이성흠), Dev1 BE는 베타 설정 완료(김동욱).\n- 베트남 FE팀(Jimmy/Thang) 작업은 8/6 완료 예정.\n- 진달래 담당 UIT 변경은 LV팀 개발완료(8/6, v1.6.6) 시점에 맞춰 진행 예정.\n\n원본 Slack 스레드: https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1785746015428689",
+      "descriptionLinks": [
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1785746015428689",
+          "text": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1785746015428689",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
+      "commentLinks": [],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "inward",
+          "relation": "is contained in",
+          "key": "UNIFY-9579",
+          "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제",
+          "status": "In Progress"
+        }
+      ],
+      "comments": [],
+      "commentsLoaded": true
+    },
+    {
+      "key": "UNIFY-9628",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9628",
+      "summary": "OA 생성",
+      "issuetype": "Task",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Highest",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "Promotion"
+      ],
+      "duedate": "2026-08-05",
+      "startDate": "2026-08-04",
+      "created": "2026-08-04T18:07:57.000+0900",
+      "updated": "2026-08-04T18:08:14.000+0900",
+      "parent": {
+        "key": "UNIFY-9579",
+        "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제"
+      },
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "",
+      "descriptionLinks": [],
+      "commentLinks": [],
+      "links": [
+        {
+          "type": "Hierarchy link (WBSGantt)",
+          "direction": "inward",
+          "relation": "is contained in",
+          "key": "UNIFY-9579",
+          "summary": "JPYC 럭키볼 프로모션 3 재개 - 기본미션 지급 및 초대자 IP 제한 해제",
+          "status": "In Progress"
+        }
+      ],
+      "comments": [],
+      "commentsLoaded": false
     }
   ],
   "labelGroups": [
     {
       "name": "Promotion",
-      "count": 7,
+      "count": 9,
       "issueKeys": [
         "UNIFY-9579",
         "UNIFY-9583",
@@ -1728,7 +1856,9 @@
         "UNIFY-9581",
         "UNIFY-9580",
         "UNIFY-9577",
-        "UNIFY-9576"
+        "UNIFY-9576",
+        "UNIFY-9622",
+        "UNIFY-9628"
       ]
     },
     {
@@ -2243,6 +2373,46 @@
       }
     ],
     "UNIFY-9581": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-9582": [
+      {
+        "id": 11,
+        "name": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened"
+      }
+    ],
+    "UNIFY-9622": [
       {
         "id": "11",
         "name": "In Progress",
