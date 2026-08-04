@@ -108,11 +108,19 @@ def main():
                 it["parent"] = None
 
     add = payload.get("addIssues", [])
-    if add:  # create_issue 후: 새 이슈 normalize → 추가/교체 → labelGroups 재빌드
+    if add:  # create_issue/create_link 후: 새 이슈 normalize → 추가/교체 → labelGroups 재빌드
         pos = {it.get("key"): i for i, it in enumerate(snap.get("issues", []))}
         for raw in add:
             norm = _nz.normalize_issue(_nz.to_v2(raw), cfg, today)
             if norm["key"] in pos:
+                # 기존 이슈 교체(create_link 후 링크 갱신 등)면 이미 지연 로드된 코멘트를
+                # 이어받는다 — normalize_issue 는 comments 를 비우므로, 안 그러면 상세 패널이
+                # 코멘트를 잃고 load_comments 를 다시 큐잉한다(normalize.py main 과 같은 규칙).
+                old = by_key.get(norm["key"])
+                if old and old.get("commentsLoaded"):
+                    norm["comments"] = old.get("comments", [])
+                    norm["commentsLoaded"] = True
+                    norm["commentLinks"] = old.get("commentLinks", [])
                 snap["issues"][pos[norm["key"]]] = norm
             else:
                 snap.setdefault("issues", []).append(norm)

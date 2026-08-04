@@ -4,6 +4,9 @@ data/.processed/
 data/ui-state.json
 data/raw_issues.json
 data/attachments/
+# 큐 처리 payload (apply_queue.py 입력) — 처리 후 버리는 일회용 산출물
+data/payload_*.json
+data/.payload_*.json
 __pycache__/
 *.log
 
