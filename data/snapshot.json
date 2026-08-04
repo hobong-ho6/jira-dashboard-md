@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T10:01:43+09:00",
+  "generatedAt": "2026-08-04T10:30:17+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -202,7 +202,7 @@
         }
       ],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-9582",
@@ -276,8 +276,15 @@
       },
       "epicLink": null,
       "bucket": "thisWeek",
-      "descriptionText": "",
-      "descriptionLinks": [],
+      "descriptionText": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4541588845",
+      "descriptionLinks": [
+        {
+          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4541588845",
+          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4541588845",
+          "category": "docs",
+          "label": "Wiki"
+        }
+      ],
       "commentLinks": [],
       "links": [
         {
@@ -290,7 +297,7 @@
         }
       ],
       "comments": [],
-      "commentsLoaded": false
+      "commentsLoaded": true
     },
     {
       "key": "UNIFY-9580",
@@ -2192,6 +2199,50 @@
       }
     ],
     "UNIFY-9580": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-9583": [
+      {
+        "id": "11",
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": "21",
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": "31",
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": "41",
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-9581": [
       {
         "id": "11",
         "name": "In Progress",
