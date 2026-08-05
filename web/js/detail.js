@@ -11,14 +11,32 @@ let requestedComments = new Set();
 
 export function renderDetail(root, byKey, weekStart) {
   const key = state.selectedKey;
-  if (!key) { root.classList.remove("open"); root.innerHTML = ""; return; }
+  if (!key) { root.classList.remove("open"); root.innerHTML = ""; root.dataset.sig = ""; return; }
   const it = byKey.get(key);
-  if (!it) { root.classList.remove("open"); root.innerHTML = ""; return; }
+  if (!it) { root.classList.remove("open"); root.innerHTML = ""; root.dataset.sig = ""; return; }
   root.classList.add("open");
   const today = todayDate();
   const bk = bucketOf(it.duedate, today, weekStart);
 
   const transitions = (state.snapshot.transitions || {})[key] || [];
+
+  // 상위(부모) 티켓: sub-task 등. 우측 상세에서는 실제 Jira 이슈로 이동한다(새 탭). 카드의 "↳ 상위" 줄은 대시보드 내 이동(09).
+  const parent = parentOf(it, byKey);
+
+  // 이 패널이 그리는 데이터가 그대로면 다시 그리지 않는다. 폴링(7초)은 다른 티켓이
+  // 바뀌어도 generatedAt 변경만으로 render() 를 돌리는데, 그때 innerHTML 을 통째로
+  // 교체하면 편집 중인 입력(라벨 피커 선택·새 라벨 입력, 코멘트/Slack URL 입력)이
+  // 조용히 사라진다. (2026-08-05 사고: 다른 티켓 큐 배치를 apply 하는 중에 라벨을
+  // 편집해 "적용"을 눌렀더니 지운 칩이 되살아나고 입력한 새 라벨이 버려졌다)
+  const sig = JSON.stringify([
+    key, it, transitions, weekStart, today,
+    state.snapshot.jiraBaseUrl,
+    (state.snapshot.config && state.snapshot.config.linkTypes) || [],
+    parent && (byKey.get(parent.key) || {}).url,
+  ]);
+  if (root.dataset.sig === sig) return;
+  root.dataset.sig = sig;
+
   const statusOpts = transitions.length
     ? transitions.map((t) => `<option value="${escapeHtml(t.to || t.name)}">${escapeHtml(t.name)}</option>`).join("")
     : `<option value="">(전이 정보 없음 — process 때 조회)</option>`;
@@ -31,8 +49,6 @@ export function renderDetail(root, byKey, weekStart) {
   ).join("");
   const linkChips = (descLinkChips + cmtLinkChips) || `<span class="muted">없음</span>`;
 
-  // 상위(부모) 티켓: sub-task 등. 우측 상세에서는 실제 Jira 이슈로 이동한다(새 탭). 카드의 "↳ 상위" 줄은 대시보드 내 이동(09).
-  const parent = parentOf(it, byKey);
   const parentUrl = parent
     ? (((byKey.get(parent.key) || {}).url) || (state.snapshot.jiraBaseUrl + "/browse/" + parent.key))
     : "";

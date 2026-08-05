@@ -17,6 +17,15 @@
 - 시작 시 `GET /api/snapshot`(서버가 `data/snapshot.json` 제공) 또는 정적 경로 `../data/snapshot.json` fetch.
 - `generatedAt`을 기억하고 N초(기본 5~10s)마다 재fetch. 값이 바뀌면 diff 렌더(가능하면 부분 갱신, 어려우면 전체 재렌더 + 스크롤/접힘 상태 보존).
 - 윈도우 포커스 복귀 시 즉시 1회 재fetch.
+- **상세 패널은 자기 데이터가 바뀔 때만 다시 그린다.** `renderDetail`은 그리는 데이터
+  (`selectedKey`·해당 이슈·`transitions[key]`·`weekStart`·오늘·`jiraBaseUrl`·`config.linkTypes`·부모 url)로
+  시그니처를 만들어 `#detail`의 `data-sig`와 비교하고, 같으면 즉시 return 한다.
+  `generatedAt`은 **다른 티켓이 바뀌어도** 변하므로 이 가드가 없으면 폴링이 `innerHTML`을
+  통째로 교체해 편집 중인 입력이 사라진다.
+  (2026-08-05 사고: 다른 티켓 큐 배치를 apply 하는 중에 라벨을 편집하고 "적용"을 눌렀더니
+  제거한 칩이 되살아나고 입력한 새 라벨이 버려진 채 `set_labels`가 큐잉됐다 — 라벨 피커의
+  선택 상태와 미확정 입력은 피커 인스턴스의 지역 상태라 DOM 교체와 함께 사라진다.
+  코멘트·Slack URL 입력창도 동일한 영향을 받았다.)
 
 ## 상태(클라이언트)
 - `state = { snapshot, filters, collapsed:Set<"group:name">, selectedKey, ui:{ groupOrder } }`.
