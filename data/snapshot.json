@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-05T13:57:22+09:00",
+  "generatedAt": "2026-08-05T15:17:01+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -1631,6 +1631,52 @@
       "links": [],
       "comments": [],
       "commentsLoaded": false
+    },
+    {
+      "key": "UNIFY-9663",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9663",
+      "summary": "럭키볼 친구소개 비실시간 지급 변경 대응",
+      "issuetype": "Task",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "Promotion"
+      ],
+      "duedate": "2026-08-05",
+      "startDate": "2026-08-05",
+      "created": "2026-08-05T14:56:55.123+0900",
+      "updated": "2026-08-05T14:57:07.070+0900",
+      "parent": null,
+      "epicLink": null,
+      "bucket": "today",
+      "descriptionText": "h3. 배경\n럭키볼 친구소개 이벤트의 럭키볼 지급 방식이 실시간에서 비실시간으로 변경됨에 따른 대응 논의.\n\nh3. 논의\n* 럭키볼 지급을 실시간 → 비실시간으로 변경. FDS 검토 기간을 고려해 일주일 단위로 지급(8월 7일까지 대상자는 14일에 일괄 지급, 8월 8일~14일 대상자는 21일에 일괄 지급)\n* 프로모션 기간 내 3회 + 프로모션 종료 후 1회 지급\n* 대상자는 김동욱 님 쪽에서 FDS팀으로 전달, FDS팀 검토 후 최종 대상자에게 김동욱 님 쪽에서 지급\n* 초대자·피초대자 럭키볼 모두 비실시간으로 적용\n* BE 배포는 당일 대응 목표. 유저 변경이 필요한 FE 변경 사항은 김호근 / 이진솔 님 쪽에서 체크 후 요청 예정\n* 기존 실시간 지급 안내 문구(토스트 팝업, 프로모션 페이지 버튼 위 안내, OA 메시지) 수정 필요 — 토스트 팝업·프로모션 페이지 안내는 제거, OA 메시지는 \"당첨 보상 지급은 7일(대상자에 따라 최대 2주) 이내에 지급됩니다\" 형태로 수정 논의\n* 이진솔 님이 Figma에 텍스트/UI 관련 코멘트 반영 완료, 김호근 님 검토 요청\n* 이후 진행되는 럭키볼 시즌 3도 비실시간 지급 적용 여부 확정 필요\n\nh3. 결론\n* 럭키볼 친구소개 지급을 비실시간(주 단위 일괄 지급)으로 변경 진행\n* FE·공지사항 안내 문구 변경 필요 — 검토 후 반영 예정\n* 시즌 3 비실시간 적용 여부는 추후 확정\n\n원본 스레드: https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1785907352844259",
+      "descriptionLinks": [
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1785907352844259",
+          "text": "https://group-all-workers-hub.slack.com/archives/C06RE3MFYAZ/p1785907352844259",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
+      "commentLinks": [],
+      "links": [],
+      "comments": [
+        {
+          "author": "Kim HoGeun （ 김호근 ）",
+          "created": "2026-08-05T15:16:50.731+09:00",
+          "updated": "2026-08-05T15:16:50.731+09:00",
+          "body": "팜을 운영하고 있는 것 같아 원천적으로 차단할 방법은 없음\n차선책 실시간 지급을 중단하고 1일 2일정도의 시간차를 두고 검토 후 지급 (개발필요)\n\n예산이 빠르게 소진되고 있어 긴급 중단 의사결정이 필요함\n반나절에 15% 정도 예산이 소진됨"
+        }
+      ],
+      "commentsLoaded": true
     }
   ],
   "labelGroups": [
@@ -1659,12 +1705,13 @@
     },
     {
       "name": "Promotion",
-      "count": 4,
+      "count": 5,
       "issueKeys": [
         "UNIFY-9628",
         "UNIFY-9579",
         "UNIFY-9622",
-        "UNIFY-9577"
+        "UNIFY-9577",
+        "UNIFY-9663"
       ]
     },
     {
@@ -2151,6 +2198,28 @@
       }
     ],
     "UNIFY-9552": [
+      {
+        "id": 11,
+        "name": "In Progress",
+        "to": "In Progress"
+      },
+      {
+        "id": 21,
+        "name": "Resolved",
+        "to": "Resolved"
+      },
+      {
+        "id": 31,
+        "name": "Closed",
+        "to": "Closed"
+      },
+      {
+        "id": 41,
+        "name": "Reopened",
+        "to": "Reopened"
+      }
+    ],
+    "UNIFY-9663": [
       {
         "id": 11,
         "name": "In Progress",
