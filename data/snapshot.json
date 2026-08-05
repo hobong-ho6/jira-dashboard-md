@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-05T10:47:06+09:00",
+  "generatedAt": "2026-08-05T13:57:22+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -1072,7 +1072,7 @@
       "labels": [
         "KaiaWallet"
       ],
-      "duedate": "2026-08-05",
+      "duedate": "2026-08-08",
       "startDate": "2026-06-08",
       "created": "2026-06-08T15:37:38.000+0900",
       "updated": "2026-07-30T14:26:56.000+0900",
@@ -1081,7 +1081,7 @@
         "summary": "Kaia Wallet > Unifi Mobile 전환 유도"
       },
       "epicLink": null,
-      "bucket": "today",
+      "bucket": "thisWeek",
       "descriptionText": "카이아 월렛에서 자산이동하는 유니크 사용자, 전체 보낸 양 메트릭 지표 추가 필요\n\nhttps://wiki.workers-hub.com/pages/viewpage.action?pageId=4515188069",
       "descriptionLinks": [
         {
@@ -1133,7 +1133,7 @@
       "labels": [
         "KaiaWallet"
       ],
-      "duedate": "2026-08-05",
+      "duedate": "2026-08-10",
       "startDate": "2026-05-14",
       "created": "2026-05-14T13:21:19.000+0900",
       "updated": "2026-07-30T14:26:39.000+0900",
@@ -1142,7 +1142,7 @@
         "summary": null
       },
       "epicLink": "W3P-5593",
-      "bucket": "today",
+      "bucket": "later",
       "descriptionText": "Figma: https://www.figma.com/design/uyUkM7rWWg1vAwpf47um86/-Share--Unifi-Design?node-id=44995-55&t=5CvocmqqwM6uTXPB-1\r\n\r\nslack: https://group-all-workers-hub.slack.com/archives/C097X2T31FE/p1778750287865969\r\n\r\nPIA Review: https://jira.workers-hub.com/browse/LNS-1127",
       "descriptionLinks": [
         {
