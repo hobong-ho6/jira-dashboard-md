@@ -45,7 +45,10 @@
 이번 세션은 예약 hourly sync가 **Jira MCP 미연결로 실패**하며 시작했고, 이어 사용자의 "서버 워쳐 실행" 요청으로 좀비 서버를 복구하고 큐 3건을 드레인했다. 그 과정에서 HANDOFF가 세션 #4 분량(커밋 6개·사고 3건)을 통째로 놓치고 있던 것을 발견해 함께 복원했다.
 
 - **서버·워쳐**: 정상(`server=up :5173`, `watcher=running`), 큐 0건.
-- **🔴 좀비 서버 3번째 재발(복구 완료, 코드 수정은 미착수)**: PID 76019가 포트 5173을 LISTEN한 채 2일간 무응답(`curl` → `Empty reply from server`). `ensure_services.sh`는 이 상태에서 새 인스턴스를 띄우려다 `Address already in use`로 죽어 `server=FAILED`만 보고했다. kill 후 재기동해 200 확인. **아직 재발 방지책이 없다** — 아래 "다음 할 일" P1 참조. 세션 #2(07-30)에도 같은 패턴이 있었으므로 이번이 3번째다.
+- **✅ 좀비 서버 3번째 재발 → 자동 감지·복구 구현(세션 #5)**: PID 76019가 포트 5173을 LISTEN한 채 2일간 무응답(`curl` → `Empty reply from server`). `ensure_services.sh`가 그 상태에서 새 인스턴스를 띄우려다 `Address already in use`로 죽어 `server=FAILED`만 보고 → 매번 사람이 kill 해야 했다(3회 반복).
+  - **원인 가설(사용자 제기, 정황 증거로 뒷받침됨)**: 업무 종료 후 PC를 켜둔 채 장시간 방치 → macOS가 Deep Idle sleep ↔ DarkWake 를 수 분 간격으로 반복(`pmset -g log`로 확인)하고 `hibernatemode 3`·`standby 1`이라 결국 RAM을 디스크로 덤프한다. 이때 **프로세스는 살아남지만(`STAT=S`) 리스닝 소켓만 응답 불능**이 된다. 실제 좀비의 STAT가 `S`였던 것과 일치. **아직 확정은 아니다** — 확증은 다음 재발 때 자동 저장되는 진단 파일로 한다.
+  - **구현**: ① 헬스체크에 `--max-time 5`(없으면 좀비를 만났을 때 `curl`이 매달려 SessionStart 훅 전체가 멈춘다) ② 실패 시 `lsof`로 포트 점유 PID를 찾아 **우리 `server/serve.py` 일 때만** 정리 후 재기동, 남의 프로세스면 `PORT_CONFLICT`로 보고만 ③ kill 직전 `data/zombie_<타임스탬프>.txt`에 프로세스 STAT·소켓·최근 sleep/wake 이력·스택(`sample`)을 저장.
+  - **검증**: 실제 서버에 `SIGSTOP`을 걸어 좀비를 재현 → 감지·진단·정리·재기동 성공(14초). `nc -k -l 5173`으로 남의 프로세스 시나리오 → `PORT_CONFLICT` 판정하고 죽이지 않음 확인. 정상 경로는 0.06초로 오버헤드 없음.
 - **🔴 예약 scheduled-task가 Jira MCP 미연결로 실패(원인 미규명)**: 오늘 새벽 자동 실행된 hourly sync가 `mcp__noahs-mcp-jira__*` 도구를 전혀 로드하지 못해(`noahs-mcp-wiki`는 정상 연결) 절차대로 중단하고 실패 알림만 남겼다. snapshot은 건드리지 않았다. 같은 세션 안에서 몇 분 뒤 사용자 요청 시점에는 Jira MCP가 정상 연결됐다 — **MCP 서버 연결이 느리거나 간헐 실패할 때 짧은 예약 세션이 이를 못 기다리는 문제로 보인다(미확인)**. 재현되면 `claude mcp list`로 서버 상태부터 확인할 것.
 - **큐 3건 드레인**: ① `create_issue`(+`slackUrl`) → docs/13 기준대로 `queue-worker` 위임 → **UNIFY-9693 "JPYC 럭키볼 지연 지급 - 개선"** 생성(Slack 스레드 요약 description, 라벨 `Promotion`, 마감일 2026-08-07, In Progress 전이). ②·③ `load_comments`·`load_transitions`(UNIFY-9693) → 읽기 전용이라 메인 직접 처리. 모두 `apply_and_rewatch.sh` 체인으로 반영·ack·재기동. 황금 규칙 #11 준수(위임 프롬프트에 재기동 지시 없음).
 - **snapshot 25건 → 20건은 정상**: apply 후 이슈가 줄어 조사했으나, `apply_queue.py`에는 이슈 제거 경로가 자체적으로 없고(`addIssues`는 추가/교체만) 현재 JQL의 Jira 실제 결과가 20건으로 snapshot과 정확히 일치했다. 낡은 커밋본(08-05 15:17, 25건)과 비교한 착오였다. Closed 3건 + 조건에서 빠진 3건이 줄어든 내역.
@@ -57,8 +60,9 @@
 <!-- 우선순위순. P1=지금 바로, P2=이번 주, P3=여유 있을 때
      각 항목은 "다음 Claude가 바로 착수 가능한" 수준으로 구체적으로 -->
 
-- [ ] **P1**: **좀비 서버 자동 감지·복구** — `tools/ensure_services.sh:19`의 헬스체크 `curl -s -o /dev/null "http://localhost:$PORT/api/snapshot"` 에 타임아웃이 없어, 포트만 잡고 무응답인 좀비를 만나면 그대로 매달렸다가 재기동 시도 → `Address already in use` → `FAILED` 보고로 끝나고 **매번 사람이 kill 해야 한다**(3회 재발). 제안: `--max-time 5` 추가 + 실패 시 `lsof -ti:$PORT`로 PID를 찾아 kill 후 1회 재시도. 세션 #5에서 제안만 하고 미구현.
-- [ ] **P2**: 예약 scheduled-task가 Jira MCP 미연결로 실패한 원인 규명(2026-08-06 새벽 발생, 위 "현재 상태" 참조). 짧은 예약 세션이 MCP 연결 완료를 못 기다리는 문제로 추정(미확인) — 재발 시 실패 알림에 `claude mcp list` 결과를 함께 남기도록 절차 보강 검토.
+- [x] **좀비 서버 자동 감지·복구** — 세션 #5에서 구현·검증 완료(위 "현재 상태" 참조).
+- [ ] **P1**: **hourly sync가 `issuetype`·`parent`를 유실한다** — 예약 scheduled-task는 `fields`에 두 필드를 요청하지만, MCP flattened 응답(`data/raw_issues.json`)에 **키 자체가 없다**(실측: 키 목록이 `assignee/created/customfield_10108/customfield_10300/description/duedate/id/issuelinks/key/labels/priority/status/summary/updated`). 그 결과 sync가 돌 때마다 전 이슈의 `issuetype`이 `""`가 된다(현재 20건 전부 `""`). `queue-worker`가 `fields="*all"`로 넣은 UNIFY-9693만 잠깐 `"Task"`였다가 11:03 sync에서 원상복귀된 것으로 발견. **영향 범위 미확인** — `parent`(에픽 계층)도 같은 상태라 간트/그룹 표시에 영향이 있는지 확인 필요. 해결 후보: sync의 `fields`를 `*all`로 바꾸거나(호출 비용↑), `to_v2`에서 누락 필드를 기존 snapshot 값으로 보존.
+- [ ] **P2**: 예약 scheduled-task가 Jira MCP 미연결로 실패한 원인 규명(2026-08-06 새벽 발생, 위 "현재 상태" 참조). 같은 예약이 11:03에는 정상 실행됐으므로 **간헐적**이다. 짧은 예약 세션이 MCP 연결 완료를 못 기다리는 문제로 추정(미확인) — 재발 시 실패 알림에 `claude mcp list` 결과를 함께 남기도록 절차 보강 검토.
 - [ ] **P2**: 라벨 그룹 카드에 티켓 번호 복사 버튼 재추가 검토 — `8021593`에서 추가했다가 `card-top`(flex) 공간 부족으로 티켓 번호가 두 줄로 밀려 `84967f8`로 리버트함. 다시 넣으려면 `card-top`의 flex-wrap 또는 버튼을 다른 줄/위치(예: `card-meta`)로 옮기는 레이아웃 조정이 먼저 필요.
 - [ ] **P2**: `docs/11`/`queue-worker.md`에 추가한 `create_link` 반영 절차가 실제로 지켜지는지 다음 몇 번의 링크 생성에서 확인(회귀 여부 관찰). 세션 #4~#5에는 `create_link` 명령이 없어 아직 미검증.
 - [ ] **P3**: 루트의 `scratchpad_check.txt`(0바이트, 7/13 생성) 정리 — 용도 불명이라 손대지 않았다. 필요 없으면 삭제.
@@ -99,6 +103,8 @@
   - 큐 3건 드레인: UNIFY-9693 생성(`create_issue`+`slackUrl` → `queue-worker` 위임), `load_comments`·`load_transitions`(메인 직접). 모두 `apply_and_rewatch.sh` 체인으로 반영
   - snapshot 이슈 수 감소(25→20)를 조사해 **정상**으로 확인 — Jira 실제 JQL 결과 20건과 일치, `apply_queue.py`에 이슈 제거 경로 없음
   - HANDOFF가 `67b63c5` 이후 6커밋·사고 3건을 놓치고 있던 것을 발견해 세션 #4 항목으로 복원(본 갱신)
+  - 좀비 서버 자동 감지·복구를 `ensure_services.sh`에 구현하고 3가지 시나리오(좀비/포트충돌/정상)를 모두 실측 검증
+  - hourly sync의 `issuetype`·`parent` 유실을 발견(P1 등록) — 조사만 하고 수정은 범위 밖이라 미착수
 - **진행 중 / 중단 지점**: 없음. 종료 시점 기준 서버·워쳐 정상, 큐 0건.
 - **발견 / 배운 것**:
   - `ensure_services.sh`의 헬스체크는 **좀비를 감지하지 못한다** — 포트가 열려 있어도 응답이 없으면 재기동도 실패하고 사람이 개입해야 끝난다. 3번 반복됐는데도 아직 코드가 안 고쳐진 이유는, 매번 "kill하고 넘어가면 당장 동작"하기 때문이다(P1으로 승격).

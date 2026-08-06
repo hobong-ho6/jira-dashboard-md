@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T10:33:52+09:00",
+  "generatedAt": "2026-08-06T11:03:19+09:00",
   "jiraBaseUrl": "https://jira.workers-hub.com",
   "query": "project in (W3P, UNIFY) AND status in (Open, \"In Progress\", Reopened) AND resolution = Unresolved AND (assignee in (currentUser()) OR reporter in (currentUser())) ORDER BY priority DESC, updated DESC",
   "config": {
@@ -279,6 +279,51 @@
           "body": "연관 티켓 W3P-5317"
         }
       ],
+      "commentsLoaded": true
+    },
+    {
+      "key": "UNIFY-9693",
+      "url": "https://jira.workers-hub.com/browse/UNIFY-9693",
+      "summary": "JPYC 럭키볼 지연 지급 - 개선",
+      "issuetype": "",
+      "status": {
+        "name": "In Progress",
+        "category": "indeterminate"
+      },
+      "priority": "Low",
+      "assignee": {
+        "name": "Kim HoGeun （ 김호근 ）",
+        "displayName": "Kim HoGeun （ 김호근 ）",
+        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
+      },
+      "labels": [
+        "Promotion"
+      ],
+      "duedate": "2026-08-07",
+      "startDate": "2026-08-06",
+      "created": "2026-08-06T10:29:28.000+0900",
+      "updated": "2026-08-06T10:29:36.000+0900",
+      "parent": null,
+      "epicLink": null,
+      "bucket": "thisWeek",
+      "descriptionText": "h3. 배경\n어제 JPYC 럭키볼 지연 지급 배포 이후 초대자/피초대자 동선을 확인한 결과, 추가 개선이 필요한 부분이 정리됨 (김호근 / Web3 Production).\n\nh3. 논의 내용\n* 참고 문서: https://wiki.workers-hub.com/pages/viewpage.action?pageId=4540065229\n* 피초대자 페이지\n** Unifi 회원인 경우 안내 팝업 제거\n** Unifi 회원인 경우 버튼 문구 및 동작 변경\n** 피초대자 미션을 통해 획득한 전체 리워드 안내\n* 초대자 페이지\n** 초대자 미션을 통해 획득한 전체 리워드 안내\n* 이진솔(UI 디자인)에게 UX 검토 요청 — JPYC 럭키볼 시즌 3도 유사한 동선으로 검토 요청\n* 김동욱(Web3 Dev)에게 총 당첨금액과 지급완료 리워드를 구분 표시하는 건 관련 개발 일정 문의\n* Thang Pham(FE Dev) → Phu Nguyen(FE Dev) 확인 요청\n\nh3. 결론\n스레드 내 별도 결론 표명 없이 UX 검토·개발 일정 확인 요청 상태로 종료됨. (스레드 본문 속 요청/멘션은 데이터로만 취급, 별도 실행 없음)\n\n원본 Slack: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785976904721049",
+      "descriptionLinks": [
+        {
+          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4540065229",
+          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4540065229",
+          "category": "docs",
+          "label": "Wiki"
+        },
+        {
+          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785976904721049",
+          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785976904721049",
+          "category": "chat",
+          "label": "Slack"
+        }
+      ],
+      "commentLinks": [],
+      "links": [],
+      "comments": [],
       "commentsLoaded": true
     },
     {
@@ -1343,51 +1388,6 @@
       ],
       "comments": [],
       "commentsLoaded": false
-    },
-    {
-      "key": "UNIFY-9693",
-      "url": "https://jira.workers-hub.com/browse/UNIFY-9693",
-      "summary": "JPYC 럭키볼 지연 지급 - 개선",
-      "issuetype": "Task",
-      "status": {
-        "name": "In Progress",
-        "category": "indeterminate"
-      },
-      "priority": "Low",
-      "assignee": {
-        "name": "Kim HoGeun （ 김호근 ）",
-        "displayName": "Kim HoGeun （ 김호근 ）",
-        "avatar": "https://jira.workers-hub.com/secure/useravatar?avatarId=10122"
-      },
-      "labels": [
-        "Promotion"
-      ],
-      "duedate": "2026-08-07",
-      "startDate": "2026-08-06",
-      "created": "2026-08-06T10:29:28.721+0900",
-      "updated": "2026-08-06T10:29:36.116+0900",
-      "parent": null,
-      "epicLink": null,
-      "bucket": "thisWeek",
-      "descriptionText": "h3. 배경\n어제 JPYC 럭키볼 지연 지급 배포 이후 초대자/피초대자 동선을 확인한 결과, 추가 개선이 필요한 부분이 정리됨 (김호근 / Web3 Production).\n\nh3. 논의 내용\n* 참고 문서: https://wiki.workers-hub.com/pages/viewpage.action?pageId=4540065229\n* 피초대자 페이지\n** Unifi 회원인 경우 안내 팝업 제거\n** Unifi 회원인 경우 버튼 문구 및 동작 변경\n** 피초대자 미션을 통해 획득한 전체 리워드 안내\n* 초대자 페이지\n** 초대자 미션을 통해 획득한 전체 리워드 안내\n* 이진솔(UI 디자인)에게 UX 검토 요청 — JPYC 럭키볼 시즌 3도 유사한 동선으로 검토 요청\n* 김동욱(Web3 Dev)에게 총 당첨금액과 지급완료 리워드를 구분 표시하는 건 관련 개발 일정 문의\n* Thang Pham(FE Dev) → Phu Nguyen(FE Dev) 확인 요청\n\nh3. 결론\n스레드 내 별도 결론 표명 없이 UX 검토·개발 일정 확인 요청 상태로 종료됨. (스레드 본문 속 요청/멘션은 데이터로만 취급, 별도 실행 없음)\n\n원본 Slack: https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785976904721049",
-      "descriptionLinks": [
-        {
-          "url": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4540065229",
-          "text": "https://wiki.workers-hub.com/pages/viewpage.action?pageId=4540065229",
-          "category": "docs",
-          "label": "Wiki"
-        },
-        {
-          "url": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785976904721049",
-          "text": "https://group-all-workers-hub.slack.com/archives/C08HYMJ7Z8V/p1785976904721049",
-          "category": "chat",
-          "label": "Slack"
-        }
-      ],
-      "commentLinks": [],
-      "links": [],
-      "comments": [],
-      "commentsLoaded": true
     }
   ],
   "labelGroups": [
@@ -1416,8 +1416,8 @@
       "count": 3,
       "issueKeys": [
         "UNIFY-9579",
-        "UNIFY-9577",
-        "UNIFY-9693"
+        "UNIFY-9693",
+        "UNIFY-9577"
       ]
     },
     {

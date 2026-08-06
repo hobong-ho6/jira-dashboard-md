@@ -7,6 +7,7 @@ data/attachments/
 # 큐 처리 payload (apply_queue.py 입력) — 처리 후 버리는 일회용 산출물
 data/payload_*.json
 data/.payload_*.json
+data/zombie_*.txt
 __pycache__/
 *.log
 
