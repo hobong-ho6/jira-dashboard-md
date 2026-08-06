@@ -62,6 +62,18 @@
 ## 코멘트 "수정"에 대한 솔직한 한계
 - 현재 MCP 도구셋에는 **기존 코멘트를 편집/삭제하는 도구가 없다**(`jira_add_comment`만 존재).
 - 따라서 "코멘트 업데이트"는 **새 코멘트 추가**로 구현한다. 진짜 인라인 편집이 필요하면 별도 도구가 필요함을 사용자에게 알린다(범위 밖).
+- **⚠️ 코멘트 본문의 언더스코어(`_`)가 먹힌다 — 게시 전에 처리해야 한다(2026-08-06 실측).**
+  `jira_add_comment` 의 `comment` 는 도구 스키마상 **Markdown 입력**이다("Comment text in Markdown format").
+  즉 MCP가 markdown → wiki markup 변환을 거치는데, 이 과정에서 식별자 안의 `_` 가 emphasis 구분자로
+  해석돼 사라진다. UNIFY-9693 요약 코멘트에서 `mini_luckyball_congrats_won` 이
+  `mini*luckyball*congrats*won` 으로 저장됐다. 위 §한계대로 **코멘트는 편집·삭제가 불가하므로 사후 복구가
+  안 된다** — 따라서 게시 **전에** 본문을 점검한다. (`jira_update_issue` 의 description 은 반대로
+  `is_description_markdown=False` 가 기본이라 raw wiki markup 이 그대로 들어간다 — 두 경로의 기본값이
+  다르다는 점에 주의.)
+  - 대응: 이벤트명·플래그·DB 컬럼·URL 슬러그처럼 `_` 가 든 토큰은 **백틱으로 감싼다**
+    (`` `mini_luckyball_congrats_won` ``) → wiki `{{...}}` monospace 로 변환되어 원문이 보존될 것으로
+    예상된다. **단 이 우회는 아직 이 인스턴스에서 실측 검증되지 않았다** — 다음에 `_` 가 든 코멘트를
+    게시할 때 저장 결과를 확인하고, 결과(성공/실패)를 이 절에 기록한다.
 
 ## 상태 변경 UX 세부
 - 상세/카드에서 상태 드롭다운을 채우려면 전이 목록이 필요. 두 방식:
