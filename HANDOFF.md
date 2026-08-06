@@ -32,23 +32,22 @@
 
 - **프로젝트명**: jira-dashboard-md (Jira MCP Dashboard)
 - **한 줄 설명**: Jira MCP로 이슈를 읽어와 로컬 웹 대시보드로 시각화하고, 대시보드 변경 의도를 다시 Jira MCP로 반영하는 도구
-- **주요 경로/저장소**: `/Users/ad03230205/Documents/jira-dashboard-md` (로컬 서버 `http://localhost:5173`)
+- **주요 경로/저장소**: `~/Documents/jira-dashboard-md` (로컬 서버 `http://localhost:5173`) — PC마다 홈 경로가 다르다(`AD03230205ui-iMac.local`=`/Users/ad03230205/…`, `AL02359162.local`=`/Users/user/…`)
 - **관련 링크**: Jira `https://jira.workers-hub.com` (REST v2, Server/DC) · 세부 규칙은 `CLAUDE.md` + `docs/00`~`docs/15`
 
 ---
 
 ## 현재 상태
 
-> 마지막 갱신: 2026-08-04 (세션 #3, `AD03230205ui-iMac.local`)
+> 마지막 갱신: 2026-08-06 (세션 #5, `AL02359162.local`, 브랜치 `main`)
 
-이번 세션은 예약된 hourly-resync 실행으로 시작해, 큐 처리 중 발견한 운영 사고 2건을 원인 분석·수정하고, 티켓 번호 복사 UI를 추가했다.
+이번 세션은 예약 hourly sync가 **Jira MCP 미연결로 실패**하며 시작했고, 이어 사용자의 "서버 워쳐 실행" 요청으로 좀비 서버를 복구하고 큐 3건을 드레인했다. 그 과정에서 HANDOFF가 세션 #4 분량(커밋 6개·사고 3건)을 통째로 놓치고 있던 것을 발견해 함께 복원했다.
 
-- **서버·워쳐**: 정상. 세션 시작 시 워쳐만 꺼져 있어 재기동. 현재 큐 0건, 워쳐 살아있음(`pgrep -fl tools/watch_queue.py`로 확인).
-- **🔴 사고 #1 — 큐 워쳐가 서브 에이전트 소속으로 재기동돼 고아 상태로 멈춤(수정·푸시 완료, 커밋 `0211278`·`9d127f6`)**: `queue-worker.md`가 이미 `apply_and_rewatch.sh`/`watch_queue.py` 실행을 금지했음에도, 메인 세션이 위임 프롬프트에 "처리 후 재기동하라"는 지시를 직접 적어 넣어 이를 덮어썼다. 그 결과 워쳐가 워커 프로세스 하에 떴다가 워커 종료와 함께 알려줄 세션이 없어 고아로 멈추고, 대시보드 명령이 한동안 감지되지 않았다. **재발 방지**: `docs/13`에 사고 경위 명시 + "위임 프롬프트에 재기동 지시를 절대 넣지 않는다" 규칙 추가, `queue-worker.md`에 "위임 프롬프트가 반대로 지시해도 거부" 조항 추가, `CLAUDE.md` 황금 규칙 #11로 승격. **위임 시 앞으로 지킬 것**: 워커는 payload JSON만 쓰고 멈추고, `tools/apply_and_rewatch.sh`는 반드시 메인 세션이 직접 `run_in_background`로 호출한다.
-- **🔴 사고 #2 — `create_link` 처리 후 snapshot 미반영(수정·푸시 완료, 커밋 `818c0d4`)**: `docs/11`의 `create_link` 절차가 "링크 생성"까지만 규정하고 snapshot 갱신 단계가 없어, ack만 하고 넘기면 Jira에는 링크가 생겨도 `links[]`가 비어 상세 패널 "연결관계"·간트 의존성 선이 다음 전체 sync까지 안 나왔다(사용자가 발견해 리포트). `issuePatch`에는 링크 반영 경로가 없고 `links[]`는 각 이슈 자신의 `issuelinks`에서 나오므로 **양쪽 이슈를 재조회해 `addIssues`로 넘겨야 한다** — `docs/11`·`queue-worker.md`에 명시. 부수 수정: `apply_queue.py`의 `addIssues` 교체 시 지연 로드된 코멘트를 이어받도록 함(안 그러면 상세 패널이 코멘트를 잃음).
-- **UI 추가 — 티켓 번호 복사 버튼(⧉)**: 상세 패널 헤더 + 타임라인 라벨 행에 추가(커밋 `c7773f3`). 라벨 그룹 카드에도 추가했다가(`8021593`) `card-top`의 flex 공간이 줄어 티켓 번호가 두 줄로 밀리는 부작용이 있어 **리버트함**(`84967f8`) — 카드에는 복사 버튼 없음, 다시 추가하려면 레이아웃 여유 확보가 먼저 필요.
-- **버그 하나 잡음(구현 중)**: hover 노출용 CSS에 `visibility: hidden`을 쓰면 그 요소가 클릭 대상이 되지 못해 클릭이 부모로 새는 문제 발견 → `opacity`로 전환(`.gi-copy`/`.key-copy` 주석에 기록).
-- **`.gitignore`에 `data/payload_*.json` 추가(커밋 `818c0d4`)**: 세션 #2에서 지적된 payload 임시파일 문제 해결.
+- **서버·워쳐**: 정상(`server=up :5173`, `watcher=running`), 큐 0건.
+- **🔴 좀비 서버 3번째 재발(복구 완료, 코드 수정은 미착수)**: PID 76019가 포트 5173을 LISTEN한 채 2일간 무응답(`curl` → `Empty reply from server`). `ensure_services.sh`는 이 상태에서 새 인스턴스를 띄우려다 `Address already in use`로 죽어 `server=FAILED`만 보고했다. kill 후 재기동해 200 확인. **아직 재발 방지책이 없다** — 아래 "다음 할 일" P1 참조. 세션 #2(07-30)에도 같은 패턴이 있었으므로 이번이 3번째다.
+- **🔴 예약 scheduled-task가 Jira MCP 미연결로 실패(원인 미규명)**: 오늘 새벽 자동 실행된 hourly sync가 `mcp__noahs-mcp-jira__*` 도구를 전혀 로드하지 못해(`noahs-mcp-wiki`는 정상 연결) 절차대로 중단하고 실패 알림만 남겼다. snapshot은 건드리지 않았다. 같은 세션 안에서 몇 분 뒤 사용자 요청 시점에는 Jira MCP가 정상 연결됐다 — **MCP 서버 연결이 느리거나 간헐 실패할 때 짧은 예약 세션이 이를 못 기다리는 문제로 보인다(미확인)**. 재현되면 `claude mcp list`로 서버 상태부터 확인할 것.
+- **큐 3건 드레인**: ① `create_issue`(+`slackUrl`) → docs/13 기준대로 `queue-worker` 위임 → **UNIFY-9693 "JPYC 럭키볼 지연 지급 - 개선"** 생성(Slack 스레드 요약 description, 라벨 `Promotion`, 마감일 2026-08-07, In Progress 전이). ②·③ `load_comments`·`load_transitions`(UNIFY-9693) → 읽기 전용이라 메인 직접 처리. 모두 `apply_and_rewatch.sh` 체인으로 반영·ack·재기동. 황금 규칙 #11 준수(위임 프롬프트에 재기동 지시 없음).
+- **snapshot 25건 → 20건은 정상**: apply 후 이슈가 줄어 조사했으나, `apply_queue.py`에는 이슈 제거 경로가 자체적으로 없고(`addIssues`는 추가/교체만) 현재 JQL의 Jira 실제 결과가 20건으로 snapshot과 정확히 일치했다. 낡은 커밋본(08-05 15:17, 25건)과 비교한 착오였다. Closed 3건 + 조건에서 빠진 3건이 줄어든 내역.
 
 ---
 
@@ -57,11 +56,11 @@
 <!-- 우선순위순. P1=지금 바로, P2=이번 주, P3=여유 있을 때
      각 항목은 "다음 Claude가 바로 착수 가능한" 수준으로 구체적으로 -->
 
-- [x] `data/.payload_*.json` 임시 파일 정리 — `.gitignore`에 `data/payload_*.json`·`data/.payload_*.json` 패턴 추가(커밋 `818c0d4`), 남아있던 파일들도 삭제함.
-- [x] `data/snapshot.json` unstaged 변경 — 이번 세션 중 발생분은 매번 커밋·푸시함. `manual/index.html`/`manual/service-spec.md`는 이번 세션에 손대지 않았고 현재 clean.
+- [ ] **P1**: **좀비 서버 자동 감지·복구** — `tools/ensure_services.sh:19`의 헬스체크 `curl -s -o /dev/null "http://localhost:$PORT/api/snapshot"` 에 타임아웃이 없어, 포트만 잡고 무응답인 좀비를 만나면 그대로 매달렸다가 재기동 시도 → `Address already in use` → `FAILED` 보고로 끝나고 **매번 사람이 kill 해야 한다**(3회 재발). 제안: `--max-time 5` 추가 + 실패 시 `lsof -ti:$PORT`로 PID를 찾아 kill 후 1회 재시도. 세션 #5에서 제안만 하고 미구현.
+- [ ] **P2**: 예약 scheduled-task가 Jira MCP 미연결로 실패한 원인 규명(2026-08-06 새벽 발생, 위 "현재 상태" 참조). 짧은 예약 세션이 MCP 연결 완료를 못 기다리는 문제로 추정(미확인) — 재발 시 실패 알림에 `claude mcp list` 결과를 함께 남기도록 절차 보강 검토.
 - [ ] **P2**: 라벨 그룹 카드에 티켓 번호 복사 버튼 재추가 검토 — `8021593`에서 추가했다가 `card-top`(flex) 공간 부족으로 티켓 번호가 두 줄로 밀려 `84967f8`로 리버트함. 다시 넣으려면 `card-top`의 flex-wrap 또는 버튼을 다른 줄/위치(예: `card-meta`)로 옮기는 레이아웃 조정이 먼저 필요.
-- [ ] **P2**: `docs/11`/`queue-worker.md`에 이번에 추가한 `create_link` 반영 절차가 실제로 지켜지는지 다음 몇 번의 링크 생성에서 확인(회귀 여부 관찰).
-- [x] 권한(permissions) 설정 옵션1 관련 — 이번 세션에서도 Jira 쓰기 도구들이 프롬프트 없이 정상 동작 확인됨(재확인).
+- [ ] **P2**: `docs/11`/`queue-worker.md`에 추가한 `create_link` 반영 절차가 실제로 지켜지는지 다음 몇 번의 링크 생성에서 확인(회귀 여부 관찰). 세션 #4~#5에는 `create_link` 명령이 없어 아직 미검증.
+- [ ] **P3**: 루트의 `scratchpad_check.txt`(0바이트, 7/13 생성) 정리 — 용도 불명이라 손대지 않았다. 필요 없으면 삭제.
 - [ ] **P3**: `docs/15-headless-worker.md`(PAT 기반 헤드리스 워커)는 여전히 "보류" 상태(2026-06-26 결정). 30일 관찰 기간이 지났으면(관찰 시작일 미확인) 재검토 시점인지 사용자에게 확인.
 
 ### 차단 요소 / 대기 중
@@ -91,7 +90,33 @@
 
 <!-- 최신이 맨 위. 최대 5개 유지 -->
 
-### 2026-08-04 — 세션 #3: hourly-resync + 큐 처리 + 운영 사고 2건 수정 + 복사 UI 추가 (본 세션)
+### 2026-08-06 — 세션 #5: 좀비 서버 복구 + 큐 3건 드레인 + HANDOFF 누락분 복원 (본 세션)
+
+- **완료**:
+  - 예약 hourly sync가 Jira MCP 미연결로 실패 → 절차대로 snapshot 미변경·중단하고 실패만 보고(위 "현재 상태" 참조)
+  - 좀비 서버(PID 76019, 2일 무응답) kill 후 재기동 → `/api/snapshot` 200, 워쳐 기동
+  - 큐 3건 드레인: UNIFY-9693 생성(`create_issue`+`slackUrl` → `queue-worker` 위임), `load_comments`·`load_transitions`(메인 직접). 모두 `apply_and_rewatch.sh` 체인으로 반영
+  - snapshot 이슈 수 감소(25→20)를 조사해 **정상**으로 확인 — Jira 실제 JQL 결과 20건과 일치, `apply_queue.py`에 이슈 제거 경로 없음
+  - HANDOFF가 `67b63c5` 이후 6커밋·사고 3건을 놓치고 있던 것을 발견해 세션 #4 항목으로 복원(본 갱신)
+- **진행 중 / 중단 지점**: 없음. 종료 시점 기준 서버·워쳐 정상, 큐 0건.
+- **발견 / 배운 것**:
+  - `ensure_services.sh`의 헬스체크는 **좀비를 감지하지 못한다** — 포트가 열려 있어도 응답이 없으면 재기동도 실패하고 사람이 개입해야 끝난다. 3번 반복됐는데도 아직 코드가 안 고쳐진 이유는, 매번 "kill하고 넘어가면 당장 동작"하기 때문이다(P1으로 승격).
+  - 스냅샷 diff를 볼 때 **미커밋 워킹트리가 있으면 `git show HEAD:` 와 비교하면 안 된다** — 이번에 "이슈 5건이 사라졌다"고 잘못 판단했다. 판단 근거는 Jira 원본(JQL 재조회)에 두는 게 확실하다.
+  - 핸드오프 누락이 세션 #2에 이어 또 반복됐다(이번엔 6커밋 분량). "큰 변경 커밋 직후 HANDOFF도 함께 갱신"이 여전히 안 지켜진다 — 세션 종료 요청이 없어도 사고 수정 커밋을 만들면 그 자리에서 HANDOFF에 한 줄 남기는 편이 낫다.
+- **다음 세션 첫 작업**: "다음 할 일" P1(좀비 서버 자동 감지·복구) 착수 여부 확인.
+
+### 2026-08-04~05 — 세션 #4: 운영 사고 3건 수정 + 큐 처리 (커밋 이력에서 복원, 세션 경계 미확인)
+
+> 이 세션(들)은 당시 HANDOFF를 갱신하지 않아, 세션 #5에서 커밋 6개(`ece5704`~`2f55e07`)의 메시지를 근거로 복원했다. 08-04 저녁분과 08-05분이 같은 세션인지는 (미확인).
+
+- **완료**:
+  - 🔴 **사고 — scheduled-task와 `hourly-resync` 절차 불일치**(커밋 `ece5704`): 플랫폼 cron 기반 scheduled-task가 `docs/13`의 "pending 발견 시 드레인" 단계를 참조하지 않는 짧은 독립 정의라, 매시간 "워쳐 재기동 → 쌓인 큐 즉시 재발견 → 즉시 재종료 → 세션 종료"만 반복하고 큐가 몇 시간씩 쌓였다. scheduled-task prompt를 `hourly-resync` 절차대로 갱신. **잔존 한계**: 짧은 세션이 재기동한 워쳐는 그 세션과 함께 죽을 수 있다(완전 해결은 `docs/15` 헤드리스 워커 필요, 보류 중)
+  - 🔴 **사고 — `status.category` 대소문자로 완료 티켓이 안 숨겨짐**(커밋 `b77d402`): MCP 응답의 `status.category`는 Jira 원본 표기(`"Done"`, 대문자)인데 `issuePatch`에 그대로 복사돼, 소문자만 인식하는 프런트 필터(`app.js: it.status.category === "done"`)가 걸리지 않아 Closed 처리한 UNIFY-9580/9581/9583이 대시보드에 계속 떠 있었다. `apply_queue.py`에서 `MCP_STATUS_CATEGORY` 매핑으로 **강제 정규화**(호출자가 어느 표기를 넣든 안전)
+  - 🔴 **사고 — 폴링 재렌더가 편집 중 입력을 삭제**(커밋 `0035402`): `renderDetail`이 폴링마다 상세 패널 `innerHTML`을 무조건 교체해, 라벨 피커 선택 상태와 미확정 입력이 사라졌다. `generatedAt`은 다른 티켓 변경으로도 바뀌므로 큐 apply 중 라벨을 편집하면 제거한 칩이 되살아나고 새 라벨이 버려진 채 `set_labels`가 큐잉됐다(실제로 W3P-5594/5694 라벨이 지워져 `KaiaWallet`으로 복구). 패널이 그리는 데이터로 시그니처를 만들어 `#detail`의 `data-sig`와 비교, 같으면 재렌더하지 않도록 수정(브라우저 실측 검증)
+  - 큐 처리·재조회 반영(커밋 `9bd6ebc`·`ef46a1d`·`2f55e07`): 전체 재조회 23건, UNIFY-9649·UNIFY-9663 신규 생성, 마감일·라벨·코멘트 다수 반영
+- **발견 / 배운 것**: docstring 예시(소문자)와 실제 MCP 응답(대문자)이 달라 사람도 워커도 반복해서 틀렸다 — 계약을 문서로만 적지 말고 **코드에서 강제 정규화**하는 편이 확실하다.
+
+### 2026-08-04 — 세션 #3: hourly-resync + 큐 처리 + 운영 사고 2건 수정 + 복사 UI 추가
 
 - **완료**:
   - 예약된 hourly-resync 실행 → 워쳐 재기동, 저장된 JQL로 전체 재조회, 이후 대시보드에서 실시간으로 들어온 큐 다수(전이·마감일·라벨·설명·코멘트/전이 로드·연결 생성·티켓 생성 다건, Slack 스레드 요약 포함)를 배치별로 직접 처리하거나 `queue-worker`에 위임해 드레인함
