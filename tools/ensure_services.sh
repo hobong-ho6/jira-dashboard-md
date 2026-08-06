@@ -18,8 +18,16 @@ PORT=${1:-5173}
 
 # 헬스체크에 상한을 둔다. 좀비(포트는 잡고 응답만 없음)를 만나면 타임아웃 없는
 # curl 이 그대로 매달려 SessionStart 훅 전체가 멈출 수 있다.
+#
+# ⚠️ "연결됐다"·"200 이다" 만으로는 부족하다(2026-08-06 실측). 프로세스가 프로젝트
+# 파일을 하나도 못 여는 상태(EPERM)에 빠지면 서버는 여전히 접속을 받고
+# `/api/snapshot` 에 **빈 스냅샷을 200 으로** 돌려준다(serve.py 의 OSError 폴백).
+# 이전 체크는 `/api/snapshot` 의 curl 성공 여부만 봐서, `GET /` 가 3시간 내내 전부
+# 500 인 서버를 `up` 으로 보고했다. 그래서 대시보드 문서(`/`)가 실제로 200 인지
+# 확인한다 — `web/index.html` 은 sync 상태와 무관하게 항상 있으므로, 이게 500 이면
+# 서버가 파일을 못 읽고 있다는 뜻이다.
 health() {
-  curl -s -o /dev/null --max-time 5 "http://localhost:$PORT/api/snapshot" 2>/dev/null
+  [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://localhost:$PORT/" 2>/dev/null)" = "200" ]
 }
 
 start_server() {
@@ -35,7 +43,8 @@ else
   if [ -z "$ZPID" ]; then
     start_server
   elif ps -p "$ZPID" -o command= 2>/dev/null | grep -q "server/serve.py"; then
-    # 좀비 서버: 포트는 LISTEN 인데 응답이 없다(3회 재발 — 2026-07-30·08-06 등).
+    # 좀비 서버: 포트는 LISTEN 인데 정상 응답을 못 한다 — 응답 자체가 없거나,
+    # 응답은 하지만 파일을 못 읽어 `/` 가 500 이다(3회 재발 — 2026-07-30·08-06 등).
     # 그냥 재기동하면 Address already in use 로 죽고 FAILED 만 남아 사람이 kill 해야 했다.
     # 원인 가설(2026-08-06, 사용자 제기): 장시간 자리 비움 → macOS sleep/standby 반복 중
     # 프로세스는 살아남지만(STAT=S) 리스닝 소켓이 응답 불능이 된다. 확정 전이라
